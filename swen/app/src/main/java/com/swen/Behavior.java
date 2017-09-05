@@ -69,6 +69,6 @@ public class Behavior
             double pref = sharedPreferences.getFloat(word, 0);
             score += pref * wk.score;
         }
-        return score * categoryPref;
+        return score * categoryPref / keywords.size();
     }
 }
