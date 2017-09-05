@@ -2,16 +2,11 @@ package com.swen;
 
 public class NewsAPI
 {
-    public enum Category
-    {
-        // TODO
-    }
+    public NewsList getList(int pageNo, int pageSize) { return null; }
 
-    public NewsList getList(int pageNo, int pageSize) {}
+    public NewsList getList(int pageNo, int pageSize, String keyword) { return null; }
 
-    public NewsList getList(int pageNo, int pageSize, String keyword) {}
+    public NewsList getList(int pageNo, int pageSize, String keyword, News.Category category) { return null; }
 
-    public NewsList getList(int pageNo, int pageSize, String keyword, Category category) {}
-
-    public News getNews(String id) {}
+    public News getNews(String id) { return null; }
 }
