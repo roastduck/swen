@@ -95,6 +95,15 @@ public class News
     public String seggedTitle; // e.g. "德/n 媒/g ：/w 俄/b 柔道/n 运动员/n 里约/LOC 夺金/vn 与/cc 普京/PER 密切相关/n "
     public int wordCountOfContent;
     public int wordCountOfTitle;
+    private boolean alreadyRead = false;
+
+    public boolean isAlreadyRead() {
+        return alreadyRead;
+    }
+
+    public void setAlreadyRead(boolean alreadyRead) {
+        this.alreadyRead = alreadyRead;
+    }
 
     public Category getNewsClassTag() throws Category.InvalidCategoryException
     {
