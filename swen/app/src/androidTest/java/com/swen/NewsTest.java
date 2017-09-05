@@ -1,5 +1,6 @@
 package com.swen;
 
+import com.alibaba.fastjson.JSON;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,14 +21,14 @@ public class NewsTest
     @Test
     public void testGetNewsClassTag() throws Exception
     {
-        mNews.newsClassTag = "教育";
-        assertEquals(News.Category.EDUCATION, mNews.getNewsClassTag());
+        News news = JSON.parseObject("{\"newsClassTag\":\"教育\"}", News.class);
+        assertEquals(News.Category.EDUCATION, news.getNewsClassTag());
     }
 
     @Test
     public void testGetNewsTime() throws Exception
     {
-        mNews.news_Time = "20161213214510";
+        mNews.setNews_Time("20161213214510");
         Calendar ret = mNews.getNewsTime();
         assertEquals(2016, ret.get(Calendar.YEAR));
         assertEquals(11, ret.get(Calendar.MONTH)); // MONTH is 0-based
@@ -40,7 +41,7 @@ public class NewsTest
     @Test
     public void testGetCrawlTime() throws Exception
     {
-        mNews.crawl_Time = "20161213214510";
+        mNews.setCrawl_Time("20161213214510");
         Calendar ret = mNews.getCrawlTime();
         assertEquals(2016, ret.get(Calendar.YEAR));
         assertEquals(11, ret.get(Calendar.MONTH)); // MONTH is 0-based

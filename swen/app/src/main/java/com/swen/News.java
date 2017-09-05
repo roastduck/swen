@@ -5,22 +5,25 @@ import java.util.List;
 
 public class News
 {
+    // NOTE: All properties that will be written by fastjson must be public or with a setter provided.
+    // NOTE: This object cannot be serialized back the same as original API response with fastjson.
+
     public static class WeightedKeyword
     {
-        String word;
-        double score;
+        public String word;
+        public double score;
     }
 
     public static class WordBag // TODO: What's this? Counting? If you know, write down here.
     {
-        String word;
-        int score;
+        public String word;
+        public int score;
     }
 
     public static class WordCnt
     {
-        String word;
-        int count;
+        public String word;
+        public int count;
     }
 
     public enum Category
@@ -67,12 +70,12 @@ public class News
     }
 
     public String lang_Type; // e.g. ":"zh-CN"
-    public String newsClassTag; // e.g. "科技". Please use getter but keep this public to work with fastjson
+    private String newsClassTag; // e.g. "科技". Please use getter.
     public String news_Author;
     public String news_ID; // e.g. "20160913041301d5fc6a41214a149cd8a0581d3a014f"
-    public String news_Pictures; // A url
+    public String news_Pictures; // URLs
     public String news_Source; // e.g. "新浪新闻"
-    public String news_Time; // e.g. "20160912000000"  Please use getter but keep this public to work with fastjson
+    private String news_Time; // e.g. "20160912000000"  Please use getter
     public String news_Title;
     public String news_URL;
     public String news_Video;
@@ -82,7 +85,7 @@ public class News
     public List<WeightedKeyword> Keywords;
     public List<WordBag> bagOfWords;
     public String crawl_Source; // A host name
-    public String crawl_Time; // Please use getter but keep this public to work with fastjson
+    private String crawl_Time; // Please use getter
     public String inborn_KeyWords; // TODO: What's this then?
     public List<WordCnt> locations;
     public String news_Category; // e.g. "首页 > 新闻 > 环球扫描 > 正文"
@@ -96,10 +99,15 @@ public class News
     public int wordCountOfContent;
     public int wordCountOfTitle;
 
+    public void setNewsClassTag(String newsClassTag) { this.newsClassTag = newsClassTag; }
+
     public Category getNewsClassTag() throws Category.InvalidCategoryException
     {
         return Category.fromString(newsClassTag);
     }
+
+    public void setNews_Time(String news_Time) { this.news_Time = news_Time; }
+    public void setCrawl_Time(String crawl_Time) { this.crawl_Time = crawl_Time; }
 
     // NOTE: MONTH is 0-based
     public Calendar getNewsTime() { return parseDateTime(news_Time); }
