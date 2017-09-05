@@ -32,12 +32,17 @@ public class Behavior
             //TODO: invalid category. Temporarily ignore it.
             e.printStackTrace();
         }
-        //TODO: about keywords
+        //TODO: keyword score
         List<News.WeightedKeyword> keywords = news.Keywords;
+        if(keywords.isEmpty()) {
+            return;
+        }
+        double maximumScore = keywords.get(0).score;
         for(News.WeightedKeyword wk: keywords) {
             String word = wk.word;
+            double prefUpdate = wk.score / maximumScore;
             double previousPref = sharedPreferences.getFloat(word, 0);
-            editor.putFloat(word, (float)(previousPref + wk.score));
+            editor.putFloat(word, (float)(previousPref + prefUpdate));
         }
         editor.apply();
     }
