@@ -10,9 +10,9 @@ public class Behavior
     private SharedPreferences sharedPreferences;
     /*
      * Keys in preferences:
-     * CP_i means the category preference of the ith category. Value is an integer.
-     * CH_i means whether the ith category is hided. Value is a boolean.
-     * A keyword means the preference of this keyword. Value is an float.
+     * CP_i means the category preference of the ith category. Value is an integer, 1 as default.
+     * CH_i means whether the ith category is hided. Value is a boolean, false as default.
+     * A keyword means the preference of this keyword. Value is a float, 0 as default.
      */
 
 
@@ -26,7 +26,7 @@ public class Behavior
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             int category = news.getNewsClassTag().getId();
-            int previousPref = sharedPreferences.getInt("CP_" + category, 0);
+            int previousPref = sharedPreferences.getInt("CP_" + category, 1);
             editor.putInt("CP_" + category, previousPref + 1);
         } catch (News.Category.InvalidCategoryException e) {
             //TODO: invalid category. Temporarily ignore it.
@@ -47,5 +47,28 @@ public class Behavior
         editor.apply();
     }
 
-    public double getPreference(News news) {}
+    public double getPreference(News news) {
+        int category = -1;
+        try {
+            category = news.getNewsClassTag().getId();
+            if(sharedPreferences.getBoolean("CH_" + category, false)) {
+                return -1;
+            }
+        } catch (News.Category.InvalidCategoryException e) {
+            //TODO: invalid category. Temporarily ignore it.
+            e.printStackTrace();
+        }
+        int categoryPref = sharedPreferences.getInt("CP_" + category, 1);
+        List<News.WeightedKeyword> keywords = news.Keywords;
+        if(keywords.isEmpty()) {
+            return 0;
+        }
+        double score = 0;
+        for(News.WeightedKeyword wk: keywords) {
+            String word = wk.word;
+            double pref = sharedPreferences.getFloat(word, 0);
+            score += pref * wk.score;
+        }
+        return score * categoryPref;
+    }
 }
