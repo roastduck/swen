@@ -21,6 +21,10 @@ public class Behavior
         sharedPreferences = context.getSharedPreferences("readingPreferences", Context.MODE_PRIVATE);
     }
 
+    public int getCategoryPreference(int i) {
+        return sharedPreferences.getInt("CP_" + i, 1);
+    }
+
     public void markHaveRead(News news) {
         news.setAlreadyRead(true);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -28,13 +32,14 @@ public class Behavior
             int category = news.getNewsClassTag().getId();
             int previousPref = sharedPreferences.getInt("CP_" + category, 1);
             editor.putInt("CP_" + category, previousPref + 1);
+            editor.apply();
         } catch (News.Category.InvalidCategoryException e) {
             //TODO: invalid category. Temporarily ignore it.
             e.printStackTrace();
         }
         //TODO: keyword score
         List<News.WeightedKeyword> keywords = news.Keywords;
-        if(keywords.isEmpty()) {
+        if(keywords == null ||keywords.isEmpty()) {
             return;
         }
         double maximumScore = keywords.get(0).score;
@@ -60,7 +65,7 @@ public class Behavior
         }
         int categoryPref = sharedPreferences.getInt("CP_" + category, 1);
         List<News.WeightedKeyword> keywords = news.Keywords;
-        if(keywords.isEmpty()) {
+        if(keywords == null ||keywords.isEmpty()) {
             return 0;
         }
         double score = 0;
