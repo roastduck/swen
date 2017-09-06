@@ -25,7 +25,7 @@ public class External
         oks.setTitle(news.news_Title);
         oks.setUrl(news.news_URL);
         oks.setTitleUrl(news.news_URL);
-        oks.setImageUrl(news.news_Pictures);
+        oks.setImageUrl(news.news_Pictures);    // TODO: parse news_Pictures
         oks.setSite("Swen");
         oks.show(context);
     }
