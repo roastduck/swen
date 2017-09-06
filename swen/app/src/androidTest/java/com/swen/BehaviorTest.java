@@ -44,7 +44,7 @@ public class BehaviorTest {
         news.persons.add(test4);
         news.persons.add(test5);
         news.persons.add(test6);
-        news.newsClassTag = "体育";
+        news.setNewsClassTag("体育");
     }
 
     @Test
