@@ -14,10 +14,13 @@ public class External
 
     public void share(News news, Target target) {}
 
-    public void readyRead(Context context, String str) {
-        thread = new Thread(() ->
-            player = MediaPlayer.create(context, Uri.parse(String.format(urlFormat, str)))
-        );
+    public void readyRead(final Context context, final String str) {
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                player = MediaPlayer.create(context, Uri.parse(String.format(urlFormat, str)));
+            }
+        });
         thread.start();
     }
 
