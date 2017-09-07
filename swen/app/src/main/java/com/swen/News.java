@@ -1,26 +1,30 @@
 package com.swen;
 
+import java.io.Serializable;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-public class News
+public class News implements Serializable
 {
     // NOTE: All properties that will be written by fastjson must be public or with a setter provided.
     // NOTE: This object cannot be serialized back the same as original API response with fastjson.
 
-    public static class WeightedKeyword
+    public static class WeightedKeyword implements Serializable
     {
         public String word;
         public double score;
     }
 
-    public static class WordBag // TODO: What's this? Counting? If you know, write down here.
+    // TODO: What's this? Counting? If you know, write down here.
+    public static class WordBag implements Serializable
     {
         public String word;
         public int score;
     }
 
-    public static class WordCnt
+    public static class WordCnt implements Serializable
     {
         public String word;
         public int count;
@@ -98,14 +102,19 @@ public class News
     public String seggedTitle; // e.g. "德/n 媒/g ：/w 俄/b 柔道/n 运动员/n 里约/LOC 夺金/vn 与/cc 普京/PER 密切相关/n "
     public int wordCountOfContent;
     public int wordCountOfTitle;
-    private boolean alreadyRead = false;
+
+    // This should be a static variable, because News object will be cached and stored
+    private static Set<String> alreadyRead = new HashSet<>();
 
     public boolean isAlreadyRead() {
-        return alreadyRead;
+        return alreadyRead.contains(news_ID);
     }
 
     public void setAlreadyRead(boolean alreadyRead) {
-        this.alreadyRead = alreadyRead;
+        if (alreadyRead)
+            this.alreadyRead.add(news_ID);
+        else
+            this.alreadyRead.remove(news_ID);
     }
 
     public void setNewsClassTag(String newsClassTag) { this.newsClassTag = newsClassTag; }
