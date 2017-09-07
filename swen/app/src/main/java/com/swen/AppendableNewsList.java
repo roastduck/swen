@@ -67,20 +67,26 @@ public class AppendableNewsList extends NewsList
     public Promise append()
     {
         final Deferred deferred = new DeferredObject();
-        return deferred.promise().then(o -> {
-            try
+        return deferred.promise().then(new DoneCallback() {
+            // For unknown reason, there will be a error when replaced with a lambda-expression
+            // Error message: java.lang.NoSuchMethodError: No direct method <init>(Ljava/lang/Object;Ljava/lang/Object;)V in class Lcom/swen/-$Lambda$0; or its super classes (declaration of 'com.swen.-$Lambda$0' appears in /data/app/com.swen.test-1/base.apk)
+            @Override
+            public void onDone(Object o)
             {
-                appendSync();
-            } catch (IOException e)
-            {
-                deferred.reject(e);
+                try
+                {
+                    AppendableNewsList.this.appendSync();
+                } catch (IOException e)
+                {
+                    deferred.reject(e);
+                }
             }
         });
     }
 
     /** Synchronized version of append
      */
-    public void appendSync() throws IOException
+    public synchronized void appendSync() throws IOException
     {
         int fetchPageSize = (isRecommend ? RECOMMEND_FACTOR : 1) * pageSize;
         NewsList fetched;

@@ -1,6 +1,11 @@
 package com.swen;
 
 import android.content.Context;
+import org.jdeferred.Deferred;
+import org.jdeferred.DoneCallback;
+import org.jdeferred.DoneFilter;
+import org.jdeferred.Promise;
+import org.jdeferred.impl.DeferredObject;
 
 import java.io.*;
 import java.util.*;
@@ -42,9 +47,30 @@ public class Storage
      *  If it's cached in memory, return it
      *  Otherwise, If it's marked as persistent, get it from file
      *  Otherwise, get it from NewsAPI
-     *  @throws IOException when fails
+     *  You can refer to the unit test as an example of how to use Promise
+     *  If you want to run callback in UI thread, use AndroidDoneCallback instead of DoneCallback, and specify the thread
+     *  When fail, it throws IOException (ues .fail to catch)
      */
-    public synchronized News getNewsCached(String id) throws IOException
+    public Promise<News,IOException,Object> getNewsCached(String id)
+    {
+        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        return deferred.promise().then(new DoneFilter<Object, News>() {
+            @Override
+            public News filterDone(Object result)
+            {
+                try
+                {
+                    return Storage.this.getNewsCachedSync(id);
+                } catch (IOException e)
+                {
+                    deferred.reject(e);
+                }
+                return null;
+            }
+        });
+    }
+
+    public synchronized News getNewsCachedSync(String id) throws IOException
     {
         News news = cache.get(id);
         if (news != null)
@@ -57,13 +83,43 @@ public class Storage
     /** Mark a file to be persistent
      *  It will not save the news again when already saved
      */
-    public synchronized void mark(String id) throws IOException
+    public Promise<Object,IOException,Object> mark(String id)
     {
-        saveToFile(id, getNewsCached(id));
+        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        return deferred.promise().then(new DoneCallback<Object>() {
+            @Override
+            public void onDone(Object o)
+            {
+                try
+                {
+                    Storage.this.markSync(id);
+                } catch (IOException e)
+                {
+                    deferred.reject(e);
+                }
+            }
+        });
+    }
+
+    public Promise<Object,IOException,Object> unmark(String id)
+    {
+        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        return deferred.promise().then(new DoneCallback<Object>() {
+            @Override
+            public void onDone(Object o)
+            {
+                Storage.this.unmarkSync(id);
+            }
+        });
+    }
+
+    public synchronized void markSync(String id) throws IOException
+    {
+        saveToFile(id, getNewsCachedSync(id));
         persistent.add(id);
     }
 
-    public synchronized void unmark(String id)
+    public synchronized void unmarkSync(String id)
     {
         persistent.remove(id);
         try
