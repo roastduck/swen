@@ -11,8 +11,8 @@ import static org.junit.Assert.*;
 
 public class AppendableNewsListTest
 {
-    NewsAPI mAPI;
-    Behavior mBehavior;
+    private NewsAPI mAPI;
+    private Behavior mBehavior;
 
     @Before
     public void setUp() throws Exception
