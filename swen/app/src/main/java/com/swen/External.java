@@ -4,6 +4,8 @@ import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
 
+import java.util.List;
+
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
@@ -25,7 +27,10 @@ public class External
         oks.setTitle(news.news_Title);
         oks.setUrl(news.news_URL);
         oks.setTitleUrl(news.news_URL);
-        oks.setImageUrl(news.news_Pictures);    // TODO: parse news_Pictures
+        List<String> picList = news.getNewsPictures();
+        if (picList.size() >= 1) {
+            oks.setImageUrl(news.getNewsPictures().get(0));    // TODO: parse news_Pictures
+        }
         oks.setSite("Swen");
         oks.show(context);
     }
