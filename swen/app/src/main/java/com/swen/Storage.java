@@ -54,6 +54,7 @@ public class Storage
     public Promise<News,IOException,Object> getNewsCached(String id)
     {
         final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneFilter<Object, News>() {
             @Override
             public News filterDone(Object result)
@@ -86,6 +87,7 @@ public class Storage
     public Promise<Object,IOException,Object> mark(String id)
     {
         final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneCallback<Object>() {
             @Override
             public void onDone(Object o)
@@ -104,6 +106,7 @@ public class Storage
     public Promise<Object,IOException,Object> unmark(String id)
     {
         final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneCallback<Object>() {
             @Override
             public void onDone(Object o)
