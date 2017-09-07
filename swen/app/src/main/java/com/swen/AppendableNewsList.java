@@ -67,13 +67,17 @@ public class AppendableNewsList extends NewsList
     public Promise append()
     {
         final Deferred deferred = new DeferredObject();
-        return deferred.promise().then(o -> {
-            try
-            {
-                appendSync();
-            } catch (IOException e)
-            {
-                deferred.reject(e);
+        deferred.resolve(new Object());
+        return deferred.promise().then(new DoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                try
+                {
+                    appendSync();
+                } catch (IOException e)
+                {
+                    deferred.reject(e);
+                }
             }
         });
     }

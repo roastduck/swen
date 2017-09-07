@@ -152,6 +152,7 @@ public class News
     public Promise searchPicture(final String title)
     {
         final Deferred deferred = new DeferredObject();
+        deferred.resolve(new Object());
         ImageSearcher ims = new ImageSearcher(10);
         return deferred.promise().then(new DonePipe() {
             @Override
