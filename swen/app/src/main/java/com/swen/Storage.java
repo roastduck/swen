@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.*;
 
 /** Store marked news into persistent files and cache others in memory
+ *  PLEASE DO NOT INSTANTIATE THIS CLASS, USE ((ApplicationWithStorage)getApplication()).getStorage() INSTEAD
  *  NOTE: Suggest passing the reference to this object around all Activities
  *        to avoid the cache being destructed
  */

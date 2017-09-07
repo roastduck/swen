@@ -1,7 +1,9 @@
 package com.swen;
 
 import android.support.test.InstrumentationRegistry;
+import android.support.test.rule.ActivityTestRule;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 import java.util.List;
@@ -12,6 +14,9 @@ import static org.junit.Assert.*;
 
 public class StorageTest
 {
+    @Rule
+    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+
     private NewsAPI mAPI;
 
     @Before
@@ -29,6 +34,13 @@ public class StorageTest
         news456.news_ID = "456"; doReturn(news456).when(mAPI).getNews("456");
         news789.news_ID = "789"; doReturn(news789).when(mAPI).getNews("789");
 
+    }
+
+    @Test
+    public void testGetFromApplication() throws Exception
+    {
+        Storage storage = ((ApplicationWithStorage)(mActivityRule.getActivity().getApplication())).getStorage();
+        assertTrue(storage.getMarked().isEmpty());
     }
 
     @Test
