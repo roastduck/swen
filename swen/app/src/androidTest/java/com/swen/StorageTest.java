@@ -12,17 +12,23 @@ import static org.junit.Assert.*;
 
 public class StorageTest
 {
-    NewsAPI mAPI;
+    private NewsAPI mAPI;
 
     @Before
     public void setUp() throws Exception
     {
         mAPI = mock(NewsAPI.class);
-        doAnswer(invocation -> {
+        /*doAnswer(invocation -> {
             News news = new News();
             news.news_ID = (String)(invocation.getArguments()[0]);
             return news;
-        }).when(mAPI).getNews(anyString());
+        }).when(mAPI).getNews(anyString());*/
+        // The code above will cause AppendableNewsListTest to fail for unknown reason
+        News news123 = new News(), news456 = new News(), news789 = new News();
+        news123.news_ID = "123"; doReturn(news123).when(mAPI).getNews("123");
+        news456.news_ID = "456"; doReturn(news456).when(mAPI).getNews("456");
+        news789.news_ID = "789"; doReturn(news789).when(mAPI).getNews("789");
+
     }
 
     @Test
