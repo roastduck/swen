@@ -13,6 +13,7 @@ import org.jdeferred.android.AndroidDoneCallback;
 import org.jdeferred.android.AndroidExecutionScope;
 import org.jdeferred.android.AndroidFailCallback;
 
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -24,11 +25,13 @@ public class RecommendationView extends RecyclerView {
     private List<News> mData;
     private AppendableNewsList mAppendableList;
     private RecommendationAdapter mAdapter;
+    private Context mContext;
 
     public RecommendationView(Context context, AppendableNewsList appendableNewsList) {
         super(context);
         mAppendableList = appendableNewsList;
         mData = mAppendableList.list;
+        mContext = context;
         mAppendableList.append().done(new AndroidDoneCallback() {
             @Override
             public void onDone(Object result) {
@@ -44,7 +47,7 @@ public class RecommendationView extends RecyclerView {
             @Override
             public void onFail(Object result) {
                 //TODO:停止加载动画
-                Toast.makeText(context, "加载推荐失败", Toast.LENGTH_LONG);
+                Toast.makeText(mContext, "加载推荐失败", Toast.LENGTH_LONG);
             }
 
             @Override
@@ -56,10 +59,39 @@ public class RecommendationView extends RecyclerView {
 
     class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAdapter.RAViewHolder> {
 
+        private boolean loading = false;
+        private HashMap<News, News> neighbor = new HashMap<>();
+
         @Override
         public int getItemViewType(int position) {
+            int threshold = (int) (getItemCount() * 0.8);
+            if(!loading && position >= threshold) {
+                loading = true;
+                mAppendableList.append().then(new AndroidDoneCallback() {
+                    @Override
+                    public void onDone(Object result) {
+                        notifyDataSetChanged();
+                        loading = false;
+                    }
+
+                    @Override
+                    public AndroidExecutionScope getExecutionScope() {
+                        return AndroidExecutionScope.UI;
+                    }
+                }).fail(new AndroidFailCallback() {
+                    @Override
+                    public void onFail(Object result) {
+                        Toast.makeText(mContext, "未能获取更多推荐", Toast.LENGTH_LONG);
+                        loading = false;
+                    }
+
+                    @Override
+                    public AndroidExecutionScope getExecutionScope() {
+                        return AndroidExecutionScope.UI;
+                    }
+                });
+            }
             //TODO:根据新闻图片内容选择item style
-            //TODO:根据当前位置异步加载更多推荐
             return 1;
         }
 
