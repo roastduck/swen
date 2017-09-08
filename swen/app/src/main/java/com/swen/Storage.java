@@ -41,6 +41,15 @@ public class Storage
         cacheDir = context.getCacheDir();
         mAPI = api;
         this.cacheCapacity = cacheCapacity;
+
+        File[] subFiles = filesDir.listFiles();
+        if (subFiles != null)
+            for (File file : subFiles)
+            {
+                String s = file.getName();
+                if (s.startsWith(FILE_PREFIX))
+                    persistent.add(s.substring(FILE_PREFIX.length()));
+            }
     }
 
     /** Get a news
@@ -139,8 +148,8 @@ public class Storage
         return new Vector<>(persistent);
     }
 
-    private final String FILE_PREFIX = "news_";
-    private final String TMP_SUFFIX = ".tmp";
+    public static final String FILE_PREFIX = "news_";
+    public static final String TMP_SUFFIX = ".tmp";
 
     /** Safely save a news into a file even the process will be killed
      *  Because AtomicFile was not supported until SDK 22, we write into tmp and then rename it
