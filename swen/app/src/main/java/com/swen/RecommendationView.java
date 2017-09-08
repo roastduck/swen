@@ -15,6 +15,7 @@ import org.jdeferred.android.AndroidFailCallback;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Teon on 2017/9/8.
@@ -60,7 +61,7 @@ public class RecommendationView extends RecyclerView {
     class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAdapter.RAViewHolder> {
 
         private boolean loading = false;
-        private HashMap<News, News> neighbor = new HashMap<>();
+        private HashMap<String, News> neighbor = new HashMap<>();
 
         @Override
         public int getItemViewType(int position) {
@@ -91,8 +92,32 @@ public class RecommendationView extends RecyclerView {
                     }
                 });
             }
-            //TODO:根据新闻图片内容选择item style
-            return 1;
+            List<String> pictures = mData.get(position).getNewsPictures();
+            if(pictures.isEmpty()) {
+                mData.remove(position);
+                notifyDataSetChanged();
+            }
+            if(position == 0) {     //First item in view
+                return 1;
+            }
+            if(pictures.size() >= 5) {      //If this news contains many pictures, then we try to show more of them
+                return 4;
+            }
+            int style = 0;
+            if(pictures.size() >= 3) {
+                Random rnd = new Random(System.currentTimeMillis());
+                style = rnd.nextInt(4) + 1;
+            }
+            else {
+                Random rnd = new Random(System.currentTimeMillis());
+                style = rnd.nextInt(3) + 1;
+            }
+            if(style == 3) {
+                News nextNews = mData.remove(position + 1);
+                notifyDataSetChanged();
+                neighbor.put(mData.get(position).news_ID, nextNews);
+            }
+            return style;
         }
 
         @Override
