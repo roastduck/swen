@@ -88,15 +88,12 @@ public class NewsTest
     @Test
     public void testSearchPicture() throws Exception
     {
-        mNews.searchPicture("Twitter推出新闻标签功能：降低用户门槛").done(imgUrl -> {
-            try {
-                HttpURLConnection conn = (HttpURLConnection) (new URL((String)imgUrl).openConnection());
-                assertEquals(200, conn.getResponseCode());
-                Map<String, List<String>> map = conn.getHeaderFields();
-                assertTrue(map.get("Content-Type").get(0).contains("image"));
-            }
-            catch (MalformedURLException e) {}
-            catch (IOException e) {}
-        });
+        mNews.searchPicture("Twitter推出新闻标签功能：降低用户门槛").then(imgUrl -> {
+            HttpURLConnection conn = (HttpURLConnection) (new URL((String)imgUrl).openConnection());
+            assertEquals(200, conn.getResponseCode());
+            Map<String, List<String>> map = conn.getHeaderFields();
+            assertTrue(map.get("Content-Type").get(0).contains("image"));
+            return new Object();
+        }).waitUntilHasRun();
     }
 }

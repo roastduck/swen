@@ -1,9 +1,7 @@
 package com.swen;
 
-import org.jdeferred.Deferred;
-import org.jdeferred.DoneCallback;
-import org.jdeferred.Promise;
-import org.jdeferred.android.AndroidDeferredObject;
+import com.swen.promise.Callback;
+import com.swen.promise.Promise;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,25 +60,17 @@ public class AppendableNewsList extends NewsList
      *  You can refer to the unit test as an example of how to use Promise
      *  When fail, it throws IOException (ues .fail to catch) , and guarantee nothing will be changed
      */
-    public Promise append()
+    public Promise<Object,Object> append()
     {
-        final Deferred deferred = new AndroidDeferredObject();
-        deferred.resolve(new Object()); // must
-        return deferred.promise().then(new DoneCallback() {
-            // For unknown reason, there will be a error when replaced with a lambda-expression
-            // Error message: java.lang.NoSuchMethodError: No direct method <init>(Ljava/lang/Object;Ljava/lang/Object;)V in class Lcom/swen/-$Lambda$0; or its super classes (declaration of 'com.swen.-$Lambda$0' appears in /data/app/com.swen.test-1/base.apk)
+        return new Promise<Object,Object>(new Callback<Object, Object>()
+        {
             @Override
-            public void onDone(Object o)
+            public Object run(Object o) throws Throwable
             {
-                try
-                {
-                    AppendableNewsList.this.appendSync();
-                } catch (IOException e)
-                {
-                    deferred.reject(e);
-                }
+                appendSync();
+                return new Object();
             }
-        });
+        }, new Object());
     }
 
     /** Synchronized version of append

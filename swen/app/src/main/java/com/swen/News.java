@@ -1,9 +1,7 @@
 package com.swen;
 
-import org.jdeferred.Deferred;
-import org.jdeferred.DonePipe;
-import org.jdeferred.Promise;
-import org.jdeferred.android.AndroidDeferredObject;
+import com.swen.promise.Callback;
+import com.swen.promise.Promise;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -153,22 +151,17 @@ public class News implements Serializable
         return news_Pictures;
     }
 
-    public Promise searchPicture(final String title)
+    public Promise<Object,String> searchPicture(final String title)
     {
-        final Deferred deferred = new AndroidDeferredObject();
-        deferred.resolve(new Object());
         ImageSearcher ims = new ImageSearcher(10);
-        return deferred.promise().then(new DonePipe() {
+        return new Promise<>(new Callback<Object,String>()
+        {
             @Override
-            public Promise pipeDone(Object result) {
-                try {
-                    return new AndroidDeferredObject().resolve(ims.search(title));
-                }
-                catch (Exception e) {
-                    return new AndroidDeferredObject().reject(e);
-                }
+            public String run(Object o) throws Throwable
+            {
+                return ims.search(title);
             }
-        });
+        }, new Object());
     }
 
     /** Parse date and time from the digital string of the API

@@ -47,27 +47,21 @@ public class AppendableNewsListTest
         assertEquals(0, appendable.pageNo);
         assertEquals(0, appendable.list.size());
 
-        appendable.append().done(o -> {
-            try
-            {
-                verify(mAPI).getList(1, 2, "keyword", News.Category.CAR);
-            } catch (Exception ignored) {}
-            assertEquals(1, appendable.pageNo);
-            assertEquals(2, appendable.list.size());
-        });
+        appendable.append().waitUntilHasRun();
+        verify(mAPI).getList(1, 2, "keyword", News.Category.CAR);
+        assertEquals(1, appendable.pageNo);
+        assertEquals(2, appendable.list.size());
     }
 
     @Test
     public void testRecommend() throws Exception
     {
         AppendableNewsList appendable = new AppendableNewsList(1, "keyword", News.Category.CAR, true, mBehavior, mAPI);
-        appendable.append().done(o -> {
-            try
-            {
-                verify(mAPI).getList(1, 10, "keyword", News.Category.CAR);
-            } catch (Exception ignored) {}
+        appendable.append().then(o -> {
+            verify(mAPI).getList(1, 10, "keyword", News.Category.CAR);
             assertEquals(1, appendable.list.size());
             assertEquals("higher", appendable.list.get(0).news_Title);
-        });
+            return new Object();
+        }).waitUntilHasRun();
     }
 }
