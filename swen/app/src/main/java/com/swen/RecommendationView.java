@@ -154,7 +154,20 @@ public class RecommendationView extends RecyclerView {
 
         @Override
         public void onBindViewHolder(RAViewHolder holder, int position) {
-
+            switch(holder.style) {
+                //TODO:显示什么文字内容？
+                //TODO:如何显示图片？
+                case 1: //TODO：显示图片，显示标题
+                    break;
+                case 2: //TODO: 显示图片，利用html区分标题和简介
+                    break;
+                case 3: //TODO：分别显示左右分栏的图片和标题
+                    News left = mData.get(position);
+                    News right = neighbor.get(left.news_ID);
+                    break;
+                case 4: //TODO：显示图片，显示标题
+                    break;
+            }
         }
 
         @Override
@@ -164,7 +177,7 @@ public class RecommendationView extends RecyclerView {
 
         class RAViewHolder extends RecyclerView.ViewHolder {
 
-            final private int style;
+            final public int style;
             private TextView textView;
             private TextView textViewRight;
             private ImageView imageView;

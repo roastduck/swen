@@ -13,5 +13,8 @@
         android:id="@+id/tv_intro1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textStyle="bold"/>
 </LinearLayout>

@@ -24,7 +24,10 @@
             android:id="@+id/tv_intro3_left"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textStyle="bold"/>
     </LinearLayout>
 
     <LinearLayout
@@ -46,7 +49,10 @@
             android:id="@+id/tv_intro3_right"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textStyle="bold"/>
     </LinearLayout>
 
 </LinearLayout>
