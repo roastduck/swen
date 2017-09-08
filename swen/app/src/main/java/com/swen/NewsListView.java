@@ -21,14 +21,14 @@ import java.util.Random;
  * Created by Teon on 2017/9/8.
  */
 
-public class RecommendationView extends RecyclerView {
+public class NewsListView extends RecyclerView {
 
     private List<News> mData;
     private AppendableNewsList mAppendableList;
-    private RecommendationAdapter mAdapter;
+    private NewsListAdapter mAdapter;
     private Context mContext;
 
-    public RecommendationView(Context context, AppendableNewsList appendableNewsList) {
+    public NewsListView(Context context, AppendableNewsList appendableNewsList) {
         super(context);
         mAppendableList = appendableNewsList;
         mData = mAppendableList.list;
@@ -37,7 +37,7 @@ public class RecommendationView extends RecyclerView {
             @Override
             public void onDone(Object result) {
                 //TODO:停止加载动画
-                mAdapter = new RecommendationAdapter();
+                mAdapter = new NewsListAdapter();
             }
 
             @Override
@@ -48,7 +48,7 @@ public class RecommendationView extends RecyclerView {
             @Override
             public void onFail(Object result) {
                 //TODO:停止加载动画
-                Toast.makeText(mContext, "加载推荐失败", Toast.LENGTH_LONG);
+                Toast.makeText(mContext, "加载新闻列表失败", Toast.LENGTH_LONG);
             }
 
             @Override
@@ -58,7 +58,7 @@ public class RecommendationView extends RecyclerView {
         });
     }
 
-    class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAdapter.RAViewHolder> {
+    class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLViewHolder> {
 
         private boolean loading = false;
         private HashMap<String, News> neighbor = new HashMap<>();
@@ -82,7 +82,7 @@ public class RecommendationView extends RecyclerView {
                 }).fail(new AndroidFailCallback() {
                     @Override
                     public void onFail(Object result) {
-                        Toast.makeText(mContext, "未能获取更多推荐", Toast.LENGTH_LONG);
+                        Toast.makeText(mContext, "未能获取更多新闻条目", Toast.LENGTH_LONG);
                         loading = false;
                     }
 
@@ -121,7 +121,7 @@ public class RecommendationView extends RecyclerView {
         }
 
         @Override
-        public RAViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        public NLViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view;
             switch (viewType) {
                 case 1:
@@ -144,8 +144,8 @@ public class RecommendationView extends RecyclerView {
                     view = null;
             }
             try {
-                return new RAViewHolder(view, viewType);
-            } catch (RAViewHolder.InvalidItemStyleException e) {
+                return new NLViewHolder(view, viewType);
+            } catch (NLViewHolder.InvalidItemStyleException e) {
                 //TODO:错误的ItemStyle
                 e.printStackTrace();
                 return null;
@@ -153,7 +153,7 @@ public class RecommendationView extends RecyclerView {
         }
 
         @Override
-        public void onBindViewHolder(RAViewHolder holder, int position) {
+        public void onBindViewHolder(NLViewHolder holder, int position) {
             switch(holder.style) {
                 //TODO:显示什么文字内容？
                 //TODO:如何显示图片？
@@ -175,7 +175,7 @@ public class RecommendationView extends RecyclerView {
             return mData.size();
         }
 
-        class RAViewHolder extends RecyclerView.ViewHolder {
+        class NLViewHolder extends RecyclerView.ViewHolder {
 
             final public int style;
             private TextView textView;
@@ -187,7 +187,7 @@ public class RecommendationView extends RecyclerView {
             public class InvalidItemStyleException extends Exception {
             }
 
-            public RAViewHolder(View itemView, int style) throws InvalidItemStyleException {
+            public NLViewHolder(View itemView, int style) throws InvalidItemStyleException {
                 super(itemView);
                 this.style = style;
                 switch (style) {

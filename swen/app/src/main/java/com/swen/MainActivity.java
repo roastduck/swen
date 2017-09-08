@@ -14,9 +14,8 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
 {
 
-    private RecommendationView mView;
+    private NewsListView mView;
     private List<News> mData;
-    private RecommendationView.RecommendationAdapter mAdapter;
 
 
     @Override
