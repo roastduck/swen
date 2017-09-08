@@ -1,10 +1,18 @@
 package com.swen;
 
+import org.jdeferred.Deferred;
+import org.jdeferred.DonePipe;
+import org.jdeferred.Promise;
+import org.jdeferred.android.AndroidDeferredObject;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class News implements Serializable
 {
@@ -77,7 +85,7 @@ public class News implements Serializable
     private String newsClassTag; // e.g. "科技". Please use getter.
     public String news_Author;
     public String news_ID; // e.g. "20160913041301d5fc6a41214a149cd8a0581d3a014f"
-    public String news_Pictures; // URLs
+    private List<String> news_Pictures; // URLs
     public String news_Source; // e.g. "新浪新闻"
     private String news_Time; // e.g. "20160912000000"  Please use getter
     public String news_Title;
@@ -127,9 +135,41 @@ public class News implements Serializable
     public void setNews_Time(String news_Time) { this.news_Time = news_Time; }
     public void setCrawl_Time(String crawl_Time) { this.crawl_Time = crawl_Time; }
 
+    public void setNews_Pictures(String news_Pictures)
+    {
+        this.news_Pictures = new ArrayList<String>();
+        Pattern pattern = Pattern.compile("(https?|ftp|file)://[-A-Za-z0-9+&@#/%?=~_|!:,.]+[-A-Za-z0-9+&@#/%=~_|]");
+        Matcher matcher = pattern.matcher(news_Pictures);
+        while (matcher.find()) {
+            this.news_Pictures.add(matcher.group());
+        }
+    }
+
     // NOTE: MONTH is 0-based
     public Calendar getNewsTime() { return parseDateTime(news_Time); }
     public Calendar getCrawlTime() { return parseDateTime(crawl_Time); }
+
+    public List<String> getNewsPictures() {
+        return news_Pictures;
+    }
+
+    public Promise searchPicture(final String title)
+    {
+        final Deferred deferred = new AndroidDeferredObject();
+        deferred.resolve(new Object());
+        ImageSearcher ims = new ImageSearcher(10);
+        return deferred.promise().then(new DonePipe() {
+            @Override
+            public Promise pipeDone(Object result) {
+                try {
+                    return new AndroidDeferredObject().resolve(ims.search(title));
+                }
+                catch (Exception e) {
+                    return new AndroidDeferredObject().reject(e);
+                }
+            }
+        });
+    }
 
     /** Parse date and time from the digital string of the API
      *  @return A Calendar object with default time zone, because LocalDateTime is not available in old Androids

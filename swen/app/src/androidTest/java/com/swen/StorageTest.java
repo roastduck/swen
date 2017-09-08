@@ -4,10 +4,12 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.DonePipe;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
@@ -22,6 +24,15 @@ public class StorageTest
 
     private NewsAPI mAPI;
 
+    private void clearFiles() throws Exception
+    {
+        File[] subFiles = mActivityRule.getActivity().getApplicationContext().getFilesDir().listFiles();
+        if (subFiles != null)
+            for (File file : subFiles)
+                if (file.getName().startsWith(Storage.FILE_PREFIX))
+                    file.delete();
+    }
+
     @Before
     public void setUp() throws Exception
     {
@@ -32,13 +43,36 @@ public class StorageTest
             return news;
         }).when(mAPI).getNews(anyString());
         // The code above might cause Promise to fail, if lambda expressions are passed in within production code, for unknown reason
+
+        clearFiles();
+    }
+
+    @After
+    public void tearDown() throws Exception
+    {
+        clearFiles();
     }
 
     @Test
     public void testGetFromApplication() throws Exception
     {
         Storage storage = ((ApplicationWithStorage)(mActivityRule.getActivity().getApplication())).getStorage();
-        assertTrue(storage.getMarked().isEmpty());
+        assertTrue(storage.getMarked() != null); // might not be empty because there might already be files
+    }
+
+    @Test
+    public void testRestoreWhenConstruct() throws Exception
+    {
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        storage.mark("123");
+        List<String> list = storage.getMarked();
+        assertEquals(1, list.size());
+        assertEquals("123", list.get(0));
+
+        storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        list = storage.getMarked();
+        assertEquals(1, list.size());
+        assertEquals("123", list.get(0));
     }
 
     @Test

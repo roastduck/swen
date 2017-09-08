@@ -5,7 +5,7 @@ import org.jdeferred.Deferred;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.DoneFilter;
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
+import org.jdeferred.android.AndroidDeferredObject;
 
 import java.io.*;
 import java.util.*;
@@ -41,6 +41,15 @@ public class Storage
         cacheDir = context.getCacheDir();
         mAPI = api;
         this.cacheCapacity = cacheCapacity;
+
+        File[] subFiles = filesDir.listFiles();
+        if (subFiles != null)
+            for (File file : subFiles)
+            {
+                String s = file.getName();
+                if (s.startsWith(FILE_PREFIX))
+                    persistent.add(s.substring(FILE_PREFIX.length()));
+            }
     }
 
     /** Get a news
@@ -53,7 +62,7 @@ public class Storage
      */
     public Promise<News,IOException,Object> getNewsCached(String id)
     {
-        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        final Deferred<Object,IOException,Object> deferred = new AndroidDeferredObject<>();
         deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneFilter<Object, News>() {
             @Override
@@ -86,7 +95,7 @@ public class Storage
      */
     public Promise<Object,IOException,Object> mark(String id)
     {
-        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        final Deferred<Object,IOException,Object> deferred = new AndroidDeferredObject<>();
         deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneCallback<Object>() {
             @Override
@@ -105,7 +114,7 @@ public class Storage
 
     public Promise<Object,IOException,Object> unmark(String id)
     {
-        final Deferred<Object,IOException,Object> deferred = new DeferredObject<>();
+        final Deferred<Object,IOException,Object> deferred = new AndroidDeferredObject<>();
         deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneCallback<Object>() {
             @Override
@@ -139,8 +148,8 @@ public class Storage
         return new Vector<>(persistent);
     }
 
-    private final String FILE_PREFIX = "news_";
-    private final String TMP_SUFFIX = ".tmp";
+    public static final String FILE_PREFIX = "news_";
+    public static final String TMP_SUFFIX = ".tmp";
 
     /** Safely save a news into a file even the process will be killed
      *  Because AtomicFile was not supported until SDK 22, we write into tmp and then rename it
