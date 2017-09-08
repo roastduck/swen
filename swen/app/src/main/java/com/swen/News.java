@@ -3,19 +3,14 @@ package com.swen;
 import org.jdeferred.Deferred;
 import org.jdeferred.DonePipe;
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
+import org.jdeferred.android.AndroidDeferredObject;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -160,17 +155,17 @@ public class News implements Serializable
 
     public Promise searchPicture(final String title)
     {
-        final Deferred deferred = new DeferredObject();
+        final Deferred deferred = new AndroidDeferredObject();
         deferred.resolve(new Object());
         ImageSearcher ims = new ImageSearcher(10);
         return deferred.promise().then(new DonePipe() {
             @Override
             public Promise pipeDone(Object result) {
                 try {
-                    return new DeferredObject().resolve(ims.search(title));
+                    return new AndroidDeferredObject().resolve(ims.search(title));
                 }
                 catch (Exception e) {
-                    return new DeferredObject().reject(e);
+                    return new AndroidDeferredObject().reject(e);
                 }
             }
         });

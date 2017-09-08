@@ -3,13 +3,11 @@ package com.swen;
 import org.jdeferred.Deferred;
 import org.jdeferred.DoneCallback;
 import org.jdeferred.Promise;
-import org.jdeferred.impl.DeferredObject;
+import org.jdeferred.android.AndroidDeferredObject;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Vector;
-import java.util.stream.Collectors;
 
 /** This news list keeps the metadata of how to append itself
  */
@@ -66,7 +64,7 @@ public class AppendableNewsList extends NewsList
      */
     public Promise append()
     {
-        final Deferred deferred = new DeferredObject();
+        final Deferred deferred = new AndroidDeferredObject();
         deferred.resolve(new Object()); // must
         return deferred.promise().then(new DoneCallback() {
             // For unknown reason, there will be a error when replaced with a lambda-expression
