@@ -64,7 +64,7 @@ public class StorageTest
     public void testRestoreWhenConstruct() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
-        storage.mark("123");
+        storage.markSync("123");
         List<String> list = storage.getMarked();
         assertEquals(1, list.size());
         assertEquals("123", list.get(0));
