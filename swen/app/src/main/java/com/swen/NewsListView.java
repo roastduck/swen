@@ -1,6 +1,7 @@
 package com.swen;
 
 import android.content.Context;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,8 +29,11 @@ public class NewsListView extends RecyclerView {
     private NewsListAdapter mAdapter;
     private Context mContext;
 
-    public NewsListView(Context context, AppendableNewsList appendableNewsList) {
+    public NewsListView(Context context) {
         super(context);
+    }
+
+    public void init(Context context, AppendableNewsList appendableNewsList) {
         mAppendableList = appendableNewsList;
         mData = mAppendableList.list;
         mContext = context;
@@ -38,6 +42,8 @@ public class NewsListView extends RecyclerView {
             public void onDone(Object result) {
                 //TODO:停止加载动画
                 mAdapter = new NewsListAdapter();
+                setAdapter(mAdapter);
+                setLayoutManager(new LinearLayoutManager(mContext));
             }
 
             @Override

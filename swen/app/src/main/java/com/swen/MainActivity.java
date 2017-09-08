@@ -23,5 +23,7 @@ public class MainActivity extends AppCompatActivity
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mView = (NewsListView) findViewById(R.id.rv_main);
+        mView.init(this, new AppendableNewsList(50, null, null, true, new Behavior(this)));
     }
 }
