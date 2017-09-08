@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="128dp"
+    android:id="@+id/item_intro_2">
+
+    <ImageView
+        android:id="@+id/iv_intro2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="38"/>
+
+    <TextView
+        android:id="@+id/tv_intro2"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="62"/>
+
+</LinearLayout>
