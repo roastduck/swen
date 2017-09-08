@@ -7,6 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import org.jdeferred.android.AndroidDoneCallback;
+import org.jdeferred.android.AndroidExecutionScope;
+import org.jdeferred.android.AndroidFailCallback;
 
 import java.util.List;
 
@@ -18,9 +23,35 @@ public class RecommendationView extends RecyclerView {
 
     private List<News> mData;
     private AppendableNewsList mAppendableList;
+    private RecommendationAdapter mAdapter;
 
     public RecommendationView(Context context, AppendableNewsList appendableNewsList) {
-        ;
+        super(context);
+        mAppendableList = appendableNewsList;
+        mData = mAppendableList.list;
+        mAppendableList.append().done(new AndroidDoneCallback() {
+            @Override
+            public void onDone(Object result) {
+                //TODO:停止加载动画
+                mAdapter = new RecommendationAdapter();
+            }
+
+            @Override
+            public AndroidExecutionScope getExecutionScope() {
+                return AndroidExecutionScope.UI;
+            }
+        }).fail(new AndroidFailCallback() {
+            @Override
+            public void onFail(Object result) {
+                //TODO:停止加载动画
+                Toast.makeText(context, "加载推荐失败", Toast.LENGTH_LONG);
+            }
+
+            @Override
+            public AndroidExecutionScope getExecutionScope() {
+                return AndroidExecutionScope.UI;
+            }
+        });
     }
 
     class RecommendationAdapter extends RecyclerView.Adapter<RecommendationAdapter.RAViewHolder> {
@@ -28,6 +59,7 @@ public class RecommendationView extends RecyclerView {
         @Override
         public int getItemViewType(int position) {
             //TODO:根据新闻图片内容选择item style
+            //TODO:根据当前位置异步加载更多推荐
             return 1;
         }
 
