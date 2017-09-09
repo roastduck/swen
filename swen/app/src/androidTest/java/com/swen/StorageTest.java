@@ -2,8 +2,6 @@ package com.swen;
 
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ActivityTestRule;
-import org.jdeferred.DoneCallback;
-import org.jdeferred.DonePipe;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -79,88 +77,63 @@ public class StorageTest
     public void testMemCache() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
-        // These template types are not mandatory
-        storage.getNewsCached("123").then((DonePipe<News, News, IOException, ?>) news -> {
-            assertEquals("123", news.news_ID);
-            return storage.getNewsCached("123");
-        }).then((DoneCallback<News>) news -> {
-            assertEquals("123", news.news_ID);
-            try
-            {
+        storage.getNewsCached("123").then(news1 -> {
+            assertEquals("123", news1.news_ID);
+            storage.getNewsCached("123").then(news2 -> {
+                assertEquals("123", news2.news_ID);
                 verify(mAPI, times(1)).getNews("123");
-            } catch (IOException ignored) {}
-        });
+                return new Object();
+            }).waitUntilHasRun();
+            return new Object();
+        }).waitUntilHasRun();
     }
 
     @Test
     public void testOutOfCapacity() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
-        storage.getNewsCached("123").then((DonePipe<News, News, IOException, ?>) news -> {
-            assertEquals("123", news.news_ID);
-            return storage.getNewsCached("456");
-        }).then((DonePipe<News, News, IOException, ?>) news -> {
-            return storage.getNewsCached("123");
-        }).then((DoneCallback<News>) news -> {
-            assertEquals("123", news.news_ID);
-            try
-            {
-                verify(mAPI, times(2)).getNews("123");
-            } catch (IOException ignored) {}
-        });
+        News news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        news = storage.getNewsCachedSync("456");
+        news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        verify(mAPI, times(2)).getNews("123");
     }
 
     @Test
     public void testDiskStore() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
-        storage.getNewsCached("123").then((DonePipe<News, Object, IOException, ?>) news -> {
-            assertEquals("123", news.news_ID);
-            return storage.mark("123");
-        }).then((DonePipe<Object, News, IOException, ?>) o -> {
-            return storage.getNewsCached("456");
-        }).then((DonePipe<News, News, IOException, ?>) news -> {
-            return storage.getNewsCached("123");
-        }).then((DoneCallback<News>) news -> {
-            assertEquals("123", news.news_ID);
-            try
-            {
-                verify(mAPI, times(1)).getNews("123");
-            } catch (IOException ignored) {}
-        });
+        News news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        storage.markSync("123");
+        news = storage.getNewsCachedSync("456");
+        news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        verify(mAPI, times(1)).getNews("123");
     }
 
     @Test
     public void testUnmark() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
-        storage.getNewsCached("123").then((DonePipe<News, Object, IOException, ?>) news -> {
-            assertEquals("123", news.news_ID);
-            return storage.mark("123");
-        }).then((DonePipe<Object, Object, IOException, ?>) o -> {
-            return storage.unmark("123");
-        }).then((DonePipe<Object, News, IOException, ?>) news -> {
-            return storage.getNewsCached("456");
-        }).then((DonePipe<News, News, IOException, ?>) news -> {
-            return storage.getNewsCached("123");
-        }).then((DoneCallback<News>) news -> {
-            assertEquals("123", news.news_ID);
-            try
-            {
-                verify(mAPI, times(2)).getNews("123");
-            } catch (IOException ignored) {}
-        });
+        News news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        storage.markSync("123");
+        storage.unmarkSync("123");
+        news = storage.getNewsCachedSync("456");
+        news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
+        verify(mAPI, times(2)).getNews("123");
     }
 
     @Test
     public void testDownloadWhenMark() throws Exception
     {
         Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
-        storage.mark("123").then((DonePipe<Object, News, IOException, ?>) o -> {
-            return storage.getNewsCached("123");
-        }).then((DoneCallback<News>) news -> {
-            assertEquals("123", news.news_ID);
-        });
+        storage.markSync("123");
+        News news = storage.getNewsCachedSync("123");
+        assertEquals("123", news.news_ID);
     }
 
     @Test
