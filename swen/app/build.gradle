@@ -34,6 +34,7 @@ dependencies {
     androidTestCompile 'org.mockito:mockito-android:2.8.+'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.android.support:design:25.3.1'
     compile 'com.alibaba:fastjson:1.1.62.android'
     compile 'org.jdeferred:jdeferred-android-aar:1.2.6'
     testCompile 'junit:junit:4.12'
