@@ -10,10 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import android.widget.Toast;
-import org.jdeferred.android.AndroidDoneCallback;
-import org.jdeferred.android.AndroidExecutionScope;
-import org.jdeferred.android.AndroidFailCallback;
-import org.w3c.dom.Text;
+import com.swen.promise.*;
 
 import java.util.List;
 
@@ -29,28 +26,21 @@ public class MainActivity extends AppCompatActivity {
         mView = (RecyclerView) findViewById(R.id.rv_main);
         mAppendableList = new AppendableNewsList(50, null, null, true, new Behavior(this));
         mData = mAppendableList.list;
-        mAppendableList.append().done(new AndroidDoneCallback() {
+        mAppendableList.append().thenUI(new Callback<Object, Object>() {
             @Override
-            public void onDone(Object result) {
+            public Object run(Object result) throws Throwable {
                 //TODO:停止加载动画
                 mView.setAdapter(new NewsListAdapter(mData, mAppendableList, MainActivity.this));
                 mView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+                return null;
             }
+        }).failUI(new Callback<Throwable, Object>() {
 
             @Override
-            public AndroidExecutionScope getExecutionScope() {
-                return AndroidExecutionScope.UI;
-            }
-        }).fail(new AndroidFailCallback() {
-            @Override
-            public void onFail(Object result) {
+            public Object run(Throwable result) throws Throwable {
                 //TODO:停止加载动画
                 Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_LONG);
-            }
-
-            @Override
-            public AndroidExecutionScope getExecutionScope() {
-                return AndroidExecutionScope.UI;
+                return null;
             }
         });
     }
