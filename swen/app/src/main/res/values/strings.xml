@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">Swen</string>
+
+    <string name="search_title">输入你想搜索的内容</string>
+    <string name="search_hint">搜索</string>
+
+    <string name="menu_open">Open menu</string>
+    <string name="menu_close">Close menu</string>
+
+    <string name="category_tech">科技</string>
+    <string name="category_edu">体育</string>
+    <string name="category_milit">军事</string>
+    <string name="category_domes">国内</string>
+    <string name="category_social">社会</string>
+    <string name="category_culture">文化</string>
+    <string name="category_car">汽车</string>
+    <string name="category_glob">国际</string>
+    <string name="category_sports">体育</string>
+    <string name="category_finance">财经</string>
+    <string name="category_health">健康</string>
+    <string name="category_enter">娱乐</string>
+
 </resources>
