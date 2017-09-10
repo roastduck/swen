@@ -25,11 +25,13 @@ public class Storage
 
     private LinkedHashMap<String, News> newsCache;
     private LinkedHashMap<String, Bitmap> picCache;
-    private LinkedHashSet<String> newsPersistent, picPersistent;
+    private LinkedHashSet<String> newsPersistent;
+    private LinkedCounter<String> picPersistent;
 
     private File filesDir, cacheDir;
 
     private NewsAPI mAPI;
+    private StreamFactory mStreamFactory;
 
     public static final String NEWS_PREFIX = "news_";
     public static final String IMG_PREFIX = "img_";
@@ -37,14 +39,15 @@ public class Storage
 
     public Storage(Context context)
     {
-        this(context, new NewsAPI(), DEFAULT_NEWS_CACHE_CAPACITY, DEFAULT_PIC_CACHE_CAPACITY);
+        this(context, new NewsAPI(), new StreamFactory(), DEFAULT_NEWS_CACHE_CAPACITY, DEFAULT_PIC_CACHE_CAPACITY);
     }
 
-    Storage(Context context, NewsAPI api, int newsCacheCapacity, int picCacheCapacity)
+    Storage(Context context, NewsAPI api, StreamFactory streamFactory, int newsCacheCapacity, int picCacheCapacity)
     {
         filesDir = context.getFilesDir();
         cacheDir = context.getCacheDir();
         mAPI = api;
+        mStreamFactory = streamFactory;
         this.newsCacheCapacity = newsCacheCapacity;
         this.picCacheCapacity = picCacheCapacity;
 
@@ -57,7 +60,7 @@ public class Storage
             protected boolean removeEldestEntry(Map.Entry eldest) { return size() > picCacheCapacity; }
         };
         newsPersistent = new LinkedHashSet<>();
-        picPersistent = new LinkedHashSet<>();
+        picPersistent = new LinkedCounter<>();
 
         File[] subFiles = filesDir.listFiles();
         if (subFiles != null)
@@ -97,7 +100,8 @@ public class Storage
         if (news != null)
             return news;
         news = getNewsFromExternal(id);
-        newsCache.put(id, news);
+        if (newsCacheCapacity > 0)
+            newsCache.put(id, news);
         return news;
     }
 
@@ -110,7 +114,7 @@ public class Storage
             {
                 return getPicCachedSync(url);
             }
-        }, new Object());
+        }, null);
     }
 
     public synchronized Bitmap getPicCachedSync(String url) throws IOException
@@ -119,27 +123,37 @@ public class Storage
         if (pic != null)
             return pic;
         pic = getPicFromExternal(url);
-        picCache.put(url, pic);
+        if (picCacheCapacity > 0)
+            picCache.put(url, pic);
         return pic;
     }
 
     /** Mark a file to be persistent
      *  It will not save the news again when already saved
+     *  It also saves the pictures in this news to persistent
      */
     public Promise<Object,Object> mark(String id)
     {
-        return new Promise<>(o -> {
-            Storage.this.markSync(id);
-            return new Object();
-        }, new Object());
+        return new Promise<>(new Callback<Object, Object>()
+        {
+            @Override
+            public Object run(Object o) throws Throwable
+            {
+                markSync(id);
+                return null;
+            }
+        }, null);
     }
 
+    /**
+     * Delete a file and its pictures from persistent
+     */
     public Promise<Object,Object> unmark(String id)
     {
         return new Promise<>(o-> {
             Storage.this.unmarkSync(id);
-            return new Object();
-        }, new Object());
+            return null;
+        }, null);
     }
 
     public synchronized void markSync(String id) throws IOException
@@ -149,7 +163,8 @@ public class Storage
         for (String picId : news.getNewsPictures())
             saveToFile(IMG_PREFIX + Base64.encodeToString(picId.getBytes(), Base64.URL_SAFE), getPicFromExternal(picId));
         newsPersistent.add(id);
-        picPersistent.addAll(news.getNewsPictures());
+        for (String picId : news.getNewsPictures())
+            picPersistent.add(picId);
     }
 
     public synchronized void unmarkSync(String id) throws IOException
@@ -245,6 +260,35 @@ public class Storage
     {
         if (picPersistent.contains(id))
             return BitmapFactory.decodeFile(IMG_PREFIX + Base64.encodeToString(id.getBytes(), Base64.URL_SAFE));
-        return BitmapFactory.decodeStream(new URL(id).openStream());
+        return BitmapFactory.decodeStream(mStreamFactory.fromUrl(id));
+    }
+}
+
+class LinkedCounter<T>
+{
+    private LinkedHashMap<T, Integer> mMap;
+
+    LinkedCounter() { mMap = new LinkedHashMap<>(); }
+
+    public void add(T key)
+    {
+        Integer ori = mMap.get(key);
+        mMap.put(key, ori == null ? 1 : ori + 1);
+    }
+
+    public void remove(T key)
+    {
+        Integer ori = mMap.get(key);
+        if (ori == null)
+            return;
+        if (ori == 1)
+            mMap.remove(key);
+        else
+            mMap.put(key, ori - 1);
+    }
+
+    public boolean contains(T key)
+    {
+        return mMap.containsKey(key);
     }
 }

@@ -68,9 +68,9 @@ public class AppendableNewsList extends NewsList
             public Object run(Object o) throws Throwable
             {
                 appendSync();
-                return new Object();
+                return null;
             }
-        }, new Object());
+        }, null);
     }
 
     /** Synchronized version of append

@@ -21,6 +21,9 @@ public class StorageTest
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
 
     private NewsAPI mAPI;
+    private StreamFactory mStreamFactory = spy(StreamFactory.class);
+
+    final String IMG_URL = "http://news.xinhuanet.com/info/2015-10/26/134748860_14458157112331n.jpg";
 
     private void clearFiles() throws Exception
     {
@@ -38,7 +41,7 @@ public class StorageTest
         doAnswer(invocation -> {
             News news = new News();
             news.news_ID = (String)(invocation.getArguments()[0]);
-            news.setNews_Pictures("");
+            news.setNews_Pictures(IMG_URL);
             return news;
         }).when(mAPI).getNews(anyString());
         // The code above might cause Promise to fail, if lambda expressions are passed in within production code, for unknown reason
@@ -62,13 +65,13 @@ public class StorageTest
     @Test
     public void testRestoreWhenConstruct() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
         storage.markSync("123");
         List<String> list = storage.getMarked();
         assertEquals(1, list.size());
         assertEquals("123", list.get(0));
 
-        storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
+        storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
         list = storage.getMarked();
         assertEquals(1, list.size());
         assertEquals("123", list.get(0));
@@ -77,22 +80,22 @@ public class StorageTest
     @Test
     public void testMemCache() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
         storage.getNewsCached("123").then(news1 -> {
             assertEquals("123", news1.news_ID);
             storage.getNewsCached("123").then(news2 -> {
                 assertEquals("123", news2.news_ID);
                 verify(mAPI, times(1)).getNews("123");
-                return new Object();
+                return null;
             }).waitUntilHasRun();
-            return new Object();
+            return null;
         }).waitUntilHasRun();
     }
 
     @Test
     public void testOutOfCapacity() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         news = storage.getNewsCachedSync("456");
@@ -104,7 +107,7 @@ public class StorageTest
     @Test
     public void testDiskStore() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         storage.markSync("123");
@@ -117,7 +120,7 @@ public class StorageTest
     @Test
     public void testUnmark() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         storage.markSync("123");
@@ -131,7 +134,7 @@ public class StorageTest
     @Test
     public void testDownloadWhenMark() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 1, 10);
         storage.markSync("123");
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
@@ -140,7 +143,7 @@ public class StorageTest
     @Test
     public void testGetMarked() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
         storage.markSync("123");
         storage.markSync("456");
         storage.markSync("789");
@@ -149,5 +152,45 @@ public class StorageTest
         assertEquals(2, list.size());
         assertEquals("123", list.get(0));
         assertEquals("789", list.get(1));
+    }
+
+    @Test
+    public void testGetPic() throws Exception
+    {
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
+        storage.getPicCached(IMG_URL).then(img -> {
+            verify(mStreamFactory, times(1)).fromUrl(IMG_URL);
+            return null;
+        }).waitUntilHasRun();
+    }
+
+    @Test
+    public void testPicMemCache() throws Exception
+    {
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 10);
+        storage.getPicCachedSync(IMG_URL);
+        storage.getPicCachedSync(IMG_URL);
+        verify(mStreamFactory, times(1)).fromUrl(IMG_URL);
+    }
+
+    @Test
+    public void testPicMark() throws Exception
+    {
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 0);
+        storage.markSync("123");
+        verify(mStreamFactory, times(1)).fromUrl(IMG_URL);
+        storage.getPicCachedSync(IMG_URL);
+        verify(mStreamFactory, times(1)).fromUrl(IMG_URL);
+    }
+
+    @Test
+    public void testPicUnmark() throws Exception
+    {
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, mStreamFactory, 10, 0);
+        storage.markSync("123");
+        verify(mStreamFactory, times(1)).fromUrl(IMG_URL);
+        storage.unmarkSync("123");
+        storage.getPicCachedSync(IMG_URL);
+        verify(mStreamFactory, times(2)).fromUrl(IMG_URL);
     }
 }
