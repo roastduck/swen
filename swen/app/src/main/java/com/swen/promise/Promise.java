@@ -26,6 +26,8 @@ public class Promise<IN,OUT>
     Throwable throwable;
 
     private boolean runInUI = false;
+    private boolean resolved = false;
+    private boolean rejected = false;
 
     public Promise(Callback<IN,OUT> callback)
     {
@@ -45,7 +47,7 @@ public class Promise<IN,OUT>
         next.parent = this;
         if (!alreadyRun)
             resNext.add(next);
-        else
+        else if (resolved)
             executorService.submit(() -> next.run(output));
         return next;
     }
@@ -55,7 +57,7 @@ public class Promise<IN,OUT>
         next.parent = this;
         if (!alreadyRun)
             rejNext.add(next);
-        else
+        else if (rejected)
             executorService.submit(() -> next.run(throwable));
         return next;
     }
@@ -137,11 +139,13 @@ public class Promise<IN,OUT>
             output = callback.run(input);
             for (Promise<OUT,?> next : resNext)
                 executorService.submit(() -> next.run(output));
+            resolved = true;
         } catch (Throwable e)
         {
             throwable = e;
             for (Promise<Throwable,?> next : rejNext)
                 executorService.submit(() -> next.run(throwable));
+            rejected = true;
         }
         resNext = null;
         rejNext = null;
