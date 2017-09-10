@@ -28,6 +28,5 @@ public class MainActivity extends BaseActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         
         // layout.addView(inflater.inflate([layout], null));
-
     }
 }
