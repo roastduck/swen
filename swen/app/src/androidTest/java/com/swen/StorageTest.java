@@ -27,7 +27,7 @@ public class StorageTest
         File[] subFiles = mActivityRule.getActivity().getApplicationContext().getFilesDir().listFiles();
         if (subFiles != null)
             for (File file : subFiles)
-                if (file.getName().startsWith(Storage.FILE_PREFIX))
+                if (file.getName().startsWith(Storage.NEWS_PREFIX) || file.getName().startsWith(Storage.IMG_PREFIX))
                     file.delete();
     }
 
@@ -38,6 +38,7 @@ public class StorageTest
         doAnswer(invocation -> {
             News news = new News();
             news.news_ID = (String)(invocation.getArguments()[0]);
+            news.setNews_Pictures("");
             return news;
         }).when(mAPI).getNews(anyString());
         // The code above might cause Promise to fail, if lambda expressions are passed in within production code, for unknown reason
@@ -61,13 +62,13 @@ public class StorageTest
     @Test
     public void testRestoreWhenConstruct() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
         storage.markSync("123");
         List<String> list = storage.getMarked();
         assertEquals(1, list.size());
         assertEquals("123", list.get(0));
 
-        storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
         list = storage.getMarked();
         assertEquals(1, list.size());
         assertEquals("123", list.get(0));
@@ -76,7 +77,7 @@ public class StorageTest
     @Test
     public void testMemCache() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
         storage.getNewsCached("123").then(news1 -> {
             assertEquals("123", news1.news_ID);
             storage.getNewsCached("123").then(news2 -> {
@@ -91,7 +92,7 @@ public class StorageTest
     @Test
     public void testOutOfCapacity() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         news = storage.getNewsCachedSync("456");
@@ -103,7 +104,7 @@ public class StorageTest
     @Test
     public void testDiskStore() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         storage.markSync("123");
@@ -116,7 +117,7 @@ public class StorageTest
     @Test
     public void testUnmark() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
         storage.markSync("123");
@@ -130,7 +131,7 @@ public class StorageTest
     @Test
     public void testDownloadWhenMark() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 1, 10);
         storage.markSync("123");
         News news = storage.getNewsCachedSync("123");
         assertEquals("123", news.news_ID);
@@ -139,7 +140,7 @@ public class StorageTest
     @Test
     public void testGetMarked() throws Exception
     {
-        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10);
+        Storage storage = new Storage(InstrumentationRegistry.getTargetContext(), mAPI, 10, 10);
         storage.markSync("123");
         storage.markSync("456");
         storage.markSync("789");
