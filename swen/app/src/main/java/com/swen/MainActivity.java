@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.util.Log;
 import android.widget.Toast;
 import com.swen.promise.*;
 
@@ -54,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public Object run(final Throwable result) throws Throwable {
                                     Toast.makeText(MainActivity.this,
-                                        "未能获取更多新闻条目", Toast.LENGTH_SHORT).show();
+                                        result.getMessage(), Toast.LENGTH_SHORT).show();
                                     loading = false;
                                     return null;
                                 }
@@ -71,7 +72,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Object run(Throwable result) throws Throwable {
                 //TODO:停止加载动画
-                Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_SHORT).show();
+                for(StackTraceElement e: result.getStackTrace()) {
+                    Log.e("MainActivity", e.toString());
+                }
+                //Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_SHORT).show();
                 return null;
             }
         });

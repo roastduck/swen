@@ -53,10 +53,13 @@ public class DemonstratedContent {
                 style = random.nextInt(3) + 1;
             }
             if (style == 3) {
-                res.add(new DemonstratedContent(news.get(position),
-                    news.get(position + 1), 3));
-                position++;
-                continue;
+                if(position != news.size() - 1) {
+                    res.add(new DemonstratedContent(news.get(position),
+                        news.get(position + 1), 3));
+                    position++;
+                    continue;
+                }
+                style = 1;
             }
             res.add(new DemonstratedContent(news.get(position), style));
         }
