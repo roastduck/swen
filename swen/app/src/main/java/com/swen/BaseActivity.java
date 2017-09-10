@@ -1,5 +1,7 @@
 package com.swen;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -8,6 +10,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,6 +48,14 @@ public class BaseActivity extends AppCompatActivity {
     {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.search_menu, menu);
+
+        SearchManager searchManager =
+                (SearchManager)getSystemService(this.SEARCH_SERVICE);
+        SearchView searchView =
+                (SearchView)menu.findItem(R.id.search).getActionView();
+        searchView.setSearchableInfo(
+                searchManager.getSearchableInfo(new ComponentName(this, SearchResultsActivity.class)));
+
         return true;
     }
 }
