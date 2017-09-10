@@ -7,6 +7,7 @@
     <string name="menu_open">Open menu</string>
     <string name="menu_close">Close menu</string>
 
+    <!--
     <string name="category_tech">科技</string>
     <string name="category_edu">体育</string>
     <string name="category_milit">军事</string>
@@ -19,5 +20,23 @@
     <string name="category_finance">财经</string>
     <string name="category_health">健康</string>
     <string name="category_enter">娱乐</string>
+    -->
+
+    <string name="category_tech">科技之光</string>
+    <string name="category_edu">教育天地</string>
+    <string name="category_milit">军情直播</string>
+    <string name="category_domes">国内频道</string>
+    <string name="category_social">社会观察</string>
+    <string name="category_culture">文化熔炉</string>
+    <string name="category_car">车友世界</string>
+    <string name="category_glob">环球要闻</string>
+    <string name="category_sports">体坛资讯</string>
+    <string name="category_finance">财经连线</string>
+    <string name="category_health">健康指数</string>
+    <string name="category_enter">娱乐快报</string>
+
+    <string name="category_mgmt">分类管理</string>
+    <string name="no_image_mode">无图模式</string>
+    <string name="night_mode">夜间模式</string>
 
 </resources>

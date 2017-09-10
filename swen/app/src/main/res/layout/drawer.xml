@@ -10,12 +10,10 @@
         android:layout_height="match_parent"
         android:layout_width="match_parent" />
 
-    <ListView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <include
+        layout="@layout/menu"
         android:layout_gravity="start"
-        android:background="#fff"
-        android:divider="@null"
-        android:id="@+id/category_list_view" />
+        android:layout_height="match_parent"
+        android:layout_width="match_parent" />
 
 </android.support.v4.widget.DrawerLayout>

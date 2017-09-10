@@ -1,6 +1,7 @@
 package com.swen;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.v7.widget.SwitchCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,11 @@ import java.util.List;
 
 class MenuItem {
     public enum ItemType {
+        Nothing,
         Text,
         TextWithIcon,
-        TextWithSwitch
+        TextWithSwitch,
+        TextWithIconSwitch
     }
 
     public int text;
@@ -62,20 +65,38 @@ class MenuItemAdapter extends BaseAdapter {
         }
         MenuItem item = (MenuItem)getItem(position);
         TextView tv = (TextView)convertView.findViewById(R.id.menu_item_text);
+        tv.setVisibility(View.VISIBLE);
         ImageView iv = (ImageView)convertView.findViewById(R.id.menu_item_icon);
         SwitchCompat sc = (SwitchCompat)convertView.findViewById(R.id.menu_item_switch);
+        convertView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
 
-        tv.setText(item.text);
+        if (item.itemType != MenuItem.ItemType.Nothing) {
+            tv.setText(item.text);
+        }
         switch (item.itemType) {
+            case Nothing:
+                tv.setVisibility(View.GONE);
+                iv.setVisibility(View.GONE);
+                sc.setVisibility(View.GONE);
+                convertView.setBackgroundColor(Color.parseColor("#aaaaaa"));
+                break;
             case Text:
                 iv.setVisibility(View.GONE);
                 sc.setVisibility(View.GONE);
                 break;
             case TextWithIcon:
+                iv.setImageResource(item.icon);
+                iv.setVisibility(View.VISIBLE);
                 sc.setVisibility(View.GONE);
                 break;
             case TextWithSwitch:
                 iv.setVisibility(View.GONE);
+                sc.setVisibility(View.VISIBLE);
+                break;
+            case TextWithIconSwitch:
+                iv.setImageResource(item.icon);
+                iv.setVisibility(View.VISIBLE);
+                sc.setVisibility(View.VISIBLE);
                 break;
         }
         return convertView;

@@ -28,12 +28,19 @@ public class MainActivity extends AppCompatActivity
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
         toggle.syncState();
 
-        MenuItem.ItemType type = MenuItem.ItemType.Text;
         List<MenuItem> list = new ArrayList<>();
-        /*
+        list.add(new MenuItem(R.string.category_mgmt, R.drawable.category_management, MenuItem.ItemType.TextWithIcon));
+        list.add(new MenuItem(R.string.no_image_mode, R.drawable.no_image, MenuItem.ItemType.TextWithIconSwitch));
+        list.add(new MenuItem(R.string.night_mode, R.drawable.night_mode, MenuItem.ItemType.TextWithIconSwitch));
+        list.add(new MenuItem(0, 0, MenuItem.ItemType.Nothing));
 
-         */
-        ((ListView)findViewById(R.id.category_list_view)).setAdapter(new MenuItemAdapter(list, this));
+        // add category
+        //
+        // for (int k = 1; k <= 12; ++k) {
+        //     list.add(new MenuItem(Global.categoryStrs[k], Global.categoryImgs[k], MenuItem.ItemType.TextWithIcon));
+        // }
+
+        ((ListView)findViewById(R.id.menu_list_view)).setAdapter(new MenuItemAdapter(list, this));
     }
 
     @Override

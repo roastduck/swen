@@ -16,4 +16,20 @@ public final class Global {
             R.string.category_health,
             R.string.category_enter
     };
+
+    final static int[] categoryImgs = {
+            -1,
+            R.drawable.technology,
+            R.drawable.education,
+            R.drawable.military,
+            R.drawable.domestic,
+            R.drawable.social,
+            R.drawable.culture,
+            R.drawable.car,
+            R.drawable.global,
+            R.drawable.sports,
+            R.drawable.finance,
+            R.drawable.health,
+            R.drawable.entertainment
+    };
 }
