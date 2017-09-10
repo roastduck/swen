@@ -161,7 +161,7 @@ public class News implements Serializable
             {
                 return ims.search(title);
             }
-        }, new Object());
+        }, null);
     }
 
     /** Parse date and time from the digital string of the API
