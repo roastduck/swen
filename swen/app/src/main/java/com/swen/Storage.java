@@ -202,6 +202,7 @@ public class Storage
         {
             Bitmap bitmap = (Bitmap)obj;
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            stream.close();
         }
     }
 
@@ -259,7 +260,12 @@ public class Storage
     private synchronized Bitmap getPicFromExternal(String id) throws IOException
     {
         if (picPersistent.contains(id))
-            return BitmapFactory.decodeFile(IMG_PREFIX + Base64.encodeToString(id.getBytes(), Base64.URL_SAFE));
+        {
+            File file = new File(filesDir, IMG_PREFIX + Base64.encodeToString(id.getBytes(), Base64.URL_SAFE));
+            Bitmap ret = BitmapFactory.decodeFile(file.getAbsolutePath());
+            if (ret != null)
+                return ret;
+        }
         return BitmapFactory.decodeStream(mStreamFactory.fromUrl(id));
     }
 }
