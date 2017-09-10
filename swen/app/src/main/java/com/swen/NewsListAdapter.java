@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.swen.promise.Callback;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -22,64 +23,29 @@ import java.util.Random;
 public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLViewHolder> {
 
     private boolean loading = false;
-    private HashMap<String, News> neighbor = new HashMap<>();
-    private List<News> mData;
+    private List<DemonstratedContent> mData;
     private AppendableNewsList mAppendableList;
     private Context mContext;
+    private int lastIndex = 0;
 
-    public NewsListAdapter(List<News> data, AppendableNewsList appendableList, Context context) {
-        mData = data;
+    public NewsListAdapter(AppendableNewsList appendableList, Context context, Random random) {
+        mData = DemonstratedContent.getDemonstratedContent(appendableList.list, random);
+        notifyDataSetChanged();
+        lastIndex = appendableList.list.size();
         mAppendableList = appendableList;
         mContext = context;
     }
 
+    public void updateData(Random random) {
+        DemonstratedContent.updateDemonstratedContent(mAppendableList.list,
+            mData, lastIndex, random);
+        lastIndex = mAppendableList.list.size();
+        notifyDataSetChanged();
+    }
+
     @Override
     public int getItemViewType(int position) {
-        int threshold = (int) (getItemCount() * 0.8);
-        if (!loading && position >= threshold) {
-            loading = true;
-            mAppendableList.append().thenUI(new Callback<Object, Object>() {
-                @Override
-                public Object run(final Object result) throws Throwable {
-                    notifyDataSetChanged();
-                    loading = false;
-                    return null;
-                }
-            }).failUI(new Callback<Throwable, Object>() {
-                @Override
-                public Object run(final Throwable result) throws Throwable {
-                    Toast.makeText(mContext, "未能获取更多新闻条目", Toast.LENGTH_LONG);
-                    loading = false;
-                    return null;
-                }
-            });
-        }
-        List<String> pictures = mData.get(position).getNewsPictures();
-        if (pictures.isEmpty()) {
-            mData.remove(position);
-            notifyDataSetChanged();
-        }
-        if (position == 0) {     //First item in view
-            return 1;
-        }
-        if (pictures.size()
-            >= 5) {      //If this news contains many pictures, then we try to show more of them
-            return 4;
-        }
-        int style = 0;
-        if (pictures.size() >= 3) {
-            Random rnd = new Random(System.currentTimeMillis());
-            style = rnd.nextInt(4) + 1;
-        } else {
-            Random rnd = new Random(System.currentTimeMillis());
-            style = rnd.nextInt(3) + 1;
-        }
-        if (style == 3) {
-            News nextNews = mData.remove(position + 1);
-            notifyDataSetChanged();
-            neighbor.put(mData.get(position).news_ID, nextNews);
-        }
-        return style;
+        return mData.get(position).style;
     }
 
     @Override
@@ -128,8 +94,6 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 3: //TODO：分别显示左右分栏的图片和标题
                 holder.textView.setText("Hello world!");
                 holder.textViewRight.setText("Hello world!");
-                News left = mData.get(position);
-                News right = neighbor.get(left.news_ID);
                 break;
             case 4: //TODO：显示图片，显示标题
                 holder.textView.setText("Hello world!");

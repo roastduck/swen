@@ -9,11 +9,13 @@ import android.widget.Toast;
 import com.swen.promise.*;
 
 import java.util.List;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
     private RecyclerView mView;
-    private List<News> mData;
     private AppendableNewsList mAppendableList;
+    private boolean loading = false;
+    private Random random = new Random(System.currentTimeMillis());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -21,14 +23,46 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         mView = (RecyclerView) findViewById(R.id.rv_main);
         mAppendableList = new AppendableNewsList(50, null, null, true, new Behavior(this));
-        mData = mAppendableList.list;
         Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();
         mAppendableList.append().thenUI(new Callback<Object, Object>() {
             @Override
             public Object run(Object result) throws Throwable {
                 //TODO:停止加载动画
-                Toast.makeText(MainActivity.this, "新闻列表加载完毕", Toast.LENGTH_LONG).show();
-                mView.setAdapter(new NewsListAdapter(mData, mAppendableList, MainActivity.this));
+                Toast.makeText(MainActivity.this, "新闻列表加载完毕", Toast.LENGTH_SHORT).show();
+                mView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                        LinearLayoutManager lm = (LinearLayoutManager) recyclerView.getLayoutManager();
+                        int totalItemCount = recyclerView.getAdapter().getItemCount();
+                        int lastVisibleItemPosition = lm.findLastVisibleItemPosition();
+                        int visibleItemCount = recyclerView.getChildCount();
+                        if(newState == RecyclerView.SCROLL_STATE_IDLE
+                            && lastVisibleItemPosition == totalItemCount - 1
+                            && visibleItemCount > 0
+                            && !loading) {
+                            loading = true;
+                            mAppendableList.append().thenUI(new Callback<Object, Object>() {
+                                @Override
+                                public Object run(final Object result) throws Throwable {
+                                    Toast.makeText(MainActivity.this,
+                                        "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
+                                    ((NewsListAdapter)(mView.getAdapter())).updateData(random);
+                                    loading = false;
+                                    return null;
+                                }
+                            }).failUI(new Callback<Throwable, Object>() {
+                                @Override
+                                public Object run(final Throwable result) throws Throwable {
+                                    Toast.makeText(MainActivity.this,
+                                        "未能获取更多新闻条目", Toast.LENGTH_SHORT).show();
+                                    loading = false;
+                                    return null;
+                                }
+                            });
+                        }
+                    }
+                });
+                mView.setAdapter(new NewsListAdapter(mAppendableList, MainActivity.this, random));
                 mView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 return null;
             }
@@ -37,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public Object run(Throwable result) throws Throwable {
                 //TODO:停止加载动画
-                Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_SHORT).show();
                 return null;
             }
         });

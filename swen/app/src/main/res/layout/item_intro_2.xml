@@ -3,18 +3,22 @@
     android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="128dp"
-    android:id="@+id/item_intro_2">
+    android:id="@+id/item_intro_2"
+    android:background="@drawable/border"
+    android:layout_margin="2dp">
 
     <ImageView
         android:id="@+id/iv_intro2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="38"/>
+        android:layout_weight="38"
+        android:background="@drawable/border"/>
 
     <TextView
         android:id="@+id/tv_intro2"
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        android:layout_weight="62"/>
+        android:layout_weight="62"
+        android:background="@drawable/border"/>
 
 </LinearLayout>
