@@ -1,5 +1,7 @@
 package com.swen;
 
+import android.util.Log;
+
 import com.swen.promise.Callback;
 import com.swen.promise.Promise;
 
