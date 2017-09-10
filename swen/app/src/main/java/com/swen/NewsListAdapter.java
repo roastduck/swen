@@ -1,7 +1,6 @@
 package com.swen;
 
 import android.content.Context;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.jdeferred.android.AndroidDoneCallback;
-import org.jdeferred.android.AndroidExecutionScope;
-import org.jdeferred.android.AndroidFailCallback;
+import com.swen.promise.Callback;
 
 import java.util.HashMap;
 import java.util.List;
@@ -41,27 +38,19 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         int threshold = (int) (getItemCount() * 0.8);
         if (!loading && position >= threshold) {
             loading = true;
-            mAppendableList.append().then(new AndroidDoneCallback() {
+            mAppendableList.append().thenUI(new Callback<Object, Object>() {
                 @Override
-                public void onDone(Object result) {
+                public Object run(final Object result) throws Throwable {
                     notifyDataSetChanged();
                     loading = false;
+                    return null;
                 }
-
+            }).failUI(new Callback<Throwable, Object>() {
                 @Override
-                public AndroidExecutionScope getExecutionScope() {
-                    return AndroidExecutionScope.UI;
-                }
-            }).fail(new AndroidFailCallback() {
-                @Override
-                public void onFail(Object result) {
+                public Object run(final Throwable result) throws Throwable {
                     Toast.makeText(mContext, "未能获取更多新闻条目", Toast.LENGTH_LONG);
                     loading = false;
-                }
-
-                @Override
-                public AndroidExecutionScope getExecutionScope() {
-                    return AndroidExecutionScope.UI;
+                    return null;
                 }
             });
         }
@@ -131,14 +120,19 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             //TODO:显示什么文字内容？
             //TODO:如何显示图片？
             case 1: //TODO：显示图片，显示标题
+                holder.textView.setText("Hello world!");
                 break;
             case 2: //TODO: 显示图片，利用html区分标题和简介
+                holder.textView.setText("Hello world!");
                 break;
             case 3: //TODO：分别显示左右分栏的图片和标题
+                holder.textView.setText("Hello world!");
+                holder.textViewRight.setText("Hello world!");
                 News left = mData.get(position);
                 News right = neighbor.get(left.news_ID);
                 break;
             case 4: //TODO：显示图片，显示标题
+                holder.textView.setText("Hello world!");
                 break;
         }
     }
