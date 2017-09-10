@@ -1,9 +1,11 @@
 package com.swen.promise;
 
+import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import android.widget.Toast;
 import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.Executors;
@@ -110,6 +112,7 @@ public class Promise<IN,OUT>
         @Override
         public void handleMessage(Message msg)
         {
+            super.handleMessage(msg);
             if (msg.what == 0)
             {
                 RunMessage runMessage = (RunMessage)(msg.obj);
