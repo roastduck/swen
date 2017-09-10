@@ -87,7 +87,7 @@ public class Storage
         return new Promise<>(new Callback<Object, News>()
         {
             @Override
-            public News run(Object o) throws Throwable
+            public News run(Object o) throws Exception
             {
                 return getNewsCachedSync(id);
             }
@@ -110,7 +110,7 @@ public class Storage
         return new Promise<>(new Callback<Object, Bitmap>()
         {
             @Override
-            public Bitmap run(Object o) throws Throwable
+            public Bitmap run(Object o) throws Exception
             {
                 return getPicCachedSync(url);
             }
@@ -137,7 +137,7 @@ public class Storage
         return new Promise<>(new Callback<Object, Object>()
         {
             @Override
-            public Object run(Object o) throws Throwable
+            public Object run(Object o) throws Exception
             {
                 markSync(id);
                 return null;

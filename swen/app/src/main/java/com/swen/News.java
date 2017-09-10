@@ -157,7 +157,7 @@ public class News implements Serializable
         return new Promise<>(new Callback<Object,String>()
         {
             @Override
-            public String run(Object o) throws Throwable
+            public String run(Object o) throws Exception
             {
                 return ims.search(title);
             }

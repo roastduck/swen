@@ -65,7 +65,7 @@ public class AppendableNewsList extends NewsList
         return new Promise<Object,Object>(new Callback<Object, Object>()
         {
             @Override
-            public Object run(Object o) throws Throwable
+            public Object run(Object o) throws Exception
             {
                 appendSync();
                 return null;
