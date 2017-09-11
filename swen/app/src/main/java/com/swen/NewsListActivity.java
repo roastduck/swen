@@ -16,26 +16,23 @@ import com.swen.promise.*;
 import java.util.List;
 import java.util.Random;
 
-public class NewsListActivity extends BaseActivity {
-    private RecyclerView mView;
-    private AppendableNewsList mAppendableList;
-    private boolean loading = false;
-    private Random random = new Random(System.currentTimeMillis());
+public abstract class NewsListActivity extends BaseActivity {
+    protected RecyclerView mView;
+    protected AppendableNewsList mAppendableList;
+    protected boolean loading = false;
+    protected Random random = new Random(System.currentTimeMillis());
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
+    protected void initialize() {
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_list_page, null));
 
         mView = (RecyclerView) findViewById(R.id.rv_main);
-        mAppendableList = new AppendableNewsList(50, null, null, true, new Behavior(this));
         Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();
-        mAppendableList.append().thenUI(new Callback<Object, Object>() {
+        Promise promise = mAppendableList.append();
+        promise.thenUI(new Callback<Object, Object>() {
             @Override
-            public Object run(Object result) throws Throwable {
+            public Object run(Object result) throws Exception {
                 //TODO:停止加载动画
                 Toast.makeText(NewsListActivity.this, "新闻列表加载完毕", Toast.LENGTH_SHORT).show();
                 mView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -46,24 +43,25 @@ public class NewsListActivity extends BaseActivity {
                         int lastVisibleItemPosition = lm.findLastVisibleItemPosition();
                         int visibleItemCount = recyclerView.getChildCount();
                         if (newState == RecyclerView.SCROLL_STATE_IDLE
-                                && lastVisibleItemPosition == totalItemCount - 1
-                                && visibleItemCount > 0
-                                && !loading) {
+                            && lastVisibleItemPosition == totalItemCount - 1
+                            && visibleItemCount > 0
+                            && !loading) {
                             loading = true;
-                            mAppendableList.append().thenUI(new Callback<Object, Object>() {
+                            Promise promise1 = mAppendableList.append();
+                            promise1.thenUI(new Callback<Object, Object>() {
                                 @Override
-                                public Object run(final Object result) throws Throwable {
+                                public Object run(final Object result) throws Exception {
                                     Toast.makeText(NewsListActivity.this,
-                                            "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
+                                        "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
                                     ((NewsListAdapter) (mView.getAdapter())).updateData(random);
                                     loading = false;
                                     return null;
                                 }
-                            }).failUI(new Callback<Throwable, Object>() {
+                            }).failUI(new Callback<Exception, Object>() {
                                 @Override
-                                public Object run(final Throwable result) throws Throwable {
+                                public Object run(final Exception result) throws Exception {
                                     Toast.makeText(NewsListActivity.this,
-                                            result.getMessage(), Toast.LENGTH_SHORT).show();
+                                        result.getMessage(), Toast.LENGTH_SHORT).show();
                                     loading = false;
                                     return null;
                                 }
@@ -75,10 +73,10 @@ public class NewsListActivity extends BaseActivity {
                 mView.setLayoutManager(new LinearLayoutManager(NewsListActivity.this));
                 return null;
             }
-        }).failUI(new Callback<Throwable, Object>() {
 
+        }).failUI(new Callback<Exception, Object>() {
             @Override
-            public Object run(Throwable result) throws Throwable {
+            public Object run(Exception result) throws Exception {
                 //TODO:停止加载动画
                 for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("MainActivity", e.toString());

@@ -61,7 +61,7 @@ public class AppendableNewsListTest
             verify(mAPI).getList(1, 10, "keyword", News.Category.CAR);
             assertEquals(1, appendable.list.size());
             assertEquals("higher", appendable.list.get(0).news_Title);
-            return new Object();
+            return null;
         }).waitUntilHasRun();
     }
 }

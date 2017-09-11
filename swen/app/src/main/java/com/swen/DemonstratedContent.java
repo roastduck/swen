@@ -1,5 +1,7 @@
 package com.swen;
 
+import android.app.Activity;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -9,6 +11,7 @@ import java.util.Random;
  */
 
 public class DemonstratedContent {
+    //TODO:新闻达到上限的处理
     public News news;
     public News rightNews;
     public int style;
@@ -34,9 +37,9 @@ public class DemonstratedContent {
                                                  int start, Random random) {
         for(int position = start; position < news.size(); position++) {
             List<String> pictures = news.get(position).getNewsPictures();
-            if (pictures.isEmpty()) {
-                continue;
-            }
+//            if (pictures.isEmpty()) {
+//                continue;
+//            }
             if (res.isEmpty()) {     //First item in view
                 res.add(new DemonstratedContent(news.get(position), 1));
                 continue;

@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.swen.promise.Callback;
+import com.swen.promise.Promise;
 
 
 public class SearchResultsActivity extends BaseActivity {
@@ -39,10 +40,10 @@ public class SearchResultsActivity extends BaseActivity {
             SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
             lv.setAdapter(adapter);
 
-
-            list.append().thenUI(new Callback<Object, Object>() {
+            Promise promise = list.append();
+            promise.thenUI(new Callback<Object, Object>() {
                 @Override
-                public Object run(final Object result) throws Throwable {
+                public Object run(final Object result) throws Exception {
                     lv.setOnScrollListener(new AbsListView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -56,15 +57,17 @@ public class SearchResultsActivity extends BaseActivity {
                                 int lastItem = firstVisibleItem + visibleItemCount;
                                 if (lastItem == totalItemCount && preLastItem != lastItem) {
                                     preLastItem = lastItem;
-                                    list.append().thenUI(new Callback<Object, Object>() {
+
+                                    Promise promise1 = list.append();
+                                    promise1.thenUI(new Callback<Object, Object>() {
                                         @Override
-                                        public Object run(Object result) throws Throwable {
+                                        public Object run(Object result) throws Exception {
                                             adapter.notifyDataSetChanged();
                                             return null;
                                         }
-                                    }).failUI(new Callback<Throwable, Object>() {
+                                    }).failUI(new Callback<Exception, Object>() {
                                         @Override
-                                        public Object run(final Throwable result) throws Throwable {
+                                        public Object run(final Exception result) throws Exception {
                                             return null;
                                         }
                                     });
@@ -75,9 +78,9 @@ public class SearchResultsActivity extends BaseActivity {
                     adapter.notifyDataSetChanged();
                     return null;
                 }
-            }).failUI(new Callback<Throwable, Object>() {
+            }).failUI(new Callback<Exception, Object>() {
                 @Override
-                public Object run(Throwable result) throws Throwable {
+                public Object run(Exception result) throws Exception {
                     return null;
                 }
             });
