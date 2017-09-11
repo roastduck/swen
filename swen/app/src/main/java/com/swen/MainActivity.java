@@ -25,7 +25,8 @@ public class MainActivity extends AppCompatActivity {
         mView = (RecyclerView) findViewById(R.id.rv_main);
         mAppendableList = new AppendableNewsList(50, null, null, true, new Behavior(this));
         Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();
-        mAppendableList.append().thenUI(new Callback<Object, Object>() {
+        Promise promise = mAppendableList.append();
+        promise.thenUI(new Callback<Object, Object>() {
             @Override
             public Object run(Object result) throws Throwable {
                 //TODO:停止加载动画
@@ -67,7 +68,8 @@ public class MainActivity extends AppCompatActivity {
                 mView.setLayoutManager(new LinearLayoutManager(MainActivity.this));
                 return null;
             }
-        }).failUI(new Callback<Throwable, Object>() {
+        });
+        promise.failUI(new Callback<Throwable, Object>() {
 
             @Override
             public Object run(Throwable result) throws Throwable {

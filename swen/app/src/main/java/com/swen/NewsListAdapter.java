@@ -83,19 +83,17 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
     @Override
     public void onBindViewHolder(NLViewHolder holder, int position) {
         switch (holder.style) {
-            //TODO:显示什么文字内容？
-            //TODO:如何显示图片？
-            case 1: //TODO：显示图片，显示标题
+            case 1: //TODO：显示图片
                 holder.textView.setText(mData.get(position).news.news_Title);
                 break;
             case 2: //TODO: 显示图片，利用html区分标题和简介
-                holder.textView.setText(mData.get(position).news.news_Title + "\n" + mData.get(position).news.news_Content);
+                holder.textView.setText(mData.get(position).news.news_Title + "\n" + mData.get(position).news.news_Intro);
                 break;
-            case 3: //TODO：分别显示左右分栏的图片和标题
+            case 3: //TODO：分别显示左右分栏的图片
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewRight.setText(mData.get(position).rightNews.news_Title);
                 break;
-            case 4: //TODO：显示图片，显示标题
+            case 4: //TODO：显示图片
                 holder.textView.setText(mData.get(position).news.news_Title);
                 break;
         }
