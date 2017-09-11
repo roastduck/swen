@@ -124,7 +124,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         showPictureByUrl(news.getNewsPictures().get(2), ivright, storage);
     }
 
-    public void setOnClickListener(View itemView, News news) {
+    public void setOnClickListener(View itemView, News news, int position) {
+        setOnClickListener(itemView, news, position, false);
+    }
+
+    public void setOnClickListener(View itemView, News news, int position, boolean rightside) {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -144,30 +148,33 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
     @Override
     public void onBindViewHolder(NLViewHolder holder, int position) {
         switch (holder.style) {
-            case 1: //TODO：显示图片
+            case 1:
                 showPicture(mData.get(position).news, holder.imageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                setOnClickListener(holder.itemView, mData.get(position).news);
+                setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
-            case 2: //TODO: 显示图片，利用html区分标题和简介
+            case 2:
                 showPicture(mData.get(position).news, holder.imageView);
                 holder.textView.setText(Html.fromHtml("<strong>" + mData.get(position).news.news_Title +
-                    "</strong><br/><br/>" + mData.get(position).news.news_Intro.trim()));
-                setOnClickListener(holder.itemView, mData.get(position).news);
+                    "</strong><br/><br/>" + mData.get(position).news.news_Intro
+                    .replace(" ", "").replace("　", "")));
+                setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
-            case 3: //TODO：分别显示左右分栏的图片
+            case 3:
                 showPicture(mData.get(position).news, holder.imageView);
                 showPicture(mData.get(position).rightNews, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewRight.setText(mData.get(position).rightNews.news_Title);
-                setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left), mData.get(position).news);
-                setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right), mData.get(position).rightNews);
+                setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
+                    mData.get(position).news, position);
+                setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
+                    mData.get(position).rightNews, position);
                 break;
-            case 4: //TODO：显示图片
+            case 4:
                 showPicture(mData.get(position).news, holder.imageView,
                     holder.imageViewMid, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                setOnClickListener(holder.itemView, mData.get(position).news);
+                setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
         }
     }

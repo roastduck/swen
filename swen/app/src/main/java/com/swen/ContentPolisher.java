@@ -2,7 +2,7 @@ package com.swen;
 
 public class ContentPolisher
 {
-    public void addHref(News news) {
+    public static void addHref(News news) {
         if(news.locations != null) {
             for (News.WordCnt wordCnt : news.locations) {
                 String word = wordCnt.word;
