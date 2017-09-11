@@ -15,63 +15,103 @@ public class Promise<IN,OUT>
 {
     private static ExecutorService executorService = Executors.newCachedThreadPool();
 
-    private Promise<?,?> parent = null;
     private Callback<IN,OUT> callback;
 
+    private List< Promise<?,?> > parents;
     private List< Promise<OUT,?> > resNext;
-    private List< Promise<Throwable,?> > rejNext;
+    private List< Promise<Exception,?> > rejNext;
 
     boolean alreadyRun = false;
-    OUT output;
-    Throwable throwable;
-
-    private boolean runInUI = false;
     private boolean resolved = false;
     private boolean rejected = false;
+    OUT output;
+    Exception throwable;
 
-    public Promise(Callback<IN,OUT> callback)
+    private boolean runInUI = false;
+
+    private Promise(Callback<IN,OUT> callback)
     {
+        parents = new Vector<>();
         resNext = new Vector<>();
         rejNext = new Vector<>();
         this.callback = callback;
     }
 
+    /** Create a Promise object
+     *  @param callback : Callback run immediately after the object being constructed
+     *  @param input : Input for the callback
+     */
     public Promise(Callback<IN,OUT> callback, IN input)
     {
         this(callback);
-        executorService.submit(() -> run(input));
+        executorService.submit(new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                Promise.this.run(input);
+            }
+        });
     }
 
     private <T> Promise<OUT,T> thenPipe(Promise<OUT,T> next)
     {
-        next.parent = this;
+        next.parents.add(this);
         if (!alreadyRun)
             resNext.add(next);
         else if (resolved)
-            executorService.submit(() -> next.run(output));
+            executorService.submit(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    next.run(output);
+                }
+            });
         return next;
     }
 
-    private <T> Promise<Throwable,T> failPipe(Promise<Throwable,T> next)
+    private <T> Promise<Exception,T> failPipe(Promise<Exception,T> next)
     {
-        next.parent = this;
+        for (Promise<?,?> parent : parents)
+            parent.failPipe(next);
+        next.parents.add(this);
         if (!alreadyRun)
             rejNext.add(next);
         else if (rejected)
-            executorService.submit(() -> next.run(throwable));
+            executorService.submit(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    next.run(throwable);
+                }
+            });
         return next;
     }
 
+    /** What should be done after the Promise finished its callback normally
+     *  You can attach more than 1 `then` callbacks by calling `then` multiple times
+     *  @param callback : What you want do after the Promise finished its callback normally
+     *  @return : A new Promise containing the new callback
+     */
     public <T> Promise<OUT,T> then(Callback<OUT,T> callback)
     {
         return thenPipe(new Promise<OUT,T>(callback));
     }
 
-    public <T> Promise<Throwable,T> fail(Callback<Throwable,T> callback)
+    /** What should be done when this Promise AND ITS PARENT Promises failed to finish its callback
+     *  You can attach more than 1 `fail` callbacks by calling `fail` multiple times
+     *  @param callback : What you want to do after the Promise failed
+     *  @return : A new Promise containing the new callback
+     */
+    public <T> Promise<Exception,T> fail(Callback<Exception,T> callback)
     {
-        return failPipe(new Promise<Throwable,T>(callback));
+        return failPipe(new Promise<Exception,T>(callback));
     }
 
+    /** Same as `.then`, but run in UI thread
+     */
     public <T> Promise<OUT,T> thenUI(Callback<OUT,T> callback)
     {
         Promise<OUT,T> ret = then(callback);
@@ -79,22 +119,40 @@ public class Promise<IN,OUT>
         return ret;
     }
 
-    public <T> Promise<Throwable,T> failUI(Callback<Throwable,T> callback)
+    /** Same as `.fail`, but run in UI thread
+     */
+    public <T> Promise<Exception,T> failUI(Callback<Exception,T> callback)
     {
-        Promise<Throwable,T> ret = failPipe(new Promise<Throwable,T>(callback));
+        Promise<Exception,T> ret = fail(callback);
         ret.setRunInUI();
         return ret;
     }
 
     public void setRunInUI() { runInUI = true; }
 
-    public synchronized void waitUntilHasRun() throws InterruptedException
+    private static final long DEFAULT_WAIT_TIMEOUT = 10000;
+
+    /** Wait for this Promise to finish or fail with default timeout
+     *  @throws InterruptedException : if time's out, throw an InterruptedException
+     *  @return : this Promise
+     */
+    public Promise<IN,OUT> waitUntilHasRun() throws InterruptedException
+    {
+        return waitUntilHasRun(DEFAULT_WAIT_TIMEOUT);
+    }
+
+    /** Wait for this Promise to finish or fail
+     *  @param timeout : if time's out, throw an InterruptedException
+     *  @return : this Promise
+     */
+    public synchronized Promise<IN,OUT> waitUntilHasRun(long timeout) throws InterruptedException
     {
         if (alreadyRun)
-            return;
-        if (parent != null)
-            parent.waitUntilHasRun();
-        wait();
+            return this;
+        wait(timeout);
+        if (!alreadyRun)
+            throw new InterruptedException();
+        return this;
     }
 
     private synchronized void run(IN input)
@@ -133,22 +191,36 @@ public class Promise<IN,OUT>
     {
         if (alreadyRun)
             return;
-        alreadyRun = true;
         try
         {
             output = callback.run(input);
             for (Promise<OUT,?> next : resNext)
-                executorService.submit(() -> next.run(output));
+                executorService.submit(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        next.run(output);
+                    }
+                });
             resolved = true;
-        } catch (Throwable e)
+        } catch (Exception e)
         {
             throwable = e;
-            for (Promise<Throwable,?> next : rejNext)
-                executorService.submit(() -> next.run(throwable));
+            for (Promise<Exception,?> next : rejNext)
+                executorService.submit(new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        next.run(throwable);
+                    }
+                });
             rejected = true;
         }
         resNext = null;
         rejNext = null;
+        alreadyRun = true;
         notifyAll();
     }
 }

@@ -93,7 +93,7 @@ public class NewsTest
             assertEquals(200, conn.getResponseCode());
             Map<String, List<String>> map = conn.getHeaderFields();
             assertTrue(map.get("Content-Type").get(0).contains("image"));
-            return new Object();
+            return null;
         }).waitUntilHasRun();
     }
 }
