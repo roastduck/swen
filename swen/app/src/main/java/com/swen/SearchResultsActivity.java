@@ -12,6 +12,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.swen.promise.Callback;
+import com.swen.promise.Promise;
 
 import java.io.IOException;
 
@@ -41,7 +42,8 @@ public class SearchResultsActivity extends BaseActivity {
             AppendableNewsList list = new AppendableNewsList(30, query, null, false, new Behavior(this));
             ListView lv = (ListView)findViewById(R.id.search_list);
 
-            list.append().thenUI(new Callback<Object, Object>() {
+            Promise promise = list.append();
+            promise.thenUI(new Callback<Object, Object>() {
                 @Override
                 public Object run(final Object result) throws Exception {
                     lv.setOnScrollListener(new AbsListView.OnScrollListener() {
@@ -58,7 +60,8 @@ public class SearchResultsActivity extends BaseActivity {
                                 if (lastItem == totalItemCount && preLastItem != lastItem) {
                                     preLastItem = lastItem;
                                     Log.wtf("haha", "cao");
-                                    list.append().thenUI(new Callback<Object, Object>() {
+                                    Promise promise1 = list.append();
+                                    promise1.thenUI(new Callback<Object, Object>() {
                                         @Override
                                         public Object run(Object result) throws Exception {
                                             lv.setAdapter(new SearchResultAdapter(list.list, getApplicationContext()));

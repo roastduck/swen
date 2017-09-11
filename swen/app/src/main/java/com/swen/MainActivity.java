@@ -26,7 +26,7 @@ public class MainActivity extends BaseActivity {
 
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
-        
+
         // layout.addView(inflater.inflate([layout], null));
     }
 }
