@@ -1,7 +1,10 @@
 package com.swen;
 
+import android.app.Activity;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,20 +83,64 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         }
     }
 
+    public void showPictureByUrl(String url, ImageView iv, Storage storage) {
+        storage.getPicCached(url).thenUI(new Callback<Bitmap, Object>() {
+            @Override
+            public Object run(Bitmap picture) {
+                iv.setImageBitmap(picture);
+                return null;
+            }
+        });
+    }
+
+    public void showPicture(News news, ImageView iv) {
+        Activity activity = (Activity) mContext;
+        Storage storage = ((ApplicationWithStorage) activity.getApplication())
+            .getStorage();
+        if(news.getNewsPictures().isEmpty()) {
+            News.searchPicture(news.news_Title)
+                .then(new Callback<String, Object>() {
+                    @Override
+                    public Object run(String url) {
+                        showPictureByUrl(url, iv, storage);
+                        return null;
+                    }
+                });
+        } else {
+            showPictureByUrl(news.getNewsPictures().get(0), iv, storage);
+        }
+    }
+
+    public void showPicture(News news, ImageView iv, ImageView ivmid, ImageView ivright) {
+        Activity activity = (Activity) mContext;
+        Storage storage = ((ApplicationWithStorage) activity.getApplication())
+            .getStorage();
+        showPictureByUrl(news.getNewsPictures().get(0), iv, storage);
+        showPictureByUrl(news.getNewsPictures().get(1), ivmid, storage);
+        showPictureByUrl(news.getNewsPictures().get(2), ivright, storage);
+    }
+
     @Override
     public void onBindViewHolder(NLViewHolder holder, int position) {
         switch (holder.style) {
             case 1: //TODO：显示图片
+                showPicture(mData.get(position).news, holder.imageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 break;
             case 2: //TODO: 显示图片，利用html区分标题和简介
-                holder.textView.setText(mData.get(position).news.news_Title + "\n" + mData.get(position).news.news_Intro);
+                showPicture(mData.get(position).news, holder.imageView);
+                holder.textView.setText(Html.fromHtml("<strong>" + mData.get(position).news.news_Title +
+                    "</strong><br/><br/>" + mData.get(position).news.news_Intro.trim()));
                 break;
             case 3: //TODO：分别显示左右分栏的图片
+                showPicture(mData.get(position).news, holder.imageView);
+                showPicture(mData.get(position).rightNews, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewRight.setText(mData.get(position).rightNews.news_Title);
                 break;
             case 4: //TODO：显示图片
+                showPicture(mData.get(position).news, holder.imageView,
+                    holder.imageViewMid, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 break;
         }
