@@ -151,7 +151,7 @@ public class News implements Serializable
         return news_Pictures;
     }
 
-    public Promise<Object,String> searchPicture(final String title)
+    public static Promise<Object,String> searchPicture(final String title)
     {
         ImageSearcher ims = new ImageSearcher(10);
         return new Promise<>(new Callback<Object,String>()
