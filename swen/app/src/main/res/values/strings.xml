@@ -22,6 +22,10 @@
     <string name="category_enter">娱乐</string>
     -->
 
+    <string name="bundle_news_id">news_id</string>
+    <string name="bundle_news_title">news_title</string>
+    <string name="bundle_news_pictures">news_pictures</string>
+
     <string name="category_tech">科技之光</string>
     <string name="category_edu">教育天地</string>
     <string name="category_milit">军情直播</string>

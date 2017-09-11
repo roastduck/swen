@@ -22,6 +22,7 @@ public class NewsContentActivity extends BaseActivity {
 
     //TODO: update Behavior, grey the news item in parent list
     private News mNews;
+    public static final String ACTION_NAME = "com.swen.action.CONTENT";
 
     @Override
     protected void onCreate(Bundle savedInstance) {
@@ -29,11 +30,12 @@ public class NewsContentActivity extends BaseActivity {
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_content_page, null));
-
         Bundle bundle = getIntent().getExtras();
-        String[] pictures = bundle.getStringArray("pictures");
-        String news_id = bundle.getString("news_id");
-        String news_title = bundle.getString("news_title");
+        String[] pictures = bundle.getStringArray(getString(R.string.bundle_news_pictures));
+        //TODO:点击详情时，列表还未从网上成功获取图片的情况
+        //TODO:网上获取url与自带url的区别
+        String news_id = bundle.getString(getString(R.string.bundle_news_id));
+        String news_title = bundle.getString(getString(R.string.bundle_news_title));
         ((TextView)findViewById(R.id.tv_content_title)).setText(news_title);
         Storage storage = ((ApplicationWithStorage)getApplication()).getStorage();
         Callback<Exception, Object> failCallback = new Callback<Exception, Object>() {
@@ -44,20 +46,16 @@ public class NewsContentActivity extends BaseActivity {
                 return null;
             }
         };
-        try {
-            Promise news_promise = storage.getNewsCached(news_id);
-            news_promise.failUI(failCallback);
-            news_promise.thenUI(new Callback<News, Object>() {
-                @Override
-                public Object run(News news) {
-                    mNews = news;
-                    //TODO:Temporarily show all the text
-                    return null;
-                }
-            }).waitUntilHasRun();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Promise news_promise = storage.getNewsCached(news_id);
+        news_promise.failUI(failCallback);
+        news_promise.thenUI(new Callback<News, Object>() {
+            @Override
+            public Object run(News news) {
+                mNews = news;
+                //TODO:Temporarily show all the text
+                return null;
+            }
+        });
         //TODO：根据图片和文字内容先做好布局，再进行图片加载
         Promise[] picture_promise = new Promise[pictures.length];
         for(int i = 0; i < picture_promise.length; i++) {
