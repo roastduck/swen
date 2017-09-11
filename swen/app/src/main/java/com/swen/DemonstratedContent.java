@@ -9,6 +9,7 @@ import java.util.Random;
  */
 
 public class DemonstratedContent {
+    //TODO:新闻达到上限的处理
     public News news;
     public News rightNews;
     public int style;
