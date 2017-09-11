@@ -45,7 +45,7 @@ public class SearchResultsActivity extends BaseActivity {
             Promise promise = list.append();
             promise.thenUI(new Callback<Object, Object>() {
                 @Override
-                public Object run(final Object result) {
+                public Object run(final Object result) throws Exception {
                     lv.setOnScrollListener(new AbsListView.OnScrollListener() {
                         @Override
                         public void onScrollStateChanged(AbsListView absListView, int i) {
@@ -63,14 +63,13 @@ public class SearchResultsActivity extends BaseActivity {
                                     Promise promise1 = list.append();
                                     promise1.thenUI(new Callback<Object, Object>() {
                                         @Override
-                                        public Object run(Object result){
+                                        public Object run(Object result) throws Exception {
                                             lv.setAdapter(new SearchResultAdapter(list.list, getApplicationContext()));
                                             return null;
                                         }
-                                    });
-                                    promise1.failUI(new Callback<Throwable, Object>() {
+                                    }).failUI(new Callback<Exception, Object>() {
                                         @Override
-                                        public Object run(final Throwable result){
+                                        public Object run(final Exception result) throws Exception {
                                             return null;
                                         }
                                     });
@@ -81,10 +80,9 @@ public class SearchResultsActivity extends BaseActivity {
                     lv.setAdapter(new SearchResultAdapter(list.list, getApplicationContext()));
                     return null;
                 }
-            });
-            promise.failUI(new Callback<Throwable, Object>() {
+            }).failUI(new Callback<Exception, Object>() {
                 @Override
-                public Object run(Throwable result){
+                public Object run(Exception result) throws Exception {
                     return null;
                 }
             });

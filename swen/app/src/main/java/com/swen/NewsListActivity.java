@@ -32,7 +32,7 @@ public abstract class NewsListActivity extends BaseActivity {
         Promise promise = mAppendableList.append();
         promise.thenUI(new Callback<Object, Object>() {
             @Override
-            public Object run(Object result){
+            public Object run(Object result) throws Exception {
                 //TODO:停止加载动画
                 Toast.makeText(NewsListActivity.this, "新闻列表加载完毕", Toast.LENGTH_SHORT).show();
                 mView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -50,17 +50,16 @@ public abstract class NewsListActivity extends BaseActivity {
                             Promise promise1 = mAppendableList.append();
                             promise1.thenUI(new Callback<Object, Object>() {
                                 @Override
-                                public Object run(final Object result){
+                                public Object run(final Object result) throws Exception {
                                     Toast.makeText(NewsListActivity.this,
                                         "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
                                     ((NewsListAdapter) (mView.getAdapter())).updateData(random);
                                     loading = false;
                                     return null;
                                 }
-                            });
-                            promise1.failUI(new Callback<Throwable, Object>() {
+                            }).failUI(new Callback<Exception, Object>() {
                                 @Override
-                                public Object run(final Throwable result){
+                                public Object run(final Exception result) throws Exception {
                                     Toast.makeText(NewsListActivity.this,
                                         result.getMessage(), Toast.LENGTH_SHORT).show();
                                     loading = false;
@@ -74,11 +73,10 @@ public abstract class NewsListActivity extends BaseActivity {
                 mView.setLayoutManager(new LinearLayoutManager(NewsListActivity.this));
                 return null;
             }
-        });
-        promise.failUI(new Callback<Throwable, Object>() {
 
+        }).failUI(new Callback<Exception, Object>() {
             @Override
-            public Object run(Throwable result){
+            public Object run(Exception result) throws Exception {
                 //TODO:停止加载动画
                 for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("MainActivity", e.toString());
