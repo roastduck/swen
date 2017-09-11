@@ -102,6 +102,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 .then(new Callback<String, Object>() {
                     @Override
                     public Object run(String url) {
+                        news.setNews_Pictures(url);
                         showPictureByUrl(url, iv, storage);
                         return null;
                     }
