@@ -3,18 +3,14 @@ package com.swen;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.AbsListView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.swen.promise.Callback;
 import com.swen.promise.Promise;
 
-import java.io.IOException;
 
 public class SearchResultsActivity extends BaseActivity {
     private int preLastItem;
@@ -41,6 +37,8 @@ public class SearchResultsActivity extends BaseActivity {
 
             AppendableNewsList list = new AppendableNewsList(30, query, null, false, new Behavior(this));
             ListView lv = (ListView)findViewById(R.id.search_list);
+            SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
+            lv.setAdapter(adapter);
 
             Promise promise = list.append();
             promise.thenUI(new Callback<Object, Object>() {
@@ -59,12 +57,12 @@ public class SearchResultsActivity extends BaseActivity {
                                 int lastItem = firstVisibleItem + visibleItemCount;
                                 if (lastItem == totalItemCount && preLastItem != lastItem) {
                                     preLastItem = lastItem;
-                                    Log.wtf("haha", "cao");
+
                                     Promise promise1 = list.append();
                                     promise1.thenUI(new Callback<Object, Object>() {
                                         @Override
                                         public Object run(Object result) throws Exception {
-                                            lv.setAdapter(new SearchResultAdapter(list.list, getApplicationContext()));
+                                            adapter.notifyDataSetChanged();
                                             return null;
                                         }
                                     }).failUI(new Callback<Exception, Object>() {
@@ -77,7 +75,7 @@ public class SearchResultsActivity extends BaseActivity {
                             }
                         }
                     });
-                    lv.setAdapter(new SearchResultAdapter(list.list, getApplicationContext()));
+                    adapter.notifyDataSetChanged();
                     return null;
                 }
             }).failUI(new Callback<Exception, Object>() {
