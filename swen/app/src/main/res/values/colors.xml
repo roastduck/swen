@@ -8,5 +8,8 @@
     <color name="purple_pressed">#9F79EE</color>
     <color name="divider_color">#FFB7B2B2</color>
 
+    <color name="font_enabled">#423732</color>
+    <color name="font_disabled">#91a3b0</color>
+
     <color name="transparent">#00000000</color>
 </resources>

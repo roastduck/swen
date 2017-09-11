@@ -85,7 +85,8 @@ public class FavoritesActivity extends BaseActivity
         }
 
         @Override
-        public int getItemCount() {
+        public int getItemCount()
+        {
             return list.size();
         }
 

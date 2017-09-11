@@ -39,5 +39,7 @@
     <string name="no_image_mode">无图模式</string>
     <string name="night_mode">夜间模式</string>
 
+    <string name="cat_guide"><i>拖动分类以移动顺序，或轻触以删除</i></string>
+    <string name="fav_guide"><i>轻触以进入，或滑动以删除</i></string>
 
 </resources>

@@ -81,7 +81,6 @@ public abstract class NewsListActivity extends BaseActivity {
                 for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("MainActivity", e.toString());
                 }
-                //Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_SHORT).show();
                 return null;
             }
         });
