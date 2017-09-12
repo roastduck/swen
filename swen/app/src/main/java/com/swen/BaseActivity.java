@@ -125,6 +125,8 @@ public class BaseActivity extends AppCompatActivity {
                 (SearchView)menu.findItem(R.id.search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(new ComponentName(this, SearchResultsActivity.class)));
+        searchView.setIconified(false);
+        searchView.setFocusable(true);
 
         return true;
     }
