@@ -66,6 +66,23 @@ public class PromiseTest
         assertEquals(1, triggerNum2.num);
     }
 
+    @Test
+    public void testCancel() throws Exception
+    {
+        Counter num = new Counter(0);
+        new Promise<Object,Object>(o -> {
+            Thread.sleep(1000);
+            return null;
+        }, null)
+                .then(o -> {
+                    num.num++;
+                    return null;
+                })
+                .cancel();
+        Thread.sleep(2000);
+        assertEquals(0, num.num);
+    }
+
     private class Counter
     {
         int num;

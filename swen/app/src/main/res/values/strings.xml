@@ -22,6 +22,10 @@
     <string name="category_enter">娱乐</string>
     -->
 
+    <string name="bundle_news_id">news_id</string>
+    <string name="bundle_news_title">news_title</string>
+    <string name="bundle_news_pictures">news_pictures</string>
+
     <string name="category_tech">科技之光</string>
     <string name="category_edu">教育天地</string>
     <string name="category_milit">军情直播</string>
@@ -39,5 +43,7 @@
     <string name="no_image_mode">无图模式</string>
     <string name="night_mode">夜间模式</string>
 
+    <string name="cat_guide"><i>拖动分类以移动顺序，或轻触以删除</i></string>
+    <string name="fav_guide"><i>轻触以进入，或滑动以删除</i></string>
 
 </resources>

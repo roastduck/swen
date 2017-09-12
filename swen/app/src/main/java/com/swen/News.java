@@ -55,6 +55,26 @@ public class News implements Serializable
          */
         public int getId() { return id; }
 
+        static Category fromId(int id) throws IndexOutOfBoundsException
+        {
+            switch (id)
+            {
+                case 1: return TECH;
+                case 2: return EDUCATION;
+                case 3: return MILITARY;
+                case 4: return DOMESTIC;
+                case 5: return SOCIETY;
+                case 6: return CULTURE;
+                case 7: return CAR;
+                case 8: return INTERNATIONAL;
+                case 9: return SPORT;
+                case 10: return FINANCE;
+                case 11: return HEALTH;
+                case 12: return ENTERTAIN;
+                default: throw new IndexOutOfBoundsException();
+            }
+        }
+
         /** Factory method
          *  @param s : e.g. "科技". NOTE: This corresponds to News.newsClassTag, NOT to News.news_Category
          */
@@ -77,6 +97,9 @@ public class News implements Serializable
                 default: throw new InvalidCategoryException();
             }
         }
+
+        public int getStr() { return Global.categoryStrs[id]; }
+        public int getIcon() { return Global.categoryImgs[id]; }
     }
 
     public String lang_Type; // e.g. ":"zh-CN"
