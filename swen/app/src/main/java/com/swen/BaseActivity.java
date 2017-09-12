@@ -27,6 +27,7 @@ public class BaseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         List<MenuItem> list = new ArrayList<>();
+        list.add(new MenuItem(R.string.my_favorites, R.drawable.favorites, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.category_mgmt, R.drawable.category_management, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.no_image_mode, R.drawable.no_image, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(R.string.night_mode, R.drawable.night_mode, MenuItem.ItemType.TextWithIconSwitch));
