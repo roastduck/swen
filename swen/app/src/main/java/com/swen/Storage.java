@@ -19,8 +19,8 @@ import java.util.*;
 public class Storage
 {
     // How many items can be cached in memory
-    private static final int DEFAULT_NEWS_CACHE_CAPACITY = 64;
-    private static final int DEFAULT_PIC_CACHE_CAPACITY = 32;
+    private static final int DEFAULT_NEWS_CACHE_CAPACITY = 512;
+    private static final int DEFAULT_PIC_CACHE_CAPACITY = 128;
     private final int newsCacheCapacity, picCacheCapacity;
 
     private LinkedHashMap<String, News> newsCache;

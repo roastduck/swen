@@ -24,12 +24,20 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <!--
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
                 android:id="@+id/iv_intro3_left"
                 android:scaleType="centerCrop" />
+            -->
+            <com.swen.LoadingImageView
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5"
+                android:id="@+id/iv_intro3_left" />
+
             <TextView
                 android:id="@+id/tv_intro3_left"
                 android:layout_width="match_parent"
@@ -58,12 +66,20 @@
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+            <!--
             <ImageView
                 android:id="@+id/iv_intro3_right"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="5"
                 android:scaleType="centerCrop" />
+            -->
+            <com.swen.LoadingImageView
+                android:id="@+id/iv_intro3_right"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="5" />
+
             <TextView
                 android:id="@+id/tv_intro3_right"
                 android:layout_width="match_parent"

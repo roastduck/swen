@@ -39,11 +39,12 @@
     <string name="category_health">健康指数</string>
     <string name="category_enter">娱乐快报</string>
 
+    <string name="my_favorites">我的收藏</string>
     <string name="category_mgmt">分类管理</string>
     <string name="no_image_mode">无图模式</string>
     <string name="night_mode">夜间模式</string>
 
-    <string name="cat_guide"><i>拖动分类以移动顺序，或轻触以删除</i></string>
+    <string name="cat_guide"><i>长按以拖动分类改变顺序，或轻触以删除</i></string>
     <string name="fav_guide"><i>轻触以进入，或滑动以删除</i></string>
 
 </resources>

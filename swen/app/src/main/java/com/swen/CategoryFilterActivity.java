@@ -36,10 +36,10 @@ public class CategoryFilterActivity extends BaseActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_category_filter, null));
 
-        List<News.Category> rawList = new Vector<>();
-        for (int i = 1; i <= 12; i++)
-            rawList.add(News.Category.fromId(i));
-        list = CategorySelect.fromCategoryList(rawList);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        CategorySetting categorySetting = ((ApplicationWithStorage)getApplication()).getCategorySetting();
+        list = CategorySelect.fromCategoryList(categorySetting.getCategories());
 
         CategoryFilterAdapter adapter = new CategoryFilterAdapter(list, this);
 
@@ -51,7 +51,7 @@ public class CategoryFilterActivity extends BaseActivity
 
                 Collections.swap(list, fromPosition, toPosition);
                 adapter.notifyItemMoved(fromPosition, toPosition);
-                // TODO: update global data
+                categorySetting.setCategories(CategorySelect.toCategoryList(list));
                 return true;
             }
 
@@ -66,7 +66,7 @@ public class CategoryFilterActivity extends BaseActivity
             {
                 list.get(position).toggle();
                 adapter.notifyItemChanged(position);
-                // TODO: update global data
+                categorySetting.setCategories(CategorySelect.toCategoryList(list));
             }
         };
 
@@ -77,6 +77,12 @@ public class CategoryFilterActivity extends BaseActivity
         rv.setLongPressDragEnabled(true);
         rv.setOnItemMoveListener(itemMoveListener);
         rv.setSwipeItemClickListener(itemClickListener);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private static class CategorySelect

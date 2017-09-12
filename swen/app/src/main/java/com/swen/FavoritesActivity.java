@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.swen.promise.Callback;
 import com.yanzhenjie.recyclerview.swipe.*;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
@@ -33,12 +34,11 @@ public class FavoritesActivity extends BaseActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_favorites, null));
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         storage = ((ApplicationWithStorage)getApplication()).getStorage();
 
-        list = new Vector<>();
-
-        list.add("20160913041301d5fc6a41214a149cd8a0581d3a014f");
-        list.add("2016091304131a39c78c43b047b6b64b7a13abc81305");
+        list = storage.getMarked();
 
         FavoritesAdapter adapter = new FavoritesAdapter(list);
 
@@ -64,8 +64,14 @@ public class FavoritesActivity extends BaseActivity
             public void onItemClick(SwipeMenuBridge menuBridge) {
                 menuBridge.closeMenu();
                 int listItemId = menuBridge.getAdapterPosition();
+                storage.unmark(list.get(listItemId)).failUI(new Callback<Exception,Object>() {
+                    @Override
+                    public Object run(Exception e) throws Exception {
+                        Toast.makeText(FavoritesActivity.this, "取消收藏失败", Toast.LENGTH_SHORT).show();
+                        return null;
+                    }
+                }); // This is done with no `then` callback
                 list.remove(listItemId);
-                // TODO: Storage.unmark
                 rv.removeViewAt(listItemId);
                 adapter.notifyItemRemoved(listItemId);
                 adapter.notifyItemRangeChanged(listItemId, list.size());
@@ -99,6 +105,12 @@ public class FavoritesActivity extends BaseActivity
         rv.setSwipeMenuCreator(swipeMenuCreator);
         rv.setSwipeMenuItemClickListener(menuItemClickListener);
         rv.setSwipeItemClickListener(itemClickListener);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder>

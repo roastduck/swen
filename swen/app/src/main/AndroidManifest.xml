@@ -72,6 +72,8 @@
                 <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
+        <activity android:name=".CategoryActivity">
+        </activity>
         <activity android:name=".FavoritesActivity">
         </activity>
         <activity android:name=".CategoryFilterActivity">
