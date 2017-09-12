@@ -149,7 +149,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 1:
                 showPicture(mData.get(position).news, holder.loadingImageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                holder.textViewAnother.setText(mData.get(position).news.news_Intro.replace("\\s+", ""));
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro
+                    .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 2:
@@ -160,6 +161,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     .replace(" ", "").replace("　", "")));
                 */
                 holder.textView.setText(mData.get(position).news.news_Title);
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro
+                    .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 3:
@@ -218,6 +221,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     break;
                 case 2:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro2);
+                    textViewAnother = (TextView)itemView.findViewById(R.id.tv_intro2_1);
                     loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro2);
                     break;
                 case 3:

@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginBottom="15dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     app:cardCornerRadius="0dp"
@@ -36,16 +37,20 @@
                 android:id="@+id/tv_intro1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="start"
+                android:gravity="center"
                 android:textStyle="bold"
-                android:textSize="21dp" />
+                android:textSize="17sp"
+                android:maxLines="2"
+                android:ellipsize="end" />
             <TextView
                 android:id="@+id/tv_intro1_1"
-                android:textSize="13dp"
+                android:textSize="13sp"
                 android:textColor="#aaa"
                 android:layout_marginTop="7dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
         </LinearLayout>
 
