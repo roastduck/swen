@@ -72,6 +72,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         iv.getImageView().setMaxHeight(screenWidth * 5);
         iv.getImageView().setMinimumHeight(screenWidth / 2);
         iv.getImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
+        mParam.setMargins(1, 4, 1, 4);
         mLinearLayout.addView(iv, mParam);
         mImageViews.add(iv);
         mPromises.add(iv.showPictureByUrl(url,
@@ -88,7 +89,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             ViewGroup.LayoutParams.WRAP_CONTENT);
         if (TransientSetting.isNoImage()) {
             for (int i = 0; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i] + "\n";
+                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
             }
             mThread = ContentPolisher.addHref(mNews, mTextViews, mHandler);
@@ -97,12 +98,12 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         if (mUrls.size() == 1) {
             int pos = paragraphCount / 5;
             for (int i = 0; i < pos; i++) {
-                String text = "　　" + paragraph[i] + "\n";
+                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
             }
             addImageView(mUrls.get(0));
             for (int i = pos; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i] + "\n";
+                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
             }
         } else if (mUrls.size() >= paragraphCount) {
@@ -117,7 +118,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 for (int j = 0; j < picturePerParagraph; j++) {
                     addImageView(mUrls.get(index++));
                 }
-                String text = "　　" + paragraph[i] + "\n";
+                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
                 //Log.e("NewsContentActivity", text);
             }
@@ -129,13 +130,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 addImageView(mUrls.get(urlIndex++));
                 int end = index + paragraphPerPicture;
                 for (; index < end; index++) {
-                    String text = "　　" + paragraph[index] + "\n";
+                    String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
                     addTextView(text);
                 }
             }
             addImageView(mUrls.get(urlIndex++));
             for (; index < paragraphCount; index++) {
-                String text = "　　" + paragraph[index] + "\n";
+                String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
                 addTextView(text);
             }
         }
@@ -148,7 +149,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         textView.setScrollbarFadingEnabled(true);
         textView.setMovementMethod(ScrollingMovementMethod.getInstance());
         textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setTextSize(18);
         textView.setText(text);
+        mParam.setMargins(1, 2, 1, 2);
         mLinearLayout.addView(textView, mParam);
         mTextViews.add(textView);
     }
