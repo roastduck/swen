@@ -22,6 +22,13 @@ public class BaseActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+
+        // Call setTheme before creation of any(!) View.
+        if (TransientSetting.isNightMode())
+            setTheme(android.R.style.Theme_Black_NoTitleBar);
+        else
+            setTheme(android.R.style.Theme_Light_NoTitleBar);
+
         setContentView(R.layout.activity_main);
 
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
@@ -85,7 +92,22 @@ public class BaseActivity extends AppCompatActivity {
                 break;
             case 3:
                 TransientSetting.setNightMode(isChecked);
+                finish(); // refresh activity
+                startActivity(getIntent());
                 break;
+            default:
+                throw new RuntimeException(); // impossible
+        }
+    }
+
+    private boolean initSwitch(int position)
+    {
+        switch (position)
+        {
+            case 2:
+                return TransientSetting.isNoImage();
+            case 3:
+                return TransientSetting.isNightMode();
             default:
                 throw new RuntimeException(); // impossible
         }
@@ -183,27 +205,35 @@ public class BaseActivity extends AppCompatActivity {
                     tv.setVisibility(View.GONE);
                     iv.setVisibility(View.GONE);
                     sc.setVisibility(View.GONE);
-                    convertView.setBackgroundColor(Color.parseColor("#aaaaaa"));
+                    convertView.setBackgroundResource(R.color.divider_color);
                     break;
                 case Text:
                     iv.setVisibility(View.GONE);
                     sc.setVisibility(View.GONE);
+                    convertView.setBackgroundResource(TransientSetting.isNightMode() ? R.color.menu_item_dark : R.color.menu_item_light);
                     break;
                 case TextWithIcon:
                     iv.setImageResource(item.icon);
                     iv.setVisibility(View.VISIBLE);
                     sc.setVisibility(View.GONE);
+                    convertView.setBackgroundResource(TransientSetting.isNightMode() ? R.color.menu_item_dark : R.color.menu_item_light);
                     break;
                 case TextWithSwitch:
                     iv.setVisibility(View.GONE);
                     sc.setVisibility(View.VISIBLE);
+                    sc.setOnCheckedChangeListener(null); // must
+                    sc.setChecked(initSwitch(position));
                     sc.setOnCheckedChangeListener(onCheckedChangeListener);
+                    convertView.setBackgroundResource(TransientSetting.isNightMode() ? R.color.menu_item_dark : R.color.menu_item_light);
                     break;
                 case TextWithIconSwitch:
                     iv.setImageResource(item.icon);
                     iv.setVisibility(View.VISIBLE);
                     sc.setVisibility(View.VISIBLE);
+                    sc.setOnCheckedChangeListener(null); // must
+                    sc.setChecked(initSwitch(position));
                     sc.setOnCheckedChangeListener(onCheckedChangeListener);
+                    convertView.setBackgroundResource(TransientSetting.isNightMode() ? R.color.menu_item_dark : R.color.menu_item_light);
                     break;
             }
             return convertView;

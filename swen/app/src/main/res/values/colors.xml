@@ -11,5 +11,8 @@
     <color name="font_enabled">#423732</color>
     <color name="font_disabled">#91a3b0</color>
 
+    <color name="menu_item_light">#fffaf0</color>
+    <color name="menu_item_dark">#423732</color>
+
     <color name="transparent">#00000000</color>
 </resources>
