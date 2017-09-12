@@ -27,6 +27,8 @@ public class Promise<IN,OUT>
     OUT output;
     Exception throwable;
 
+    private boolean canceled = false;
+
     private boolean runInUI = false;
 
     private Promise(Callback<IN,OUT> callback)
@@ -128,6 +130,10 @@ public class Promise<IN,OUT>
         return ret;
     }
 
+    /** Cancel the task
+     */
+    public void cancel() { canceled = true; }
+
     public void setRunInUI() { runInUI = true; }
 
     private static final long DEFAULT_WAIT_TIMEOUT = 10000;
@@ -189,6 +195,8 @@ public class Promise<IN,OUT>
 
     private synchronized void runSync(IN input)
     {
+        if (canceled)
+            return;
         if (alreadyRun)
             return;
         try
