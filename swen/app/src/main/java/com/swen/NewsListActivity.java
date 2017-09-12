@@ -1,5 +1,6 @@
 package com.swen;
 
+import android.content.Intent;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -7,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -21,20 +23,26 @@ public abstract class NewsListActivity extends BaseActivity {
     protected AppendableNewsList mAppendableList;
     protected boolean loading = false;
     protected Random random = new Random(System.currentTimeMillis());
+    protected NewsListAdapter mAdapter;
 
     protected void initialize() {
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_list_page, null));
 
+        final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
+        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
+        toggle.syncState();
+
         mView = (RecyclerView) findViewById(R.id.rv_main);
-        Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();
+        //Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();
         Promise promise = mAppendableList.append();
         promise.thenUI(new Callback<Object, Object>() {
             @Override
             public Object run(Object result) throws Exception {
                 //TODO:停止加载动画
-                Toast.makeText(NewsListActivity.this, "新闻列表加载完毕", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(NewsListActivity.this, "新闻列表加载完毕", Toast.LENGTH_SHORT).show();
                 mView.addOnScrollListener(new RecyclerView.OnScrollListener() {
                     @Override
                     public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
@@ -51,8 +59,8 @@ public abstract class NewsListActivity extends BaseActivity {
                             promise1.thenUI(new Callback<Object, Object>() {
                                 @Override
                                 public Object run(final Object result) throws Exception {
-                                    Toast.makeText(NewsListActivity.this,
-                                        "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
+                                    //Toast.makeText(NewsListActivity.this,
+                                    //    "成功获取更多新闻条目", Toast.LENGTH_SHORT).show();
                                     ((NewsListAdapter) (mView.getAdapter())).updateData(random);
                                     loading = false;
                                     return null;
@@ -69,7 +77,8 @@ public abstract class NewsListActivity extends BaseActivity {
                         }
                     }
                 });
-                mView.setAdapter(new NewsListAdapter(mAppendableList, NewsListActivity.this, random));
+                mAdapter = new NewsListAdapter(mAppendableList, NewsListActivity.this, random);
+                mView.setAdapter(mAdapter);
                 mView.setLayoutManager(new LinearLayoutManager(NewsListActivity.this));
                 return null;
             }
@@ -81,7 +90,6 @@ public abstract class NewsListActivity extends BaseActivity {
                 for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("MainActivity", e.toString());
                 }
-                //Toast.makeText(MainActivity.this, "加载新闻列表失败", Toast.LENGTH_SHORT).show();
                 return null;
             }
         });

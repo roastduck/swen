@@ -23,7 +23,15 @@ public class SearchResultsActivity extends BaseActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_search, null));
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         handleIntent(getIntent());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     @Override
@@ -35,7 +43,7 @@ public class SearchResultsActivity extends BaseActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            AppendableNewsList list = new AppendableNewsList(30, query, null, false, new Behavior(this));
+            AppendableNewsList list = new AppendableNewsList(30, query, null, false, ((ApplicationWithStorage)getApplication()).getBehavior());
             ListView lv = (ListView)findViewById(R.id.search_list);
             SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
             lv.setAdapter(adapter);

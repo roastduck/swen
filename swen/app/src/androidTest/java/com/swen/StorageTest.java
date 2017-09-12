@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 public class StorageTest
 {
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<RecommendationActivity> mActivityRule = new ActivityTestRule<>(RecommendationActivity.class);
 
     private NewsAPI mAPI;
     private StreamFactory mStreamFactory = spy(StreamFactory.class);
