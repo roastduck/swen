@@ -41,7 +41,8 @@ public class BaseActivity extends AppCompatActivity {
         list.add(new MenuItem(R.string.night_mode, R.drawable.night_mode, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(0, 0, MenuItem.ItemType.Nothing));
 
-        for (News.Category item : ((ApplicationWithStorage)getApplication()).getCategorySetting().getCategories())
+        List<News.Category> categoryList = ((ApplicationWithStorage)getApplication()).getCategorySetting().getCategories();
+        for (News.Category item : categoryList)
             list.add(new MenuItem(item.getStr(), item.getIcon(), MenuItem.ItemType.TextWithIcon));
 
         ListView.OnItemClickListener onItemClickListener = new ListView.OnItemClickListener() {
@@ -59,6 +60,13 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, CategoryFilterActivity.class);
                         startActivity(intent);
                         break;
+                    default:
+                        if (position > 4)
+                        {
+                            intent = new Intent(BaseActivity.this, CategoryActivity.class);
+                            intent.putExtra("category", categoryList.get(position - 5).getId());
+                            startActivity(intent);
+                        }
                 }
             }
         };
