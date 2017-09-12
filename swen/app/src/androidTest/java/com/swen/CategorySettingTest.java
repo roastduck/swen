@@ -1,6 +1,9 @@
 package com.swen;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.test.rule.ActivityTestRule;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,10 +20,32 @@ public class CategorySettingTest
 
     CategorySetting categorySetting;
 
+    private void clearSharedPreference()
+    {
+        SharedPreferences.Editor editor = mActivityRule.getActivity().getApplicationContext()
+                .getSharedPreferences("categoryPreference", Context.MODE_PRIVATE)
+                .edit();
+        editor.remove("selectedCategories");
+        editor.apply();
+    }
+
     @Before
     public void setUp() throws Exception
     {
         categorySetting = ((ApplicationWithStorage)(mActivityRule.getActivity().getApplication())).getCategorySetting();
+        clearSharedPreference();
+    }
+
+    @After
+    public void tearDown() throws Exception
+    {
+        clearSharedPreference();
+    }
+
+    @Test
+    public void testInit() throws Exception
+    {
+        assertEquals(12, categorySetting.getCategories().size());
     }
 
     @Test
