@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.Html;
 import android.text.Layout;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -164,6 +165,7 @@ public class NewsContentActivity extends BaseActivity {
         textView.setVerticalScrollBarEnabled(true);
         textView.setScrollbarFadingEnabled(true);
         textView.setMovementMethod(ScrollingMovementMethod.getInstance());
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setText(text);
         mLinearLayout.addView(textView, mParam);
         mTextViews.add(textView);
