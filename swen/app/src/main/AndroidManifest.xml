@@ -31,6 +31,18 @@
                     android:name="android.app.searchable"
                     android:resource="@xml/searchable"/>
 
+        <activity android:name=".NewsContentActivity"
+            android:launchMode="standard">
+            <intent-filter>
+                <action android:name="com.swen.action.CONTENT" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".SearchResultsActivity"
+            android:launchMode="singleTop">
+            <meta-data android:name="android.app.searchable"
+                android:resource="@xml/searchable" />
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
             </intent-filter>
