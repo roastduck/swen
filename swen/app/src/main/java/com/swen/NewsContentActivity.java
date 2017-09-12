@@ -214,7 +214,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 if(mMarked) {
                     ((ApplicationWithStorage)getApplication()).getBehavior().like(mNews);
                     Promise promise = ((ApplicationWithStorage)getApplication())
-                        .getStorage().mark(mNews.news_ID);
+                        .getStorage().unmark(mNews.news_ID);
                     mLike.setEnabled(false);
                     promise.failUI(new Callback() {
                         @Override
@@ -238,7 +238,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                     });
                 } else {
                     Promise promise = ((ApplicationWithStorage)getApplication())
-                        .getStorage().unmark(mNews.news_ID);
+                        .getStorage().mark(mNews.news_ID);
                     mLike.setEnabled(false);
                     promise.failUI(new Callback() {
                         @Override
