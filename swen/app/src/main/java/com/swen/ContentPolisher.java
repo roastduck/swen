@@ -17,8 +17,8 @@ import java.util.List;
 
 public class ContentPolisher
 {
-    public static void addHref(News news, List<TextView> textViews, Handler handler) {
-        new Thread() {
+    public static Thread addHref(News news, List<TextView> textViews, Handler handler) {
+        Thread thread = new Thread() {
             @Override
             public void run() {
                 Log.e("ContentPolisher", "开始检索百度百科词条");
@@ -89,7 +89,9 @@ public class ContentPolisher
                 msg.setData(bundle);
                 handler.sendMessage(msg);
             }
-        }.start();
+        };
+        thread.start();
+        return thread;
     }
 
     public static boolean isBaikeItem(String word) {
