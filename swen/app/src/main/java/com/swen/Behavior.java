@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.List;
 
+/** User behavior statistics
+ *  PLEASE DO NOT INSTANTIATE THIS CLASS, USE ((ApplicationWithStorage)getApplication()).getBehavior() INSTEAD
+ */
 public class Behavior
 {
     private Context context;
     private SharedPreferences sharedPreferences;
-    private static Behavior instance;
     /*
      * Keys in preferences:
      * CP_i means the category preference of the ith category. Value is an integer, 1 as default.
@@ -16,14 +18,7 @@ public class Behavior
      * A keyword means the preference of this keyword. Value is a float, 0 as default.
      */
 
-    public static Behavior getInstance(Context context) {
-        if(instance == null) {
-            instance = new Behavior(context);
-        }
-        return instance;
-    }
-
-    private Behavior(Context context) {
+    Behavior(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("readingPreferences", Context.MODE_PRIVATE);
     }
