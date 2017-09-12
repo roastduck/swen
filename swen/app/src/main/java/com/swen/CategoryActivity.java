@@ -19,9 +19,13 @@ public class CategoryActivity extends NewsListActivity {
         try
         {
             News.Category category = News.Category.fromId(categoryId);
+            getSupportActionBar().setTitle(category.getStr());
             mAppendableList = new AppendableNewsList(50, null, category);
             initialize();
-        } catch (IndexOutOfBoundsException ignored) {}
+        } catch (IndexOutOfBoundsException ignored)
+        {
+            throw new RuntimeException(); // impossible
+        }
     }
 
     @Override
