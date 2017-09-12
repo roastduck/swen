@@ -67,6 +67,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     protected void addImageView(String url) {
         LoadingImageView iv = new LoadingImageView(this);
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
+        iv.getImageView().setBackgroundColor(getResources().getColor(R.color.transparent));
         iv.getImageView().setMaxWidth(screenWidth);
         iv.getImageView().setMaxHeight(screenWidth * 5);
         iv.getImageView().setMinimumHeight(screenWidth / 2);
