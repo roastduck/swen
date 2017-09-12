@@ -24,19 +24,15 @@ public class External
         this.readThread = null;
         this.shouldStopReading = false;
         this.lock = new Object();
-        //ShareSDK.initSDK(context);
     }
 
-    public void share(News news) {
+    public void share(News news, String imgUrl) {
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
         oks.setTitle(news.news_Title);
         oks.setUrl(news.news_URL);
         oks.setTitleUrl(news.news_URL);
-        List<String> picList = news.getNewsPictures();
-        if (picList.size() >= 1) {
-            oks.setImageUrl(news.getNewsPictures().get(0));    // TODO: parse news_Pictures
-        }
+        oks.setImageUrl(imgUrl);    // TODO: parse news_Pictures
         oks.setSite("Swen");
         oks.show(context);
     }
