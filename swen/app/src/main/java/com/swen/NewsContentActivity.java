@@ -226,7 +226,7 @@ public class NewsContentActivity extends BaseActivity {
                 Log.e("NewsContentActivity", news.news_Content);
                 Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
-                Behavior.getInstance(NewsContentActivity.this).markHaveRead(mNews);
+                ((ApplicationWithStorage)getApplication()).getBehavior().markHaveRead(mNews);
                 computeLayout();
                 return null;
             }
