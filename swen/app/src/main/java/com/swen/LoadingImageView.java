@@ -8,11 +8,13 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 
 import com.swen.promise.Callback;
+import com.swen.promise.Promise;
 import com.wang.avi.AVLoadingIndicatorView;
 
 public class LoadingImageView extends FrameLayout {
     private ImageView iv;
     private AVLoadingIndicatorView loading;
+    private Promise promsie;
 
     public LoadingImageView(Context context) {
         super(context);
@@ -29,6 +31,10 @@ public class LoadingImageView extends FrameLayout {
         init();
     }
 
+    public ImageView getImageView(){
+        return iv;
+    }
+
     private void init() {
         inflate(getContext(), R.layout.loading_image_view, this);
         iv = (ImageView)findViewById(R.id.l_image);
@@ -37,7 +43,8 @@ public class LoadingImageView extends FrameLayout {
 
     public void showPictureByUrl(String url, Storage storage) {
         loading.show();
-        storage.getPicCached(url).thenUI(new Callback<Bitmap, Object>() {
+        promsie = storage.getPicCached(url);
+        promsie.thenUI(new Callback<Bitmap, Object>() {
             @Override
             public Object run(Bitmap picture) {
                 iv.setImageBitmap(picture);
@@ -45,5 +52,20 @@ public class LoadingImageView extends FrameLayout {
                 return null;
             }
         });
+    }
+
+    public Promise showPictureByUrl(String url, Storage storage, Callback callback) {
+        loading.show();
+        promsie = storage.getPicCached(url);
+        promsie.thenUI(new Callback<Bitmap, Object>() {
+            @Override
+            public Object run(Bitmap picture) {
+                iv.setImageBitmap(picture);
+                loading.hide();
+                return null;
+            }
+        });
+        promsie.failUI(callback);
+        return promsie;
     }
 }

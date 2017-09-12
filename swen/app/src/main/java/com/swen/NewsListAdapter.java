@@ -52,6 +52,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
 
     @Override
     public int getItemViewType(int position) {
+        if(TransientSetting.isNoImage()) {
+            return 5;
+        }
         return mData.get(position).style;
     }
 
@@ -74,6 +77,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 4:
                 view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_intro_4, parent, false);
+                break;
+            case 5:
+                view = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_intro_5, parent, false);
                 break;
             default:
                 view = null;
@@ -111,8 +118,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         Storage storage = ((ApplicationWithStorage) activity.getApplication())
             .getStorage();
         iv.showPictureByUrl(news.getNewsPictures().get(0), storage);
-        iv.showPictureByUrl(news.getNewsPictures().get(1), storage);
-        iv.showPictureByUrl(news.getNewsPictures().get(2), storage);
+        ivmid.showPictureByUrl(news.getNewsPictures().get(1), storage);
+        ivright.showPictureByUrl(news.getNewsPictures().get(2), storage);
     }
 
     public void setOnClickListener(View itemView, News news, int position) {
@@ -142,7 +149,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 1:
                 showPicture(mData.get(position).news, holder.loadingImageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                holder.textViewAnother.setText(mData.get(position).news.news_Intro.replace("\\s+", ""));
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro
+                    .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 2:
@@ -153,6 +161,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     .replace(" ", "").replace("　", "")));
                 */
                 holder.textView.setText(mData.get(position).news.news_Title);
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro
+                    .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 3:
@@ -169,6 +179,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 showPicture(mData.get(position).news, holder.loadingImageView,
                     holder.loadingImageViewMid, holder.loadingImageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
+                setOnClickListener(holder.itemView, mData.get(position).news, position);
+                break;
+            case 5:
+                holder.textView.setText(mData.get(position).news.news_Title);
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro);
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
         }
@@ -206,6 +221,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     break;
                 case 2:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro2);
+                    textViewAnother = (TextView)itemView.findViewById(R.id.tv_intro2_1);
                     loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro2);
                     break;
                 case 3:
@@ -220,6 +236,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_left);
                     loadingImageViewMid = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_middle);
                     loadingImageViewRight = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_right);
+                    break;
+                case 5:
+                    textView = (TextView) itemView.findViewById(R.id.tv_intro5_title);
+                    textViewAnother = (TextView) itemView.findViewById(R.id.tv_intro5_intro);
                     break;
                 default:
                     throw new InvalidItemStyleException();

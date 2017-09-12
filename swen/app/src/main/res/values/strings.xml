@@ -7,21 +7,6 @@
     <string name="menu_open">Open menu</string>
     <string name="menu_close">Close menu</string>
 
-    <!--
-    <string name="category_tech">科技</string>
-    <string name="category_edu">体育</string>
-    <string name="category_milit">军事</string>
-    <string name="category_domes">国内</string>
-    <string name="category_social">社会</string>
-    <string name="category_culture">文化</string>
-    <string name="category_car">汽车</string>
-    <string name="category_glob">国际</string>
-    <string name="category_sports">体育</string>
-    <string name="category_finance">财经</string>
-    <string name="category_health">健康</string>
-    <string name="category_enter">娱乐</string>
-    -->
-
     <string name="bundle_news_id">news_id</string>
     <string name="bundle_news_title">news_title</string>
     <string name="bundle_news_pictures">news_pictures</string>
@@ -44,8 +29,8 @@
     <string name="no_image_mode">无图模式</string>
     <string name="night_mode">夜间模式</string>
 
-    <string name="cat_guide"><i>长按以拖动分类改变顺序，或轻触以删除</i></string>
-    <string name="fav_guide"><i>轻触以进入，或滑动以删除</i></string>
+    <string name="cat_guide">长按以拖动分类改变顺序，或轻触以删除</string>
+    <string name="fav_guide">轻触以进入，或滑动以删除</string>
 
     <string name="no_favorite_prompt">您还没有添加收藏，阅览新闻时轻触右上角五角星即可添加</string>
 
