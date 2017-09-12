@@ -33,9 +33,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     //TODO: grey the news item in parent list
     private News mNews = null;
     public static final String ACTION_NAME = "com.swen.action.CONTENT";
-    private List<String> mUrls = new ArrayList<>();
-    private List<LoadingImageView> mImageViews = new ArrayList<>();
-    private List<TextView> mTextViews = new ArrayList<>();
+    private List<String> mUrls;
+    private List<LoadingImageView> mImageViews;
+    private List<TextView> mTextViews;
     private LinearLayout mLinearLayout;
     private LinearLayout.LayoutParams mParam;
     private MenuItem mLike;
@@ -56,7 +56,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     };
     private FloatingActionButton mShare;
     private FloatingActionButton mRead;
-    private List<Promise> mPromises = new ArrayList<>();
+    private List<Promise> mPromises;
     private Thread mThread;
     private Callback mFailCallback;
 
@@ -87,7 +87,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         int paragraphCount = paragraph.length;
         mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (TransientSetting.isNoImage()) {
+        if (TransientSetting.isNoImage() || mUrls.isEmpty()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
             for (int i = 0; i < paragraphCount; i++) {
                 String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
@@ -263,7 +263,11 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_content_page, null));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        
+
+        mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
+        mImageViews = new ArrayList<>();
+        mTextViews = new ArrayList<>();
+        mPromises = new ArrayList<>();
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
         mShare = (FloatingActionButton) findViewById(R.id.bt_share);
         mRead = (FloatingActionButton) findViewById(R.id.bt_read);
@@ -305,13 +309,14 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         mPromises.add(news_promise);
 
         news_promise.failUI(mFailCallback);
-        news_promise.thenUI(new Callback<News, Object>() {
+
+        Callback<News,Object> computeLayoutCallback = new Callback<News,Object>() {
             @Override
             public Object run(News news) {
                 //Toast.makeText(NewsContentActivity.this,
                 //    "新闻详情加载完毕", Toast.LENGTH_SHORT).show();
                 Log.e("NewsContentActivity", news.news_Content);
-                Log.e("NewsContentActivity", news.news_Author);
+                Log.e("NewsContentActivity", news.news_Author); // TODO:把作者显示出来
                 mNews = news;
                 mShare.setEnabled(true);
                 mRead.setEnabled(true);
@@ -319,10 +324,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 computeLayout();
                 return null;
             }
-        });
+        };
+
         if (TransientSetting.isNoImage()) {
+            news_promise.thenUI(computeLayoutCallback);
             return;
         }
+
         if (pictures.length == 0) {
             Promise outterPromise = News.searchPicture(news_title);
             mPromises.add(outterPromise);
@@ -330,39 +338,15 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 @Override
                 public Object run(String url) {
                     mUrls.add(url);
-//                    Promise innerPromise = ((ApplicationWithStorage)getApplication()).getStorage().
-//                        getPicCached(url);
-//                    mPromises.add(innerPromise);
-//                    innerPromise.thenUI(new Callback<Bitmap, Object>() {
-//                        @Override
-//                        public Object run(Bitmap picture) {
-//                            mBitmaps.add(picture);
-//                            tryShowPicture();
-//                            return null;
-//                        }
-//                    });
-//                    innerPromise.failUI(failCallback);
+                    news_promise.thenUI(computeLayoutCallback); // 重新加载
                     return null;
                 }
             });
             outterPromise.failUI(mFailCallback);
-        } else {
-            for (String url : pictures) {
+        } else
+            for (String url : pictures)
                 mUrls.add(url);
-//                Promise promise = ((ApplicationWithStorage)getApplication()).getStorage().
-//                    getPicCached(url);
-//                mPromises.add(promise);
-//                promise.thenUI(new Callback<Bitmap, Object>() {
-//                    @Override
-//                    public Object run(Bitmap picture) {
-//                        mBitmaps.add(picture);
-//                        tryShowPicture();
-//                        return null;
-//                    }
-//                });
-//                promise.failUI(failCallback);
-            }
-        }
+        news_promise.thenUI(computeLayoutCallback); // 这条要等mUrls初始化之后再调
     }
 
     @Override
