@@ -33,12 +33,23 @@ public class Behavior
     }
 
     public void markHaveRead(News news) {
+        if(news.isAlreadyRead()) {
+            return;
+        }
         news.setAlreadyRead(true);
+        preferThisNews(news, 1);
+    }
+
+    public void like(News news) {
+        preferThisNews(news, 2);
+    }
+
+    public void preferThisNews(News news, int ratio) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             int category = news.getNewsClassTag().getId();
             int previousPref = sharedPreferences.getInt("CP_" + category, 1);
-            editor.putInt("CP_" + category, previousPref + 1);
+            editor.putInt("CP_" + category, previousPref + ratio);
             editor.apply();
         } catch (News.Category.InvalidCategoryException e) {
             //TODO: invalid category. Temporarily ignore it.
@@ -54,7 +65,7 @@ public class Behavior
             String word = wk.word;
             double prefUpdate = wk.score / maximumScore;
             double previousPref = sharedPreferences.getFloat(word, 0);
-            editor.putFloat(word, (float)(previousPref + prefUpdate));
+            editor.putFloat(word, (float)(previousPref + prefUpdate * ratio));
         }
         editor.apply();
     }
