@@ -33,6 +33,8 @@ public class FavoritesActivity extends BaseActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_favorites, null));
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         storage = ((ApplicationWithStorage)getApplication()).getStorage();
 
         list = new Vector<>();
@@ -99,6 +101,12 @@ public class FavoritesActivity extends BaseActivity
         rv.setSwipeMenuCreator(swipeMenuCreator);
         rv.setSwipeMenuItemClickListener(menuItemClickListener);
         rv.setSwipeItemClickListener(itemClickListener);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     private class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder>
