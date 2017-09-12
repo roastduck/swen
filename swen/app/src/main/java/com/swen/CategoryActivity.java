@@ -11,6 +11,9 @@ public class CategoryActivity extends NewsListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         Bundle data = getIntent().getExtras();
         int categoryId = data.getInt("category");
         try
@@ -19,5 +22,11 @@ public class CategoryActivity extends NewsListActivity {
             mAppendableList = new AppendableNewsList(50, null, category);
             initialize();
         } catch (IndexOutOfBoundsException ignored) {}
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
