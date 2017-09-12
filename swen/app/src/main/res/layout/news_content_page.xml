@@ -1,23 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_content_title"/>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="vertical">
-        <LinearLayout
+        android:orientation="vertical"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true">
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ll_content"
-            android:orientation="vertical"/>
-    </ScrollView>
+            android:id="@+id/tv_content_title"/>
 
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/ll_content"
+                android:orientation="vertical"/>
+        </ScrollView>
+    </LinearLayout>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:paddingRight="16dp"
+        android:paddingBottom="16dp"
+        android:paddingEnd="16dp"
+        android:orientation="vertical">
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/bt_share"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/share"
+            app:borderWidth="0dp"
+            app:backgroundTint="#aaaaaa"
+            android:alpha="0.6"
+            app:rippleColor="#33728dff"
+            app:elevation="8dp"
+            app:pressedTranslationZ="16dp"
+            android:layout_margin="8dp"
+            />
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/bt_read"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/read"
+            app:borderWidth="0dp"
+            app:backgroundTint="#aaaaaa"
+            android:alpha="0.6"
+            app:rippleColor="#33728dff"
+            app:elevation="8dp"
+            app:pressedTranslationZ="16dp"
+            android:layout_margin="8dp"
+            />
+    </LinearLayout>
+
+</RelativeLayout>

@@ -184,6 +184,10 @@ public class Storage
         }
     }
 
+    public synchronized boolean isMarked(String id) {
+        return newsPersistent.contains(id);
+    }
+
     public synchronized List<String> getMarked()
     {
         return new Vector<>(newsPersistent);

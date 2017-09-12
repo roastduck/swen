@@ -1,17 +1,21 @@
 package com.swen;
 
-import android.content.Intent;
-import android.content.res.ObbInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.Layout;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -25,16 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
 
 /**
  * Created by Teon on 2017/9/11.
  */
 
-public class NewsContentActivity extends BaseActivity {
+public class NewsContentActivity extends BaseActivity implements View.OnClickListener{
 
     //TODO: grey the news item in parent list
-    private News mNews;
+    private News mNews = null;
     public static final String ACTION_NAME = "com.swen.action.CONTENT";
     private int mTotalPicture = 0;
     private int mShownPicture = 0;
@@ -43,8 +46,11 @@ public class NewsContentActivity extends BaseActivity {
     private List<TextView> mTextViews = new ArrayList<>();
     private LinearLayout mLinearLayout;
     private LinearLayout.LayoutParams mParam;
+    private MenuItem mLike;
     private boolean mTried = false;
     private Timer mTimer = new Timer();
+    private boolean mMarked = false;
+    private External mExternal = new External(this);
     private android.os.Handler mHandler = new android.os.Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -60,6 +66,8 @@ public class NewsContentActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+    private FloatingActionButton mShare;
+    private FloatingActionButton mRead;
     private List<Promise> mPromises = new ArrayList<>();
 
     /* 加载过程：
@@ -180,18 +188,111 @@ public class NewsContentActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.content_menu, menu);
+
+        mLike = menu.findItem(R.id.item_like);
+        if(mMarked) {
+            mLike.setIcon(R.drawable.marked);
+        } else {
+            mLike.setIcon(R.drawable.unmarked);
+        }
+        return true;
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.item_like:
+                if(mNews == null) {
+                    return true;
+                }
+                if(mMarked) {
+                    ((ApplicationWithStorage)getApplication()).getBehavior().like(mNews);
+                    Promise promise = ((ApplicationWithStorage)getApplication())
+                        .getStorage().mark(mNews.news_ID);
+                    mLike.setEnabled(false);
+                    promise.failUI(new Callback() {
+                        @Override
+                        public Object run(Object result) throws Exception {
+                            Toast.makeText(NewsContentActivity.this,
+                                "取消收藏失败", Toast.LENGTH_SHORT).show();
+                            mLike.setEnabled(true);
+                            return null;
+                        }
+                    });
+                    promise.thenUI(new Callback() {
+                        @Override
+                        public Object run(Object result) throws Exception {
+                            Toast.makeText(NewsContentActivity.this,
+                                "成功取消收藏", Toast.LENGTH_SHORT).show();
+                            mLike.setIcon(R.drawable.unmarked);
+                            mMarked = false;
+                            mLike.setEnabled(true);
+                            return null;
+                        }
+                    });
+                } else {
+                    Promise promise = ((ApplicationWithStorage)getApplication())
+                        .getStorage().unmark(mNews.news_ID);
+                    mLike.setEnabled(false);
+                    promise.failUI(new Callback() {
+                        @Override
+                        public Object run(Object result) throws Exception {
+                            Toast.makeText(NewsContentActivity.this,
+                                "收藏失败", Toast.LENGTH_SHORT).show();
+                            mLike.setEnabled(true);
+                            return null;
+                        }
+                    });
+                    promise.thenUI(new Callback() {
+                        @Override
+                        public Object run(Object result) throws Exception {
+                            Toast.makeText(NewsContentActivity.this,
+                                "成功收藏", Toast.LENGTH_SHORT).show();
+                            mLike.setIcon(R.drawable.marked);
+                            mMarked = true;
+                            mLike.setEnabled(true);
+                            return null;
+                        }
+                    });
+                }
+                return true;
+            default:
+                return true;
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         LinearLayout layout = (LinearLayout) findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_content_page, null));
 
+        final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
+        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
+        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
+        toggle.syncState();
+
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
+        mShare = (FloatingActionButton)findViewById(R.id.bt_share);
+        mRead = (FloatingActionButton)findViewById(R.id.bt_read);
+        mShare.setEnabled(false);
+        mRead.setEnabled(false);
+        mShare.setOnClickListener(this);
+        mRead.setOnClickListener(this);
+
         Bundle bundle = getIntent().getExtras();
         String[] pictures = bundle.getStringArray(getString(R.string.bundle_news_pictures));
         String news_id = bundle.getString(getString(R.string.bundle_news_id));
         String news_title = bundle.getString(getString(R.string.bundle_news_title));
 
+        mMarked = ((ApplicationWithStorage)getApplication()).getStorage().isMarked(news_id);
         ((TextView)findViewById(R.id.tv_content_title)).setText(news_title);
         Storage storage = ((ApplicationWithStorage)getApplication()).getStorage();
         Callback<Exception, Object> failCallback = new Callback<Exception, Object>() {
@@ -204,6 +305,7 @@ public class NewsContentActivity extends BaseActivity {
         };
         Promise news_promise = storage.getNewsCached(news_id);
         mPromises.add(news_promise);
+
         news_promise.failUI(failCallback);
         news_promise.thenUI(new Callback<News, Object>() {
             @Override
@@ -213,6 +315,8 @@ public class NewsContentActivity extends BaseActivity {
                 Log.e("NewsContentActivity", news.news_Content);
                 Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
+                mShare.setEnabled(true);
+                mRead.setEnabled(true);
                 ((ApplicationWithStorage)getApplication()).getBehavior().markHaveRead(mNews);
                 computeLayout();
                 return null;
@@ -260,4 +364,16 @@ public class NewsContentActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_read:
+                mExternal.readyRead(mNews.news_Content);
+                mExternal.readOut();
+                break;
+            case R.id.bt_share:
+                mExternal.share(mNews);
+                break;
+        }
+    }
 }

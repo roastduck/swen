@@ -41,7 +41,10 @@ public class ContentPolisher
                         String replacement = "<a href=\"https://baike.baidu.com/item/"
                             + word + "\">" + word + "</a>";
                         for(int i = 0; i < modified.length; i++) {
-                            modified[i] = modified[i].replaceFirst(word, replacement);
+                            if(modified[i].contains(word)) {
+                                modified[i] = modified[i].replaceFirst(word, replacement);
+                                break;
+                            }
                         }
                     }
                 }
@@ -55,7 +58,10 @@ public class ContentPolisher
                         String replacement = "<a href=\"https://baike.baidu.com/item/"
                             + word + "\">" + word + "</a>";
                         for(int i = 0; i < modified.length; i++) {
-                            modified[i] = modified[i].replaceFirst(word, replacement);
+                            if(modified[i].contains(word)) {
+                                modified[i] = modified[i].replaceFirst(word, replacement);
+                                break;
+                            }
                         }
                     }
                 }
@@ -68,7 +74,10 @@ public class ContentPolisher
                         String replacement = "<a href=\"https://baike.baidu.com/item/"
                             + word + "\">" + word + "</a>";
                         for(int i = 0; i < modified.length; i++) {
-                            modified[i] = modified[i].replaceFirst(word, replacement);
+                            if(modified[i].contains(word)) {
+                                modified[i] = modified[i].replaceFirst(word, replacement);
+                                break;
+                            }
                         }
                     }
                 }
