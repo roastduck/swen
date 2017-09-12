@@ -359,7 +359,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 mExternal.readOut(mNews.news_Content);
                 break;
             case R.id.bt_share:
-                mExternal.share(mNews);
+                mExternal.share(mNews, mUrls.get(0));
                 break;
         }
     }
