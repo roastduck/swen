@@ -8,6 +8,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.Html;
 import android.text.Layout;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -32,13 +33,14 @@ import java.util.logging.Handler;
 
 public class NewsContentActivity extends BaseActivity {
 
-    //TODO: update Behavior, grey the news item in parent list
+    //TODO: grey the news item in parent list
     private News mNews;
     public static final String ACTION_NAME = "com.swen.action.CONTENT";
     private int mTotalPicture = 0;
     private int mShownPicture = 0;
     private List<Bitmap> mBitmaps = new ArrayList<>();
     private List<ImageView> mImageViews = new ArrayList<>();
+    private List<TextView> mTextViews = new ArrayList<>();
     private LinearLayout mLinearLayout;
     private LinearLayout.LayoutParams mParam;
     private boolean mTried = false;
@@ -48,10 +50,17 @@ public class NewsContentActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if(msg.what == 0) {
                 showPicture();
+            } else if(msg.what == 1) {
+                Bundle bundle = msg.getData();
+                String[] texts = bundle.getStringArray("texts");
+                for(int i = 0; i < texts.length; i++) {
+                    mTextViews.get(i).setText(Html.fromHtml(texts[i]));
+                }
             }
             super.handleMessage(msg);
         }
     };
+    private List<Promise> mPromises = new ArrayList<>();
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
@@ -92,20 +101,20 @@ public class NewsContentActivity extends BaseActivity {
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         iv.setMaxWidth(screenWidth);
         iv.setMaxHeight(screenWidth * 5);
+        iv.setMinimumHeight(screenWidth / 2);
         mLinearLayout.addView(iv, mParam);
         mImageViews.add(iv);
     }
 
     protected synchronized void computeLayout() {
         //TODO:处理新闻中的无用信息，相关新闻等
-        ContentPolisher.addHref(mNews);
         String content = mNews.news_Content;
         String[] paragraph = content.split(" 　　");
         int paragraphCount = paragraph.length;
         mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
         if(mTotalPicture == 1) {
-            int pos = paragraphCount / 4;
+            int pos = paragraphCount / 5;
             for(int i = 0; i < pos; i++) {
                 String text = "　　" + paragraph[i] + "\n";
                 addTextView(text);
@@ -133,7 +142,6 @@ public class NewsContentActivity extends BaseActivity {
             }
         } else {
             int paragraphPerPicture = paragraphCount / mTotalPicture;
-            int paragraphsOfLastPicture = paragraphCount - paragraphPerPicture * (mTotalPicture - 1);
             int index = 0;
             for(int i = 0; i < mTotalPicture - 1; i++) {
                 addImageView();
@@ -149,6 +157,7 @@ public class NewsContentActivity extends BaseActivity {
                 addTextView(text);
             }
         }
+        ContentPolisher.addHref(mNews, mTextViews, mHandler);
     }
 
     protected void addTextView(String text) {
@@ -156,8 +165,18 @@ public class NewsContentActivity extends BaseActivity {
         textView.setVerticalScrollBarEnabled(true);
         textView.setScrollbarFadingEnabled(true);
         textView.setMovementMethod(ScrollingMovementMethod.getInstance());
-        textView.setText(Html.fromHtml(text));
+        textView.setMovementMethod(LinkMovementMethod.getInstance());
+        textView.setText(text);
         mLinearLayout.addView(textView, mParam);
+        mTextViews.add(textView);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(Promise p: mPromises) {
+            p.cancel();
+        }
     }
 
     @Override
@@ -184,6 +203,7 @@ public class NewsContentActivity extends BaseActivity {
             }
         };
         Promise news_promise = storage.getNewsCached(news_id);
+        mPromises.add(news_promise);
         news_promise.failUI(failCallback);
         news_promise.thenUI(new Callback<News, Object>() {
             @Override
@@ -191,19 +211,23 @@ public class NewsContentActivity extends BaseActivity {
                 //Toast.makeText(NewsContentActivity.this,
                 //    "新闻详情加载完毕", Toast.LENGTH_SHORT).show();
                 Log.e("NewsContentActivity", news.news_Content);
+                Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
+                ((ApplicationWithStorage)getApplication()).getBehavior().markHaveRead(mNews);
                 computeLayout();
                 return null;
             }
         });
         if(pictures.length == 0) {
             Promise outterPromise = News.searchPicture(news_title);
+            mPromises.add(outterPromise);
             outterPromise.then(new Callback<String, Object>() {
                 @Override
                 public Object run(String url) {
                     mTotalPicture = 1;
                     Promise innerPromise = ((ApplicationWithStorage)getApplication()).getStorage().
                         getPicCached(url);
+                    mPromises.add(innerPromise);
                     innerPromise.thenUI(new Callback<Bitmap, Object>() {
                         @Override
                         public Object run(Bitmap picture) {
@@ -222,6 +246,7 @@ public class NewsContentActivity extends BaseActivity {
             for(String url: pictures) {
                 Promise promise = ((ApplicationWithStorage)getApplication()).getStorage().
                     getPicCached(url);
+                mPromises.add(promise);
                 promise.thenUI(new Callback<Bitmap, Object>() {
                     @Override
                     public Object run(Bitmap picture) {

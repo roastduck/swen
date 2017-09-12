@@ -4,6 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import java.util.List;
 
+/** User behavior statistics
+ *  PLEASE DO NOT INSTANTIATE THIS CLASS, USE ((ApplicationWithStorage)getApplication()).getBehavior() INSTEAD
+ */
 public class Behavior
 {
     private Context context;
@@ -15,8 +18,7 @@ public class Behavior
      * A keyword means the preference of this keyword. Value is a float, 0 as default.
      */
 
-
-    public Behavior(Context context) {
+    Behavior(Context context) {
         this.context = context;
         sharedPreferences = context.getSharedPreferences("readingPreferences", Context.MODE_PRIVATE);
     }
@@ -26,12 +28,23 @@ public class Behavior
     }
 
     public void markHaveRead(News news) {
+        if(news.isAlreadyRead()) {
+            return;
+        }
         news.setAlreadyRead(true);
+        preferThisNews(news, 1);
+    }
+
+    public void like(News news) {
+        preferThisNews(news, 2);
+    }
+
+    public void preferThisNews(News news, int ratio) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         try {
             int category = news.getNewsClassTag().getId();
             int previousPref = sharedPreferences.getInt("CP_" + category, 1);
-            editor.putInt("CP_" + category, previousPref + 1);
+            editor.putInt("CP_" + category, previousPref + ratio);
             editor.apply();
         } catch (News.Category.InvalidCategoryException e) {
             //TODO: invalid category. Temporarily ignore it.
@@ -47,7 +60,7 @@ public class Behavior
             String word = wk.word;
             double prefUpdate = wk.score / maximumScore;
             double previousPref = sharedPreferences.getFloat(word, 0);
-            editor.putFloat(word, (float)(previousPref + prefUpdate));
+            editor.putFloat(word, (float)(previousPref + prefUpdate * ratio));
         }
         editor.apply();
     }

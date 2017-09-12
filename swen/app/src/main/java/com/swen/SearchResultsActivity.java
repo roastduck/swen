@@ -43,7 +43,7 @@ public class SearchResultsActivity extends BaseActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
-            AppendableNewsList list = new AppendableNewsList(30, query, null, false, new Behavior(this));
+            AppendableNewsList list = new AppendableNewsList(30, query, null, false, ((ApplicationWithStorage)getApplication()).getBehavior());
             ListView lv = (ListView)findViewById(R.id.search_list);
             SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
             lv.setAdapter(adapter);
