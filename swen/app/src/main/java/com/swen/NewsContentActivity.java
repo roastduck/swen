@@ -1,5 +1,7 @@
 package com.swen;
 
+import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.res.ObbInfo;
 import android.graphics.Bitmap;
@@ -11,10 +13,10 @@ import android.text.Layout;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.ViewGroup;
+import android.view.*;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -177,6 +179,17 @@ public class NewsContentActivity extends BaseActivity {
         for(Promise p: mPromises) {
             p.cancel();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.content_menu, menu);
+
+        android.view.MenuItem item = menu.findItem(R.id.item_like);
+
+        return true;
     }
 
     @Override
