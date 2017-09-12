@@ -39,6 +39,7 @@ public class NewsContentActivity extends BaseActivity {
     private int mShownPicture = 0;
     private List<Bitmap> mBitmaps = new ArrayList<>();
     private List<ImageView> mImageViews = new ArrayList<>();
+    private List<TextView> mTextViews = new ArrayList<>();
     private LinearLayout mLinearLayout;
     private LinearLayout.LayoutParams mParam;
     private boolean mTried = false;
@@ -48,6 +49,12 @@ public class NewsContentActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             if(msg.what == 0) {
                 showPicture();
+            } else if(msg.what == 1) {
+                Bundle bundle = msg.getData();
+                String[] texts = bundle.getStringArray("texts");
+                for(int i = 0; i < texts.length; i++) {
+                    mTextViews.get(i).setText(Html.fromHtml(texts[i]));
+                }
             }
             super.handleMessage(msg);
         }
@@ -100,7 +107,6 @@ public class NewsContentActivity extends BaseActivity {
 
     protected synchronized void computeLayout() {
         //TODO:处理新闻中的无用信息，相关新闻等
-        ContentPolisher.addHref(mNews);
         String content = mNews.news_Content;
         String[] paragraph = content.split(" 　　");
         int paragraphCount = paragraph.length;
@@ -150,6 +156,7 @@ public class NewsContentActivity extends BaseActivity {
                 addTextView(text);
             }
         }
+        ContentPolisher.addHref(mNews, mTextViews, mHandler);
     }
 
     protected void addTextView(String text) {
@@ -157,8 +164,9 @@ public class NewsContentActivity extends BaseActivity {
         textView.setVerticalScrollBarEnabled(true);
         textView.setScrollbarFadingEnabled(true);
         textView.setMovementMethod(ScrollingMovementMethod.getInstance());
-        textView.setText(Html.fromHtml(text));
+        textView.setText(text);
         mLinearLayout.addView(textView, mParam);
+        mTextViews.add(textView);
     }
 
     @Override
@@ -201,6 +209,7 @@ public class NewsContentActivity extends BaseActivity {
                 //Toast.makeText(NewsContentActivity.this,
                 //    "新闻详情加载完毕", Toast.LENGTH_SHORT).show();
                 Log.e("NewsContentActivity", news.news_Content);
+                Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
                 computeLayout();
                 return null;
