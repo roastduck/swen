@@ -187,6 +187,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         }
     }
 
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -201,8 +202,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         }
         return true;
     }
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -262,6 +261,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                     });
                 }
                 return true;
+            case 16908332:       // do not know what the corresponding 'R.id' but it works
+                finish();
+                return true;
             default:
                 return true;
         }
@@ -273,11 +275,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         LinearLayout layout = (LinearLayout) findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_content_page, null));
-
-        final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
-        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
-        toggle.syncState();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
         mShare = (FloatingActionButton)findViewById(R.id.bt_share);
@@ -368,8 +366,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_read:
-                mExternal.readyRead(mNews.news_Content);
-                mExternal.readOut();
+                mExternal.readOut(mNews.news_Content);
                 break;
             case R.id.bt_share:
                 mExternal.share(mNews);
