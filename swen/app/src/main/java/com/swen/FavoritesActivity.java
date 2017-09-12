@@ -1,5 +1,6 @@
 package com.swen;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.swen.promise.Callback;
 import com.yanzhenjie.recyclerview.swipe.*;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
@@ -20,6 +22,7 @@ public class FavoritesActivity extends BaseActivity
 {
     private SwipeMenuRecyclerView rv;
     private List<String> list;
+    private Storage storage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -30,10 +33,12 @@ public class FavoritesActivity extends BaseActivity
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_favorites, null));
 
+        storage = ((ApplicationWithStorage)getApplication()).getStorage();
+
         list = new Vector<>();
 
-        for (int i = 0; i <= 20; i++)
-            list.add(Integer.valueOf(i).toString());
+        list.add("20160913041301d5fc6a41214a149cd8a0581d3a014f");
+        list.add("2016091304131a39c78c43b047b6b64b7a13abc81305");
 
         FavoritesAdapter adapter = new FavoritesAdapter(list);
 
@@ -67,15 +72,36 @@ public class FavoritesActivity extends BaseActivity
             }
         };
 
+        SwipeItemClickListener itemClickListener = new SwipeItemClickListener()
+        {
+            @Override
+            public void onItemClick(View itemView, int position)
+            {
+                storage.getNewsCached(list.get(position)).thenUI(new Callback<News,Object>() {
+                    @Override
+                    public Object run(News news)
+                    {
+                        Intent intent = new Intent(FavoritesActivity.this, NewsContentActivity.class);
+                        intent.putExtra(getString(R.string.bundle_news_pictures), news.getNewsPictures().toArray(new String[0]));
+                        intent.putExtra(getString(R.string.bundle_news_id), news.news_ID);
+                        intent.putExtra(getString(R.string.bundle_news_title), news.news_Title);
+                        startActivity(intent);
+                        return null;
+                    }
+                });
+            }
+        };
+
         rv = (SwipeMenuRecyclerView)findViewById(R.id.fav_rv);
         rv.setLayoutManager(new LinearLayoutManager(this));
         rv.addItemDecoration(new DefaultItemDecoration(ContextCompat.getColor(this, R.color.divider_color)));
         rv.setAdapter(adapter);
         rv.setSwipeMenuCreator(swipeMenuCreator);
         rv.setSwipeMenuItemClickListener(menuItemClickListener);
+        rv.setSwipeItemClickListener(itemClickListener);
     }
 
-    private static class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder>
+    private class FavoritesAdapter extends RecyclerView.Adapter<FavoritesAdapter.ViewHolder>
     {
         private List<String> list;
 
@@ -102,7 +128,7 @@ public class FavoritesActivity extends BaseActivity
             holder.setData(list.get(position));
         }
 
-        public static class ViewHolder extends RecyclerView.ViewHolder
+        public class ViewHolder extends RecyclerView.ViewHolder
         {
             TextView tvTitle;
 
@@ -112,9 +138,17 @@ public class FavoritesActivity extends BaseActivity
                 tvTitle = (TextView) itemView.findViewById(R.id.fav_title);
             }
 
-            public void setData(String title)
+            public void setData(String id)
             {
-                this.tvTitle.setText(title);
+                storage.getNewsCached(id).thenUI(new Callback<News, Object>()
+                {
+                    @Override
+                    public Object run(News news) throws Exception
+                    {
+                        ViewHolder.this.tvTitle.setText(news.news_Title);
+                        return null;
+                    }
+                });
             }
         }
     }
