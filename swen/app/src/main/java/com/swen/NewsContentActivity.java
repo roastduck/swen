@@ -52,6 +52,7 @@ public class NewsContentActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+    private List<Promise> mPromises = new ArrayList<>();
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
@@ -92,6 +93,7 @@ public class NewsContentActivity extends BaseActivity {
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         iv.setMaxWidth(screenWidth);
         iv.setMaxHeight(screenWidth * 5);
+        iv.setMinimumHeight(screenWidth / 2);
         mLinearLayout.addView(iv, mParam);
         mImageViews.add(iv);
     }
@@ -105,7 +107,7 @@ public class NewsContentActivity extends BaseActivity {
         mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
         if(mTotalPicture == 1) {
-            int pos = paragraphCount / 4;
+            int pos = paragraphCount / 5;
             for(int i = 0; i < pos; i++) {
                 String text = "　　" + paragraph[i] + "\n";
                 addTextView(text);
@@ -133,7 +135,6 @@ public class NewsContentActivity extends BaseActivity {
             }
         } else {
             int paragraphPerPicture = paragraphCount / mTotalPicture;
-            int paragraphsOfLastPicture = paragraphCount - paragraphPerPicture * (mTotalPicture - 1);
             int index = 0;
             for(int i = 0; i < mTotalPicture - 1; i++) {
                 addImageView();
@@ -161,6 +162,14 @@ public class NewsContentActivity extends BaseActivity {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        for(Promise p: mPromises) {
+            p.cancel();
+        }
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
         LinearLayout layout = (LinearLayout) findViewById(R.id.content_main);
@@ -184,6 +193,7 @@ public class NewsContentActivity extends BaseActivity {
             }
         };
         Promise news_promise = storage.getNewsCached(news_id);
+        mPromises.add(news_promise);
         news_promise.failUI(failCallback);
         news_promise.thenUI(new Callback<News, Object>() {
             @Override
@@ -198,12 +208,14 @@ public class NewsContentActivity extends BaseActivity {
         });
         if(pictures.length == 0) {
             Promise outterPromise = News.searchPicture(news_title);
+            mPromises.add(outterPromise);
             outterPromise.then(new Callback<String, Object>() {
                 @Override
                 public Object run(String url) {
                     mTotalPicture = 1;
                     Promise innerPromise = ((ApplicationWithStorage)getApplication()).getStorage().
                         getPicCached(url);
+                    mPromises.add(innerPromise);
                     innerPromise.thenUI(new Callback<Bitmap, Object>() {
                         @Override
                         public Object run(Bitmap picture) {
@@ -222,6 +234,7 @@ public class NewsContentActivity extends BaseActivity {
             for(String url: pictures) {
                 Promise promise = ((ApplicationWithStorage)getApplication()).getStorage().
                     getPicCached(url);
+                mPromises.add(promise);
                 promise.thenUI(new Callback<Bitmap, Object>() {
                     @Override
                     public Object run(Bitmap picture) {
