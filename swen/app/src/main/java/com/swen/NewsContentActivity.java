@@ -33,7 +33,7 @@ import java.util.logging.Handler;
 
 public class NewsContentActivity extends BaseActivity {
 
-    //TODO: update Behavior, grey the news item in parent list
+    //TODO: grey the news item in parent list
     private News mNews;
     public static final String ACTION_NAME = "com.swen.action.CONTENT";
     private int mTotalPicture = 0;
@@ -213,6 +213,7 @@ public class NewsContentActivity extends BaseActivity {
                 Log.e("NewsContentActivity", news.news_Content);
                 Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
+                Behavior.getInstance(NewsContentActivity.this).markHaveRead(mNews);
                 computeLayout();
                 return null;
             }
