@@ -171,12 +171,10 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 showPicture(mData.get(position).rightNews, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
-                /*
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
                     mData.get(position).news, position);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
                     mData.get(position).rightNews, position);
-                    */
                 break;
             case 4:
                 showPicture(mData.get(position).news, holder.imageView,
