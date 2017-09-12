@@ -76,6 +76,21 @@ public class BaseActivity extends AppCompatActivity {
         lv.setOnItemClickListener(onItemClickListener);
     }
 
+    private void onSwitchChange(boolean isChecked, int position)
+    {
+        switch (position)
+        {
+            case 2:
+                TransientSetting.setNoImage(isChecked);
+                break;
+            case 3:
+                TransientSetting.setNightMode(isChecked);
+                break;
+            default:
+                throw new RuntimeException(); // impossible
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
@@ -112,7 +127,7 @@ public class BaseActivity extends AppCompatActivity {
         }
     }
 
-    private static class MenuItemAdapter extends BaseAdapter
+    private class MenuItemAdapter extends BaseAdapter
     {
         private List<MenuItem> data;
         private Context context;
@@ -151,6 +166,15 @@ public class BaseActivity extends AppCompatActivity {
             SwitchCompat sc = (SwitchCompat)convertView.findViewById(R.id.menu_item_switch);
             convertView.setBackgroundColor(context.getResources().getColor(R.color.transparent));
 
+            CompoundButton.OnCheckedChangeListener onCheckedChangeListener = new CompoundButton.OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked)
+                {
+                    onSwitchChange(isChecked, position);
+                }
+            };
+
             if (item.itemType != MenuItem.ItemType.Nothing) {
                 tv.setText(item.text);
             }
@@ -173,11 +197,13 @@ public class BaseActivity extends AppCompatActivity {
                 case TextWithSwitch:
                     iv.setVisibility(View.GONE);
                     sc.setVisibility(View.VISIBLE);
+                    sc.setOnCheckedChangeListener(onCheckedChangeListener);
                     break;
                 case TextWithIconSwitch:
                     iv.setImageResource(item.icon);
                     iv.setVisibility(View.VISIBLE);
                     sc.setVisibility(View.VISIBLE);
+                    sc.setOnCheckedChangeListener(onCheckedChangeListener);
                     break;
             }
             return convertView;
