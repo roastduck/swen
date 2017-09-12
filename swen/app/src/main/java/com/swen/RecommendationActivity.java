@@ -11,7 +11,7 @@ public class RecommendationActivity extends NewsListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mAppendableList = new AppendableNewsList(50, null, null, true, new Behavior(this));
+        mAppendableList = new AppendableNewsList(50, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
         initialize();
     }
 }
