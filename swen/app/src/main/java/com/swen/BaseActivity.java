@@ -89,6 +89,8 @@ public class BaseActivity extends AppCompatActivity {
         {
             case 2:
                 TransientSetting.setNoImage(isChecked);
+                finish(); // refresh activity
+                startActivity(getIntent());
                 break;
             case 3:
                 TransientSetting.setNightMode(isChecked);
