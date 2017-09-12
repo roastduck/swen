@@ -24,7 +24,6 @@ public class External
         this.readThread = null;
         this.shouldStopReading = false;
         this.lock = new Object();
-        //ShareSDK.initSDK(context);
     }
 
     public void share(News news) {
