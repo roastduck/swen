@@ -23,7 +23,15 @@ public class SearchResultsActivity extends BaseActivity {
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_search, null));
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         handleIntent(getIntent());
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 
     @Override

@@ -25,8 +25,6 @@ public class BaseActivity extends AppCompatActivity {
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
-        toggle.syncState();
 
         List<MenuItem> list = new ArrayList<>();
         list.add(new MenuItem(R.string.category_mgmt, R.drawable.category_management, MenuItem.ItemType.TextWithIcon));
