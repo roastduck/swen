@@ -1,14 +1,7 @@
 package com.swen;
 
-import android.content.Intent;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -16,7 +9,6 @@ import android.widget.Toast;
 import com.swen.promise.*;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 
-import java.util.List;
 import java.util.Random;
 
 public abstract class NewsListActivity extends BaseActivity {
@@ -29,11 +21,6 @@ public abstract class NewsListActivity extends BaseActivity {
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_list_page, null));
-
-        final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
-        final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
-        final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.menu_open, R.string.menu_close);
-        toggle.syncState();
 
         mView = (SwipeMenuRecyclerView) findViewById(R.id.rv_main);
         //Toast.makeText(this, "正在加载新闻列表", Toast.LENGTH_LONG).show();

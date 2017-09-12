@@ -38,6 +38,7 @@ public class CategoryFilterActivity extends BaseActivity
         layout.addView(inflater.inflate(R.layout.activity_category_filter, null));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.category_filter_title);
 
         CategorySetting categorySetting = ((ApplicationWithStorage)getApplication()).getCategorySetting();
         list = CategorySelect.fromCategoryList(categorySetting.getCategories());

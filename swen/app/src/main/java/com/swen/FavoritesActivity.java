@@ -37,6 +37,7 @@ public class FavoritesActivity extends BaseActivity
         layout.addView(inflater.inflate(R.layout.activity_favorites, null));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(R.string.my_favorites);
 
         storage = ((ApplicationWithStorage)getApplication()).getStorage();
 
