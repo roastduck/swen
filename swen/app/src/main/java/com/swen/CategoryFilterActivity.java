@@ -168,11 +168,15 @@ public class CategoryFilterActivity extends BaseActivity
                 this.tvTitle.setText(category.category.getStr());
                 if (category.enabled)
                 {
-                    this.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.font_enabled));
+                    this.tvTitle.setTextColor(ContextCompat.getColor(context,
+                            TransientSetting.isNightMode() ? R.color.font_disabled : R.color.font_enabled)
+                    );
                     this.tvTitle.getPaint().setFlags(0);
                 } else
                 {
-                    this.tvTitle.setTextColor(ContextCompat.getColor(context, R.color.font_disabled));
+                    this.tvTitle.setTextColor(ContextCompat.getColor(context,
+                            TransientSetting.isNightMode() ? R.color.font_enabled : R.color.font_disabled)
+                    );
                     this.tvTitle.getPaint().setFlags(Paint.STRIKE_THRU_TEXT_FLAG);
                 }
                 this.icon.setImageResource(category.category.getIcon());
