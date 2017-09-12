@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.swen.promise.Callback;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -151,24 +153,30 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 1:
                 showPicture(mData.get(position).news, holder.imageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro.replace("\\s+", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 2:
                 showPicture(mData.get(position).news, holder.imageView);
+                /*
                 holder.textView.setText(Html.fromHtml("<strong>" + mData.get(position).news.news_Title +
                     "</strong><br/><br/>" + mData.get(position).news.news_Intro
                     .replace(" ", "").replace("　", "")));
+                */
+                holder.textView.setText(mData.get(position).news.news_Title);
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 3:
                 showPicture(mData.get(position).news, holder.imageView);
                 showPicture(mData.get(position).rightNews, holder.imageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                holder.textViewRight.setText(mData.get(position).rightNews.news_Title);
+                holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
+                /*
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
                     mData.get(position).news, position);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
                     mData.get(position).rightNews, position);
+                    */
                 break;
             case 4:
                 showPicture(mData.get(position).news, holder.imageView,
@@ -189,7 +197,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         final int style;
         final View itemView;
         private TextView textView;
-        private TextView textViewRight;
+        private TextView textViewAnother;
         private ImageView imageView;
         private ImageView imageViewMid;
         private ImageView imageViewRight;
@@ -206,6 +214,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             switch (style) {
                 case 1:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro1);
+                    textViewAnother = (TextView)itemView.findViewById(R.id.tv_intro1_1);
                     imageView = (ImageView) itemView.findViewById(R.id.iv_intro1);
                     break;
                 case 2:
@@ -215,7 +224,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 case 3:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro3_left);
                     imageView = (ImageView) itemView.findViewById(R.id.iv_intro3_left);
-                    textViewRight = (TextView) itemView.findViewById(R.id.tv_intro3_right);
+                    textViewAnother = (TextView) itemView.findViewById(R.id.tv_intro3_right);
                     imageViewRight = (ImageView) itemView.findViewById(R.id.iv_intro3_right);
                     break;
                 case 4:
