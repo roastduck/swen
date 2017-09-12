@@ -69,6 +69,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private FloatingActionButton mShare;
     private FloatingActionButton mRead;
     private List<Promise> mPromises = new ArrayList<>();
+    private Thread mThread;
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
@@ -165,7 +166,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 addTextView(text);
             }
         }
-        ContentPolisher.addHref(mNews, mTextViews, mHandler);
+        mThread = ContentPolisher.addHref(mNews, mTextViews, mHandler);
     }
 
     protected void addTextView(String text) {
@@ -184,6 +185,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         super.onDestroy();
         for(Promise p: mPromises) {
             p.cancel();
+        }
+        if(mThread != null) {
+            mThread.interrupt();
         }
     }
 
@@ -216,6 +220,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                     Promise promise = ((ApplicationWithStorage)getApplication())
                         .getStorage().unmark(mNews.news_ID);
                     mLike.setEnabled(false);
+                    mPromises.add(promise);
                     promise.failUI(new Callback() {
                         @Override
                         public Object run(Object result) throws Exception {
@@ -240,6 +245,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                     Promise promise = ((ApplicationWithStorage)getApplication())
                         .getStorage().mark(mNews.news_ID);
                     mLike.setEnabled(false);
+                    mPromises.add(promise);
                     promise.failUI(new Callback() {
                         @Override
                         public Object run(Object result) throws Exception {
