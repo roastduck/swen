@@ -18,7 +18,7 @@ public class External
 
     public External(final Context context) {
         this.context = context;
-        ShareSDK.initSDK(context);
+        //ShareSDK.initSDK(context);
     }
 
     public void share(News news) {
@@ -59,7 +59,11 @@ public class External
     @Override
     public void finalize() throws Throwable {
         super.finalize();
-        thread.interrupt();
-        player.release();
+        if(thread != null) {
+            thread.interrupt();
+        }
+        if(player != null) {
+            player.release();
+        }
     }
 }

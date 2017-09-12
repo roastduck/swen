@@ -1,26 +1,24 @@
 package com.swen;
 
-import android.app.SearchManager;
-import android.content.ComponentName;
-import android.content.Intent;
-import android.content.res.ObbInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.Looper;
 import android.os.Message;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
-import android.text.Layout;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,13 +29,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
 
 /**
  * Created by Teon on 2017/9/11.
  */
 
-public class NewsContentActivity extends BaseActivity {
+public class NewsContentActivity extends BaseActivity implements View.OnClickListener{
 
     //TODO: grey the news item in parent list
     private News mNews = null;
@@ -53,6 +50,7 @@ public class NewsContentActivity extends BaseActivity {
     private boolean mTried = false;
     private Timer mTimer = new Timer();
     private boolean mMarked = false;
+    private External mExternal = new External(this);
     private android.os.Handler mHandler = new android.os.Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -68,6 +66,8 @@ public class NewsContentActivity extends BaseActivity {
             super.handleMessage(msg);
         }
     };
+    private FloatingActionButton mShare;
+    private FloatingActionButton mRead;
     private List<Promise> mPromises = new ArrayList<>();
 
     /* 加载过程：
@@ -202,6 +202,8 @@ public class NewsContentActivity extends BaseActivity {
         return true;
     }
 
+
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -278,6 +280,13 @@ public class NewsContentActivity extends BaseActivity {
         toggle.syncState();
 
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
+        mShare = (FloatingActionButton)findViewById(R.id.bt_share);
+        mRead = (FloatingActionButton)findViewById(R.id.bt_read);
+        mShare.setEnabled(false);
+        mRead.setEnabled(false);
+        mShare.setOnClickListener(this);
+        mRead.setOnClickListener(this);
+
         Bundle bundle = getIntent().getExtras();
         String[] pictures = bundle.getStringArray(getString(R.string.bundle_news_pictures));
         String news_id = bundle.getString(getString(R.string.bundle_news_id));
@@ -296,6 +305,7 @@ public class NewsContentActivity extends BaseActivity {
         };
         Promise news_promise = storage.getNewsCached(news_id);
         mPromises.add(news_promise);
+
         news_promise.failUI(failCallback);
         news_promise.thenUI(new Callback<News, Object>() {
             @Override
@@ -305,6 +315,8 @@ public class NewsContentActivity extends BaseActivity {
                 Log.e("NewsContentActivity", news.news_Content);
                 Log.e("NewsContentActivity", news.news_Author);
                 mNews = news;
+                mShare.setEnabled(true);
+                mRead.setEnabled(true);
                 ((ApplicationWithStorage)getApplication()).getBehavior().markHaveRead(mNews);
                 computeLayout();
                 return null;
@@ -352,4 +364,16 @@ public class NewsContentActivity extends BaseActivity {
         }
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_read:
+                mExternal.readyRead(mNews.news_Content);
+                mExternal.readOut();
+                break;
+            case R.id.bt_share:
+                mExternal.share(mNews);
+                break;
+        }
+    }
 }
