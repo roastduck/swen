@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.yanzhenjie.recyclerview.swipe.SwipeItemClickListener;
 import com.yanzhenjie.recyclerview.swipe.SwipeMenuRecyclerView;
 import com.yanzhenjie.recyclerview.swipe.touch.OnItemMoveListener;
@@ -77,6 +78,8 @@ public class CategoryFilterActivity extends BaseActivity
         rv.setLongPressDragEnabled(true);
         rv.setOnItemMoveListener(itemMoveListener);
         rv.setSwipeItemClickListener(itemClickListener);
+
+        Toast.makeText(this, R.string.cat_guide, Toast.LENGTH_LONG).show();
     }
 
     @Override

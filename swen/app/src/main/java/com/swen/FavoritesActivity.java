@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +17,7 @@ import com.swen.promise.Callback;
 import com.yanzhenjie.recyclerview.swipe.*;
 import com.yanzhenjie.recyclerview.swipe.widget.DefaultItemDecoration;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Vector;
 
@@ -106,6 +108,7 @@ public class FavoritesActivity extends BaseActivity
         rv.setSwipeMenuItemClickListener(menuItemClickListener);
         rv.setSwipeItemClickListener(itemClickListener);
 
+        Toast.makeText(this, R.string.fav_guide, Toast.LENGTH_LONG).show();
         if (list.isEmpty())
             Toast.makeText(this, R.string.no_favorite_prompt, Toast.LENGTH_LONG).show();
     }
@@ -160,7 +163,12 @@ public class FavoritesActivity extends BaseActivity
                     @Override
                     public Object run(News news) throws Exception
                     {
-                        ViewHolder.this.tvTitle.setText(news.news_Title);
+                        ViewHolder.this.tvTitle.setText(Html.fromHtml(
+                                news.news_Title
+                                        + "<small><font color='gray'>"
+                                        + new SimpleDateFormat("yyyy-MM-dd").format(news.getNewsTime().getTime())
+                                        + "</font></small>")
+                        );
                         return null;
                     }
                 });
