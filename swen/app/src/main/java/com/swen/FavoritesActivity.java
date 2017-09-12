@@ -105,6 +105,9 @@ public class FavoritesActivity extends BaseActivity
         rv.setSwipeMenuCreator(swipeMenuCreator);
         rv.setSwipeMenuItemClickListener(menuItemClickListener);
         rv.setSwipeItemClickListener(itemClickListener);
+
+        if (list.isEmpty())
+            Toast.makeText(this, R.string.no_favorite_prompt, Toast.LENGTH_LONG).show();
     }
 
     @Override

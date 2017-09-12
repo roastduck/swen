@@ -47,4 +47,6 @@
     <string name="cat_guide"><i>长按以拖动分类改变顺序，或轻触以删除</i></string>
     <string name="fav_guide"><i>轻触以进入，或滑动以删除</i></string>
 
+    <string name="no_favorite_prompt">您还没有添加收藏，阅览新闻时轻触右上角五角星即可添加</string>
+
 </resources>
