@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -88,17 +87,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         }
     }
 
-    public void showPictureByUrl(String url, ImageView iv, Storage storage) {
-        storage.getPicCached(url).thenUI(new Callback<Bitmap, Object>() {
-            @Override
-            public Object run(Bitmap picture) {
-                iv.setImageBitmap(picture);
-                return null;
-            }
-        });
-    }
-
-    public void showPicture(News news, ImageView iv) {
+    public void showPicture(News news, LoadingImageView iv) {
         Activity activity = (Activity) mContext;
         Storage storage = ((ApplicationWithStorage) activity.getApplication())
             .getStorage();
@@ -108,22 +97,22 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     @Override
                     public Object run(String url) {
                         news.setNews_Pictures(url);
-                        showPictureByUrl(url, iv, storage);
+                        iv.showPictureByUrl(url, storage);
                         return null;
                     }
                 });
         } else {
-            showPictureByUrl(news.getNewsPictures().get(0), iv, storage);
+            iv.showPictureByUrl(news.getNewsPictures().get(0), storage);
         }
     }
 
-    public void showPicture(News news, ImageView iv, ImageView ivmid, ImageView ivright) {
+    public void showPicture(News news, LoadingImageView iv, LoadingImageView ivmid, LoadingImageView ivright) {
         Activity activity = (Activity) mContext;
         Storage storage = ((ApplicationWithStorage) activity.getApplication())
             .getStorage();
-        showPictureByUrl(news.getNewsPictures().get(0), iv, storage);
-        showPictureByUrl(news.getNewsPictures().get(1), ivmid, storage);
-        showPictureByUrl(news.getNewsPictures().get(2), ivright, storage);
+        iv.showPictureByUrl(news.getNewsPictures().get(0), storage);
+        iv.showPictureByUrl(news.getNewsPictures().get(1), storage);
+        iv.showPictureByUrl(news.getNewsPictures().get(2), storage);
     }
 
     public void setOnClickListener(View itemView, News news, int position) {
@@ -151,13 +140,13 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
     public void onBindViewHolder(NLViewHolder holder, int position) {
         switch (holder.style) {
             case 1:
-                showPicture(mData.get(position).news, holder.imageView);
+                showPicture(mData.get(position).news, holder.loadingImageView);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro.replace("\\s+", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 2:
-                showPicture(mData.get(position).news, holder.imageView);
+                showPicture(mData.get(position).news, holder.loadingImageView);
                 /*
                 holder.textView.setText(Html.fromHtml("<strong>" + mData.get(position).news.news_Title +
                     "</strong><br/><br/>" + mData.get(position).news.news_Intro
@@ -167,20 +156,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
             case 3:
-                showPicture(mData.get(position).news, holder.imageView);
-                showPicture(mData.get(position).rightNews, holder.imageViewRight);
+                showPicture(mData.get(position).news, holder.loadingImageView);
+                showPicture(mData.get(position).rightNews, holder.loadingImageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
-                /*
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
                     mData.get(position).news, position);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
                     mData.get(position).rightNews, position);
-                    */
                 break;
             case 4:
-                showPicture(mData.get(position).news, holder.imageView,
-                    holder.imageViewMid, holder.imageViewRight);
+                showPicture(mData.get(position).news, holder.loadingImageView,
+                    holder.loadingImageViewMid, holder.loadingImageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
                 setOnClickListener(holder.itemView, mData.get(position).news, position);
                 break;
@@ -198,9 +185,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         final View itemView;
         private TextView textView;
         private TextView textViewAnother;
-        private ImageView imageView;
-        private ImageView imageViewMid;
-        private ImageView imageViewRight;
+        private LoadingImageView loadingImageView;
+        private LoadingImageView loadingImageViewMid;
+        private LoadingImageView loadingImageViewRight;
 
         //TODO:添加左滑不感兴趣
 
@@ -215,24 +202,24 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 case 1:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro1);
                     textViewAnother = (TextView)itemView.findViewById(R.id.tv_intro1_1);
-                    imageView = (ImageView) itemView.findViewById(R.id.iv_intro1);
+                    loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro1);
                     break;
                 case 2:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro2);
-                    imageView = (ImageView) itemView.findViewById(R.id.iv_intro2);
+                    loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro2);
                     break;
                 case 3:
                     textView = (TextView) itemView.findViewById(R.id.tv_intro3_left);
-                    imageView = (ImageView) itemView.findViewById(R.id.iv_intro3_left);
+                    loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro3_left);
                     textViewAnother = (TextView) itemView.findViewById(R.id.tv_intro3_right);
-                    imageViewRight = (ImageView) itemView.findViewById(R.id.iv_intro3_right);
+                    loadingImageViewRight = (LoadingImageView) itemView.findViewById(R.id.iv_intro3_right);
                     break;
                 case 4:
                     //TODO:若有时间，可改成不限图片数量的左右滑动ListView
                     textView = (TextView) itemView.findViewById(R.id.tv_intro4);
-                    imageView = (ImageView) itemView.findViewById(R.id.iv_intro_4_left);
-                    imageViewMid = (ImageView) itemView.findViewById(R.id.iv_intro_4_middle);
-                    imageViewRight = (ImageView) itemView.findViewById(R.id.iv_intro_4_right);
+                    loadingImageView = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_left);
+                    loadingImageViewMid = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_middle);
+                    loadingImageViewRight = (LoadingImageView) itemView.findViewById(R.id.iv_intro_4_right);
                     break;
                 default:
                     throw new InvalidItemStyleException();

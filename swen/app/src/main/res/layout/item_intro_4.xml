@@ -18,6 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="111dp"
             android:orientation="horizontal">
+            <!--
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -26,6 +27,16 @@
                 android:layout_marginRight="1dp"
                 android:layout_marginEnd="1dp"
                 android:scaleType="centerCrop" />
+            -->
+            <com.swen.LoadingImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/iv_intro_4_left"
+                android:layout_marginRight="1dp"
+                android:layout_marginEnd="1dp" />
+
+            <!--
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -36,6 +47,18 @@
                 android:layout_marginRight="1dp"
                 android:layout_marginEnd="1dp"
                 android:scaleType="centerCrop" />
+            -->
+            <com.swen.LoadingImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/iv_intro_4_middle"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp"
+                android:layout_marginRight="1dp"
+                android:layout_marginEnd="1dp" />
+
+            <!--
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -44,6 +67,14 @@
                 android:layout_marginLeft="1dp"
                 android:layout_marginStart="1dp"
                 android:scaleType="centerCrop" />
+            -->
+            <com.swen.LoadingImageView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/iv_intro_4_right"
+                android:layout_marginLeft="1dp"
+                android:layout_marginStart="1dp" />
         </LinearLayout>
 
         <TextView
