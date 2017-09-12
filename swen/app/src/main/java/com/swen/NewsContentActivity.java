@@ -263,7 +263,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.news_content_page, null));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
         mShare = (FloatingActionButton) findViewById(R.id.bt_share);
         mRead = (FloatingActionButton) findViewById(R.id.bt_read);
@@ -277,7 +277,20 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         String news_id = bundle.getString(getString(R.string.bundle_news_id));
         String news_title = bundle.getString(getString(R.string.bundle_news_title));
 
-        mMarked = ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
+        new Promise<Object, Boolean>(new Callback<Object, Boolean>() {
+            @Override
+            public Boolean run(Object o) {
+                return ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
+            }
+        }, null).then(new Callback<Boolean, Object>() {
+            @Override
+            public Object run(Boolean b) {
+                mMarked = b;      // TODO: not sure to be finished before onCreateOptionsMenu()
+                return new Object();
+            }
+        });
+        //mMarked = ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
+
         ((TextView) findViewById(R.id.tv_content_title)).setText(news_title);
         Storage storage = ((ApplicationWithStorage) getApplication()).getStorage();
         mFailCallback = new Callback<Exception, Object>() {
