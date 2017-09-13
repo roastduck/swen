@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -34,6 +36,16 @@ public class BaseActivity extends AppCompatActivity {
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    protected boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager =
+            (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null) {
+            return networkInfo.isAvailable();
+        }
+        return false;
     }
 
     @Override
