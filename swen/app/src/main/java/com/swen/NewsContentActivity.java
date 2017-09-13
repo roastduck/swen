@@ -59,6 +59,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private List<Promise> mPromises;
     private Thread mThread;
     private Callback mFailCallback;
+    private LinearLayout mRootLayout;
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
@@ -256,12 +257,19 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         return true;
     }
 
+    protected void updateUI() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstance) {
         super.onCreate(savedInstance);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.content_main);
+        if(isNetworkConnected()) {
+            updateUI();
+        }
+        mRootLayout = (LinearLayout) findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
-        layout.addView(inflater.inflate(R.layout.news_content_page, null));
+        mRootLayout.addView(inflater.inflate(R.layout.news_content_page, null));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
