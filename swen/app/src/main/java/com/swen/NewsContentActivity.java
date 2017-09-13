@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.swen.promise.Callback;
 import com.swen.promise.Promise;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -91,6 +92,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
 
     protected synchronized void computeLayout() {
         //TODO:处理新闻中的无用信息，相关新闻等
+        String header = "<ul><li><i><font color='gray'>作者："
+                + mNews.news_Author
+                + "</font></i></li>"
+                + "<li><i><font color='gray'>日期："
+                + new SimpleDateFormat("yyyy-MM-dd").format(mNews.getNewsTime().getTime())
+                + "</font></i></li></ul>";
+        ((TextView) findViewById(R.id.after_title)).setText(Html.fromHtml(header));
         String content = mNews.news_Content;
         String[] paragraph = content.split(" 　　");
         int paragraphCount = paragraph.length;
@@ -319,10 +327,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         Callback<News,Object> computeLayoutCallback = new Callback<News,Object>() {
             @Override
             public Object run(News news) {
-                //Toast.makeText(NewsContentActivity.this,
-                //    "新闻详情加载完毕", Toast.LENGTH_SHORT).show();
-                Log.e("NewsContentActivity", news.news_Content);
-                Log.e("NewsContentActivity", news.news_Author); // TODO:把作者显示出来
                 mNews = news;
                 mShare.setEnabled(true);
                 mRead.setEnabled(true);

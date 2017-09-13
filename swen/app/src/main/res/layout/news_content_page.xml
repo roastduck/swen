@@ -27,16 +27,20 @@
                 android:layout_height="wrap_content"
                 android:id="@+id/ll_content"
                 android:orientation="vertical">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/tv_content_title"
-                android:gravity="start"
-                android:textStyle="bold"
-                android:textSize="32sp"
-                android:textColor="@color/text_title"
-                android:lineSpacingExtra="2dp"
-                android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/tv_content_title"
+                    android:gravity="start"
+                    android:textStyle="bold"
+                    android:textSize="32sp"
+                    android:textColor="@color/text_title"
+                    android:lineSpacingExtra="2dp"
+                    android:layout_marginBottom="16dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/after_title"/>
             </LinearLayout>
 
         </ScrollView>
