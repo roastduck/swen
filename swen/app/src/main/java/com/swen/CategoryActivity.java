@@ -20,7 +20,8 @@ public class CategoryActivity extends NewsListActivity {
         {
             News.Category category = News.Category.fromId(categoryId);
             getSupportActionBar().setTitle(category.getStr());
-            mAppendableList = new AppendableNewsList(50, null, category);
+            mAppendableList = new AppendableNewsList(15, null, category);
+            mAppendableList.setKeywordFilter(((ApplicationWithStorage)getApplication()).getKeywordFilter());
             initialize();
         } catch (IndexOutOfBoundsException ignored)
         {

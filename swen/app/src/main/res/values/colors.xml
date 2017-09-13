@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#71969f</color>
+    <color name="colorPrimaryDark">#004979</color>
+    <color name="colorAccent">#96beb2</color>
+
+    <color name="background_dark">#282828</color>
+    <color name="foreground_dark">#343434</color>
+
+    <color name="background_gray">#e0e0e0</color>
+    <color name="text_gray">#808A87</color>
+    <color name="text_intro">#666666</color>
+    <color name="title_night">#c0c0c0</color>
+    <color name="text_title">#20242e</color>
+    <color name="intro_night">#778089</color>
 
     <color name="purple_normal">#9932CC</color>
     <color name="purple_pressed">#9F79EE</color>
@@ -11,8 +21,8 @@
     <color name="font_enabled">#423732</color>
     <color name="font_disabled">#91a3b0</color>
 
-    <color name="menu_item_light">#fffaf0</color>
-    <color name="menu_item_dark">#423732</color>
+    <color name="menu_item_light">#e0e0e0</color>
+    <color name="menu_item_dark">#343434</color>
 
     <color name="transparent">#00000000</color>
 </resources>

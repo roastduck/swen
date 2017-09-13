@@ -28,6 +28,10 @@ public class CategoryFilterActivity extends BaseActivity
     private SwipeMenuRecyclerView rv;
     private List<CategorySelect> list;
 
+    protected void toNightMode() {
+
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

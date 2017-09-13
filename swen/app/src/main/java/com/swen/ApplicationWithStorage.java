@@ -7,6 +7,7 @@ public class ApplicationWithStorage extends Application
     private Storage mStorage;
     private CategorySetting mCategorySetting;
     private Behavior mBehavior;
+    private KeywordFilter mKeywordFilter;
 
     @Override
     public void onCreate()
@@ -15,6 +16,7 @@ public class ApplicationWithStorage extends Application
         mStorage = new Storage(this);
         mCategorySetting = new CategorySetting(this);
         mBehavior = new Behavior(this);
+        mKeywordFilter = new KeywordFilter(this);
     }
 
     public Storage getStorage() { return mStorage; }
@@ -22,4 +24,6 @@ public class ApplicationWithStorage extends Application
     public CategorySetting getCategorySetting() { return mCategorySetting; }
 
     public Behavior getBehavior() { return mBehavior; }
+
+    public KeywordFilter getKeywordFilter() { return mKeywordFilter; }
 }

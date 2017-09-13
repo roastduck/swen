@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSON;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Locale;
 import java.util.Scanner;
 
@@ -74,6 +75,9 @@ class StreamFactory
 {
     InputStream fromUrl(String url) throws IOException // Mockito doesn't mock static methods
     {
-        return new URL(url).openStream();
+        URLConnection conn = new URL(url).openConnection();
+        conn.setConnectTimeout(500);
+        conn.setReadTimeout(1000);
+        return conn.getInputStream();
     }
 }

@@ -2,6 +2,7 @@ package com.swen;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import com.swen.promise.Callback;
 import com.swen.promise.Promise;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +40,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private List<LoadingImageView> mImageViews;
     private List<TextView> mTextViews;
     private LinearLayout mLinearLayout;
-    private LinearLayout.LayoutParams mParam;
     private MenuItem mLike;
     private boolean mMarked = false;
     private External mExternal = new External(this);
@@ -48,7 +50,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 Bundle bundle = msg.getData();
                 String[] texts = bundle.getStringArray("texts");
                 for (int i = 0; i < texts.length; i++) {
-                    mTextViews.get(i).setText(Html.fromHtml(texts[i]));
+                    mTextViews.get(i).setText(Html.fromHtml(texts[i] + "<br/>"));
                 }
             }
             super.handleMessage(msg);
@@ -59,12 +61,17 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private List<Promise> mPromises;
     private Thread mThread;
     private Callback mFailCallback;
+    private LinearLayout mRootLayout;
+    private int mTotalPictures;
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
      */
 
     protected void addImageView(String url) {
+        FrameLayout spacing = new FrameLayout(this);
+        spacing.setMinimumHeight(12);
+        mLinearLayout.addView(spacing);
         LoadingImageView iv = new LoadingImageView(this);
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         iv.getImageView().setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -72,71 +79,80 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         iv.getImageView().setMaxHeight(screenWidth * 5);
         iv.getImageView().setMinimumHeight(screenWidth / 2);
         iv.getImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
-        mParam.setMargins(1, 4, 1, 4);
-        mLinearLayout.addView(iv, mParam);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        param.setMargins(1, 8, 1, 8);
+        mLinearLayout.addView(iv, param);
         mImageViews.add(iv);
         mPromises.add(iv.showPictureByUrl(url,
             ((ApplicationWithStorage) getApplication()).getStorage(), mFailCallback));
-
+        FrameLayout spacing2 = new FrameLayout(this);
+        spacing2.setMinimumHeight(12);
+        mLinearLayout.addView(spacing2);
     }
 
     protected synchronized void computeLayout() {
         //TODO:处理新闻中的无用信息，相关新闻等
+        String header = "<ul><li><i><font color='gray'>作者："
+                + mNews.news_Author
+                + "</font></i></li>"
+                + "<li><i><font color='gray'>日期："
+                + new SimpleDateFormat("yyyy-MM-dd").format(mNews.getNewsTime().getTime())
+                + "</font></i></li></ul>";
+        ((TextView) findViewById(R.id.after_title)).setText(Html.fromHtml(header));
         String content = mNews.news_Content;
         String[] paragraph = content.split(" 　　");
         int paragraphCount = paragraph.length;
-        mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT);
         if (TransientSetting.isNoImage() || mUrls.isEmpty()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
             for (int i = 0; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
             mThread = ContentPolisher.addHref(mNews, mTextViews, mHandler);
             return;
         }
-        if (mUrls.size() == 1) {
+        if (mTotalPictures == 1) {
             int pos = paragraphCount / 5;
             for (int i = 0; i < pos; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
             addImageView(mUrls.get(0));
             for (int i = pos; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
-        } else if (mUrls.size() >= paragraphCount) {
-            int picturePerParagraph = mUrls.size() / paragraphCount;
-            int picturesOfFirstParagraph = mUrls.size() - picturePerParagraph * (paragraphCount - 1);
+        } else if (mTotalPictures >= paragraphCount) {
+            int picturePerParagraph = mTotalPictures / paragraphCount;
+            int picturesOfFirstParagraph = mTotalPictures - picturePerParagraph * (paragraphCount - 1);
             int index = 0;
             for (int i = 0; i < picturesOfFirstParagraph; i++) {
                 addImageView(mUrls.get(index++));
             }
-            addTextView(paragraph[0]);
+            addTextView(paragraph[0].replaceAll("　", "") + "\n");
             for (int i = 1; i < paragraphCount; i++) {
                 for (int j = 0; j < picturePerParagraph; j++) {
                     addImageView(mUrls.get(index++));
                 }
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
                 //Log.e("NewsContentActivity", text);
             }
         } else {
-            int paragraphPerPicture = paragraphCount / mUrls.size();
+            int paragraphPerPicture = paragraphCount / mTotalPictures;
             int index = 0;
             int urlIndex = 0;
-            for (int i = 0; i < mUrls.size() - 1; i++) {
+            for (int i = 0; i < mTotalPictures - 1; i++) {
                 addImageView(mUrls.get(urlIndex++));
                 int end = index + paragraphPerPicture;
                 for (; index < end; index++) {
-                    String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
+                    String text = paragraph[index].replaceAll("　", "") + "\n";
                     addTextView(text);
                 }
             }
             addImageView(mUrls.get(urlIndex++));
             for (; index < paragraphCount; index++) {
-                String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
+                String text = paragraph[index].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
         }
@@ -149,18 +165,26 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         textView.setScrollbarFadingEnabled(true);
         textView.setMovementMethod(ScrollingMovementMethod.getInstance());
         textView.setMovementMethod(LinkMovementMethod.getInstance());
-        textView.setTextSize(18);
+        textView.setTextSize(15);
         textView.setText(text);
-        mParam.setMargins(1, 2, 1, 2);
-        mLinearLayout.addView(textView, mParam);
+        if(TransientSetting.isNightMode()) {
+            textView.setTextColor(getResources().getColor(R.color.intro_night));
+        }
+        textView.setLineSpacing(0, (float)1.5);
+        LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        param.setMargins(1, 5, 1, 5);
+        mLinearLayout.addView(textView, param);
         mTextViews.add(textView);
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Promise p : mPromises) {
-            p.cancel();
+        if (mPromises != null) {
+            for (Promise p : mPromises) {
+                p.cancel();
+            }
         }
         if (mThread != null) {
             mThread.interrupt();
@@ -256,46 +280,54 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         return true;
     }
 
-    @Override
-    protected void onCreate(Bundle savedInstance) {
-        super.onCreate(savedInstance);
-        LinearLayout layout = (LinearLayout) findViewById(R.id.content_main);
+    protected void updateUI() {
+        showNews();
         LayoutInflater inflater = LayoutInflater.from(this);
-        layout.addView(inflater.inflate(R.layout.news_content_page, null));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        mRootLayout.addView(inflater.inflate(R.layout.news_content_page, null));
+        if(TransientSetting.isNightMode()) {
+            mRootLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
         mImageViews = new ArrayList<>();
         mTextViews = new ArrayList<>();
         mPromises = new ArrayList<>();
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
+        if(TransientSetting.isNightMode()) {
+            mLinearLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         mShare = (FloatingActionButton) findViewById(R.id.bt_share);
         mRead = (FloatingActionButton) findViewById(R.id.bt_read);
         mShare.setEnabled(false);
         mRead.setEnabled(false);
         mShare.setOnClickListener(this);
         mRead.setOnClickListener(this);
-
         Bundle bundle = getIntent().getExtras();
         String[] pictures = bundle.getStringArray(getString(R.string.bundle_news_pictures));
         String news_id = bundle.getString(getString(R.string.bundle_news_id));
         String news_title = bundle.getString(getString(R.string.bundle_news_title));
-
         new Promise<Object, Boolean>(new Callback<Object, Boolean>() {
             @Override
             public Boolean run(Object o) {
                 return ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
             }
-        }, null).then(new Callback<Boolean, Object>() {
+        }, null).thenUI(new Callback<Boolean, Object>() {
             @Override
             public Object run(Boolean b) {
-                mMarked = b;      // TODO: not sure to be finished before onCreateOptionsMenu()
+                mMarked = b;
+                if (mMarked) {
+                    mLike.setIcon(R.drawable.marked);
+                } else {
+                    mLike.setIcon(R.drawable.unmarked);
+                }
                 return new Object();
             }
         });
-        //mMarked = ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
 
-        ((TextView) findViewById(R.id.tv_content_title)).setText(news_title);
+        TextView title = (TextView) findViewById(R.id.tv_content_title);
+        title.setText(news_title);
+        if(TransientSetting.isNightMode()) {
+            title.setTextColor(getResources().getColor(R.color.title_night));
+        }
         Storage storage = ((ApplicationWithStorage) getApplication()).getStorage();
         mFailCallback = new Callback<Exception, Object>() {
             @Override
@@ -305,18 +337,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 return null;
             }
         };
-        Promise news_promise = storage.getNewsCached(news_id);
-        mPromises.add(news_promise);
-
-        news_promise.failUI(mFailCallback);
 
         Callback<News,Object> computeLayoutCallback = new Callback<News,Object>() {
             @Override
             public Object run(News news) {
-                //Toast.makeText(NewsContentActivity.this,
-                //    "新闻详情加载完毕", Toast.LENGTH_SHORT).show();
-                Log.e("NewsContentActivity", news.news_Content);
-                Log.e("NewsContentActivity", news.news_Author); // TODO:把作者显示出来
                 mNews = news;
                 mShare.setEnabled(true);
                 mRead.setEnabled(true);
@@ -326,12 +350,28 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             }
         };
 
+        Promise news_promise = storage.getNewsCached(news_id);
+        mPromises.add(news_promise);
+
+        news_promise.failUI(mFailCallback);
         if (TransientSetting.isNoImage()) {
+            mTotalPictures = 0;
             news_promise.thenUI(computeLayoutCallback);
             return;
         }
-
+        mTotalPictures = pictures.length == 0 ? 1 : pictures.length;
+        news_promise.thenUI(computeLayoutCallback).failUI(new Callback<Exception,Object>() {
+            @Override
+            public Object run(Exception result) throws Exception {
+                for(StackTraceElement e: result.getStackTrace()) {
+                    Log.e("NCA", e.toString());
+                }
+                showNoNetwork();
+                return null;
+            }
+        });
         if (pictures.length == 0) {
+
             Promise outterPromise = News.searchPicture(news_title);
             mPromises.add(outterPromise);
             outterPromise.then(new Callback<String, Object>() {
@@ -343,10 +383,24 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 }
             });
             outterPromise.failUI(mFailCallback);
-        } else
+        } else {
             for (String url : pictures)
                 mUrls.add(url);
-        news_promise.thenUI(computeLayoutCallback); // 这条要等mUrls初始化之后再调
+        }
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        mRootLayout = (LinearLayout) findViewById(R.id.content_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mNoNetwork = (FrameLayout) findViewById(R.id.fl_no_network);
+        mHint = (TextView)findViewById(R.id.tv_no_network);
+        mNoNetwork.setOnClickListener(this);
+        mErrorNotified = false;
+
+        updateUI();
+
     }
 
     @Override
@@ -357,6 +411,14 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.bt_share:
                 mExternal.share(mNews, mUrls.get(0));
+                break;
+            case R.id.fl_no_network:
+                SystemClock.sleep(1000);
+                if(isNetworkConnected()) {
+                    updateUI();
+                } else {
+                    showNoNetwork();
+                }
                 break;
         }
     }

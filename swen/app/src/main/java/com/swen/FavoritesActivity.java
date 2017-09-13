@@ -35,7 +35,10 @@ public class FavoritesActivity extends BaseActivity
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_favorites, null));
-
+        if(TransientSetting.isNightMode()) {
+            layout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+            findViewById(R.id.fav_rv).setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.my_favorites);
 
@@ -155,6 +158,9 @@ public class FavoritesActivity extends BaseActivity
             {
                 super(itemView);
                 tvTitle = (TextView) itemView.findViewById(R.id.fav_title);
+                if(TransientSetting.isNightMode()) {
+                    tvTitle.setTextColor(getResources().getColor(R.color.title_night));
+                }
             }
 
             public void setData(String id)
@@ -166,7 +172,7 @@ public class FavoritesActivity extends BaseActivity
                     {
                         ViewHolder.this.tvTitle.setText(Html.fromHtml(
                                 news.news_Title
-                                        + "<small><font color='gray'>"
+                                        + "  <small><font color='gray'>"
                                         + new SimpleDateFormat("yyyy-MM-dd").format(news.getNewsTime().getTime())
                                         + "</font></small>")
                         );

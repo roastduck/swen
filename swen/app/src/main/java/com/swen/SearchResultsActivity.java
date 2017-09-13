@@ -25,7 +25,10 @@ public class SearchResultsActivity extends BaseActivity {
         LinearLayout layout = (LinearLayout)findViewById(R.id.content_main);
         LayoutInflater inflater = LayoutInflater.from(this);
         layout.addView(inflater.inflate(R.layout.activity_search, null));
-
+        if(TransientSetting.isNightMode()) {
+            layout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+            findViewById(R.id.search_list).setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ListView searchList = (ListView)findViewById(R.id.search_list);
 
@@ -66,6 +69,7 @@ public class SearchResultsActivity extends BaseActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
             AppendableNewsList list = new AppendableNewsList(30, query, null, false, ((ApplicationWithStorage)getApplication()).getBehavior());
+            list.setKeywordFilter(((ApplicationWithStorage)getApplication()).getKeywordFilter());
             ListView lv = (ListView)findViewById(R.id.search_list);
             SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
             lv.setAdapter(adapter);

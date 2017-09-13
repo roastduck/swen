@@ -41,6 +41,10 @@ public class LoadingImageView extends FrameLayout {
         loading = (AVLoadingIndicatorView)findViewById(R.id.l_loading);
     }
 
+    public void clearPicture() {
+        iv.setImageBitmap(null);
+    }
+
     public void showPictureByUrl(String url, Storage storage) {
         loading.show();
         promsie = storage.getPicCached(url);

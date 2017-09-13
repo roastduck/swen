@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,23 +19,62 @@ import android.widget.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity {
+abstract public class BaseActivity extends AppCompatActivity {
+
+    protected FrameLayout mNoNetwork;
+    protected TextView mHint;
+    //    protected AVLoadingIndicatorView mLoading;
+    protected boolean mErrorNotified = false;
+
+    protected void showNoNetwork() {
+        if(TransientSetting.isNightMode()) {
+            mNoNetwork.setBackgroundColor(getResources().getColor(R.color.background_dark));
+        }
+        mErrorNotified = false;
+        mNoNetwork.setVisibility(View.VISIBLE);
+        mHint.setText(" 没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点我刷新\n\n");
+        mHint.setVisibility(View.VISIBLE);
+//        mLoading.hide();
+    }
+
+    protected void showNews() {
+        mNoNetwork.setVisibility(View.GONE);
+    }
+
+    protected void showLoadError() {
+        mNoNetwork.setVisibility(View.VISIBLE);
+        mHint.setText(" 加载失败啦╮(╯▽╰)╭\n\n点我重试\n\n");
+        mHint.setVisibility(View.VISIBLE);
+//        mLoading.setVisibility(View.VISIBLE);
+//        mLoading.hide();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
 
         // Call setTheme before creation of any(!) View.
-        if (TransientSetting.isNightMode())
-            setTheme(android.R.style.Theme_Black_NoTitleBar);
-        else
-            setTheme(android.R.style.Theme_Light_NoTitleBar);
+//        if (TransientSetting.isNightMode())
+//            toNightMode();
+//        else
+//            toDayMode();
 
         setContentView(R.layout.activity_main);
 
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+    }
+
+    protected boolean isNetworkConnected() {
+        ConnectivityManager connectivityManager =
+            (ConnectivityManager)getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null) {
+            return networkInfo.isAvailable();
+        }
+        return false;
     }
 
     @Override
@@ -44,6 +85,7 @@ public class BaseActivity extends AppCompatActivity {
         /* 如果要调整顺序或者增删项，要一并改动下面的click回调 */
         list.add(new MenuItem(R.string.my_favorites, R.drawable.favorites, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.category_mgmt, R.drawable.category_management, MenuItem.ItemType.TextWithIcon));
+        list.add(new MenuItem(R.string.keyword_filter, R.drawable.icon_word_filter, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.no_image_mode, R.drawable.no_image, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(R.string.night_mode, R.drawable.night_mode, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(0, 0, MenuItem.ItemType.Nothing));
@@ -67,11 +109,15 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, CategoryFilterActivity.class);
                         startActivity(intent);
                         break;
+                    case 2:
+                        intent = new Intent(BaseActivity.this, FilterSettingActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
-                        if (position > 4)
+                        if (position > 5)
                         {
                             intent = new Intent(BaseActivity.this, CategoryActivity.class);
-                            intent.putExtra("category", categoryList.get(position - 5).getId());
+                            intent.putExtra("category", categoryList.get(position - 6).getId());
                             startActivity(intent);
                         }
                 }
@@ -87,12 +133,12 @@ public class BaseActivity extends AppCompatActivity {
     {
         switch (position)
         {
-            case 2:
+            case 3:
                 TransientSetting.setNoImage(isChecked);
                 finish(); // refresh activity
                 startActivity(getIntent());
                 break;
-            case 3:
+            case 4:
                 TransientSetting.setNightMode(isChecked);
                 finish(); // refresh activity
                 startActivity(getIntent());
@@ -106,9 +152,9 @@ public class BaseActivity extends AppCompatActivity {
     {
         switch (position)
         {
-            case 2:
-                return TransientSetting.isNoImage();
             case 3:
+                return TransientSetting.isNoImage();
+            case 4:
                 return TransientSetting.isNightMode();
             default:
                 throw new RuntimeException(); // impossible
@@ -187,6 +233,9 @@ public class BaseActivity extends AppCompatActivity {
             }
             MenuItem item = (MenuItem)getItem(position);
             TextView tv = (TextView)convertView.findViewById(R.id.menu_item_text);
+            if(TransientSetting.isNightMode()) {
+                tv.setTextColor(getResources().getColor(R.color.title_night));
+            }
             tv.setVisibility(View.VISIBLE);
             ImageView iv = (ImageView)convertView.findViewById(R.id.menu_item_icon);
             SwitchCompat sc = (SwitchCompat)convertView.findViewById(R.id.menu_item_switch);
