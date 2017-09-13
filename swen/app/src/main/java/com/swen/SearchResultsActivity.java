@@ -1,10 +1,13 @@
 package com.swen;
 
 import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
@@ -24,6 +27,25 @@ public class SearchResultsActivity extends BaseActivity {
         layout.addView(inflater.inflate(R.layout.activity_search, null));
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ListView searchList = (ListView)findViewById(R.id.search_list);
+
+        Context context = getApplicationContext();
+
+        searchList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                News news = (News)parent.getAdapter().getItem(position);
+                Intent intent = new Intent();
+                intent.setAction(NewsContentActivity.ACTION_NAME);
+                Bundle data = new Bundle();
+                data.putString(context.getString(R.string.bundle_news_title), news.news_Title);
+                data.putString(context.getString(R.string.bundle_news_id), news.news_ID);
+                data.putStringArray(context.getString(R.string.bundle_news_pictures)
+                        , news.getNewsPictures().toArray(new String[news.getNewsPictures().size()]));
+                intent.putExtras(data);
+                context.startActivity(intent);
+            }
+        });
 
         handleIntent(getIntent());
     }
