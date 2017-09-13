@@ -27,7 +27,7 @@ public class Behavior
         return sharedPreferences.getInt("CP_" + i, 1);
     }
 
-    public void markHaveRead(News news) {
+    public synchronized void markHaveRead(News news) {
         if(news.isAlreadyRead()) {
             return;
         }

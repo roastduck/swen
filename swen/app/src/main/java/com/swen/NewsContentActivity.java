@@ -346,7 +346,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         } else
             for (String url : pictures)
                 mUrls.add(url);
-        news_promise.thenUI(computeLayoutCallback); // 这条要等mUrls初始化之后再调
+        news_promise.thenUI(computeLayoutCallback).failUI(new Callback() {
+            @Override
+            public Object run(Object result) throws Exception {
+                showNoNetwork();
+                return null;
+            }
+        }); // 这条要等mUrls初始化之后再调
     }
 
     @Override
@@ -359,11 +365,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         mNoNetwork.setOnClickListener(this);
         mErrorNotified = false;
 
-        if(isNetworkConnected()) {
-            updateUI();
-        } else {
-            showNoNetwork();
-        }
+        updateUI();
 
     }
 
