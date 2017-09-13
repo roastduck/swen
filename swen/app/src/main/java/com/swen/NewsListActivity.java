@@ -27,6 +27,7 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
     protected Random random = new Random(System.currentTimeMillis());
     protected NewsListAdapter mAdapter;
     protected LinearLayout mLinearLayout;
+    protected boolean mIsRefreshing = false;
 
 //    protected void showLoading() {
 //        mHint.setVisibility(View.GONE);
@@ -38,11 +39,17 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
     public void onClick(View v) {
         if(v.getId() == R.id.fl_no_network) {
 //            showLoading();
+            if(mIsRefreshing) {
+                return;
+            }
+            mIsRefreshing = true;
             SystemClock.sleep(1000);
             if(isNetworkConnected()) {
                 updateUI();
+                mIsRefreshing = false;
             } else {
                 showNoNetwork();
+                mIsRefreshing = false;
             }
         }
     }
