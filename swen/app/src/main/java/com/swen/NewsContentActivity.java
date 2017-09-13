@@ -287,7 +287,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             public Boolean run(Object o) {
                 return ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
             }
-        }, null).then(new Callback<Boolean, Object>() {
+        }, null).thenUI(new Callback<Boolean, Object>() {
             @Override
             public Object run(Boolean b) {
                 mMarked = b;
