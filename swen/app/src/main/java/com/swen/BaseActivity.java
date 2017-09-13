@@ -65,6 +65,14 @@ abstract public class BaseActivity extends AppCompatActivity {
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);
         final Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        if (TransientSetting.isNightMode()) {
+            toolbar.setBackgroundColor(getResources().getColor(R.color.toolbar_night));
+            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_night));
+        }
+        else {
+            toolbar.setTitleTextColor(getResources().getColor(R.color.toolbar_title_day));
+        }
     }
 
     protected boolean isNetworkConnected() {
@@ -258,7 +266,8 @@ abstract public class BaseActivity extends AppCompatActivity {
                     tv.setVisibility(View.GONE);
                     iv.setVisibility(View.GONE);
                     sc.setVisibility(View.GONE);
-                    convertView.setBackgroundResource(R.color.divider_color);
+                    convertView.setBackgroundResource(TransientSetting.isNightMode()?
+                            R.color.divider_night : R.color.divider_color);
                     break;
                 case Text:
                     iv.setVisibility(View.GONE);

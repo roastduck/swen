@@ -17,12 +17,17 @@
     <color name="purple_normal">#9932CC</color>
     <color name="purple_pressed">#9F79EE</color>
     <color name="divider_color">#FFB7B2B2</color>
+    <color name="divider_night">#13190a</color>
 
     <color name="font_enabled">#423732</color>
     <color name="font_disabled">#91a3b0</color>
 
     <color name="menu_item_light">#e0e0e0</color>
     <color name="menu_item_dark">#343434</color>
+
+    <color name="toolbar_title_day">#91a2aa</color>
+    <color name="toolbar_title_night">#dbdbdb</color>
+    <color name="toolbar_night">#34383a</color>
 
     <color name="transparent">#00000000</color>
 </resources>
