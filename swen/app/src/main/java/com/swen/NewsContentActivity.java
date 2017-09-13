@@ -69,6 +69,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
      */
 
     protected void addImageView(String url) {
+        FrameLayout spacing = new FrameLayout(this);
+        spacing.setMinimumHeight(12);
+        mLinearLayout.addView(spacing);
         LoadingImageView iv = new LoadingImageView(this);
         int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
         iv.getImageView().setBackgroundColor(getResources().getColor(R.color.transparent));
@@ -76,12 +79,14 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         iv.getImageView().setMaxHeight(screenWidth * 5);
         iv.getImageView().setMinimumHeight(screenWidth / 2);
         iv.getImageView().setScaleType(ImageView.ScaleType.FIT_CENTER);
-        mParam.setMargins(1, 4, 1, 4);
+        mParam.setMargins(1, 8, 1, 8);
         mLinearLayout.addView(iv, mParam);
         mImageViews.add(iv);
         mPromises.add(iv.showPictureByUrl(url,
             ((ApplicationWithStorage) getApplication()).getStorage(), mFailCallback));
-
+        FrameLayout spacing2 = new FrameLayout(this);
+        spacing2.setMinimumHeight(12);
+        mLinearLayout.addView(spacing2);
     }
 
     protected synchronized void computeLayout() {
@@ -93,7 +98,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             ViewGroup.LayoutParams.WRAP_CONTENT);
         if (TransientSetting.isNoImage() || mUrls.isEmpty()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
             for (int i = 0; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
             mThread = ContentPolisher.addHref(mNews, mTextViews, mHandler);
@@ -102,12 +107,12 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         if (mTotalPictures == 1) {
             int pos = paragraphCount / 5;
             for (int i = 0; i < pos; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
             addImageView(mUrls.get(0));
             for (int i = pos; i < paragraphCount; i++) {
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
         } else if (mTotalPictures >= paragraphCount) {
@@ -117,12 +122,12 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             for (int i = 0; i < picturesOfFirstParagraph; i++) {
                 addImageView(mUrls.get(index++));
             }
-            addTextView(paragraph[0]);
+            addTextView("　　" + paragraph[0].replaceAll("　", "") + "\n");
             for (int i = 1; i < paragraphCount; i++) {
                 for (int j = 0; j < picturePerParagraph; j++) {
                     addImageView(mUrls.get(index++));
                 }
-                String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[i].replaceAll("　", "") + "\n";
                 addTextView(text);
                 //Log.e("NewsContentActivity", text);
             }
@@ -134,13 +139,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 addImageView(mUrls.get(urlIndex++));
                 int end = index + paragraphPerPicture;
                 for (; index < end; index++) {
-                    String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
+                    String text = "　　" + paragraph[index].replaceAll("　", "") + "\n";
                     addTextView(text);
                 }
             }
             addImageView(mUrls.get(urlIndex++));
             for (; index < paragraphCount; index++) {
-                String text = "　　" + paragraph[index].replaceFirst("　", "") + "\n";
+                String text = "　　" + paragraph[index].replaceAll("　", "") + "\n";
                 addTextView(text);
             }
         }
