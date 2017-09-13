@@ -14,20 +14,28 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="4dp">
         <TextView
             android:id="@+id/tv_intro5_title"
             android:maxLines="2"
             android:layout_marginBottom="2dp"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
             style="@style/text_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"/>
 
         <TextView
             android:id="@+id/tv_intro5_intro"
             android:layout_marginTop="2dp"
             style="@style/text_intro"
+            android:layout_marginStart="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </LinearLayout>

@@ -243,7 +243,8 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 } else {
                     holder.textView.setText(mData.get(position).news.news_Title);
                 }
-                holder.textViewAnother.setText(mData.get(position).news.news_Intro);
+                holder.textViewAnother.setText(mData.get(position).news.news_Intro
+                    .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
         }
