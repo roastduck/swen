@@ -47,6 +47,30 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
     public void updateData(Random random) {
         DemonstratedContent.updateDemonstratedContent(mAppendableList.list,
             mData, lastIndex, random);
+        for(int i = lastIndex; i < mData.size(); i++) {
+            final News news = mData.get(i).news;
+            if(news.getNewsPictures().isEmpty()) {
+                News.searchPicture(news.news_Title)
+                    .then(new Callback<String, Object>() {
+                        @Override
+                        public Object run(String url) {
+                            news.setNews_Pictures(url);
+                            return null;
+                        }
+                    });
+            }
+            final News news2 = mData.get(i).rightNews;
+            if(news2 != null && news2.getNewsPictures().isEmpty()) {
+                News.searchPicture(news2.news_Title)
+                    .then(new Callback<String, Object>() {
+                        @Override
+                        public Object run(String url) {
+                            news2.setNews_Pictures(url);
+                            return null;
+                        }
+                    });
+            }
+        }
         lastIndex = mAppendableList.list.size();
         notifyDataSetChanged();
     }
