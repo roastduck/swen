@@ -168,7 +168,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     , news.getNewsPictures().toArray(new String[news.getNewsPictures().size()]));
                 intent.putExtras(data);
                 mContext.startActivity(intent);
-                title.setTextColor(Color.rgb(102, 102, 102));
+                title.setText(Html.fromHtml("<font color=\"#666666\">" + title.getText() + "</font>"));
             }
         });
     }
@@ -178,7 +178,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         switch (holder.style) {
             case 1:
                 showPicture(mData.get(position).news, holder.loadingImageView);
-                holder.textView.setText(mData.get(position).news.news_Title);
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textView.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).news.news_Title + "</font>"));
+                } else {
+                    holder.textView.setText(mData.get(position).news.news_Title);
+                }
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro
                     .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
@@ -190,7 +195,12 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     "</strong><br/><br/>" + mData.get(position).news.news_Intro
                     .replace(" ", "").replace("　", "")));
                 */
-                holder.textView.setText(mData.get(position).news.news_Title);
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textView.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).news.news_Title + "</font>"));
+                } else {
+                    holder.textView.setText(mData.get(position).news.news_Title);
+                }
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro
                     .replace("\\s+", "").replace(" ", "").replace("　", ""));
                 setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
@@ -198,8 +208,18 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 3:
                 showPicture(mData.get(position).news, holder.loadingImageView);
                 showPicture(mData.get(position).rightNews, holder.loadingImageViewRight);
-                holder.textView.setText(mData.get(position).news.news_Title);
-                holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textView.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).news.news_Title + "</font>"));
+                } else {
+                    holder.textView.setText(mData.get(position).news.news_Title);
+                }
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textViewAnother.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).rightNews.news_Title + "</font>"));
+                } else {
+                    holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
+                }
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
                     mData.get(position).news, position, holder.textView);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
@@ -208,11 +228,21 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
             case 4:
                 showPicture(mData.get(position).news, holder.loadingImageView,
                     holder.loadingImageViewMid, holder.loadingImageViewRight);
-                holder.textView.setText(mData.get(position).news.news_Title);
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textView.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).news.news_Title + "</font>"));
+                } else {
+                    holder.textView.setText(mData.get(position).news.news_Title);
+                }
                 setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
             case 5:
-                holder.textView.setText(mData.get(position).news.news_Title);
+                if(mData.get(position).news.isAlreadyRead()) {
+                    holder.textView.setText(Html.fromHtml("<font color=\"#666666\">"
+                        + mData.get(position).news.news_Title + "</font>"));
+                } else {
+                    holder.textView.setText(mData.get(position).news.news_Title);
+                }
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro);
                 setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
