@@ -166,7 +166,7 @@ public class FavoritesActivity extends BaseActivity
                     {
                         ViewHolder.this.tvTitle.setText(Html.fromHtml(
                                 news.news_Title
-                                        + "<small><font color='gray'>"
+                                        + "  <small><font color='gray'>"
                                         + new SimpleDateFormat("yyyy-MM-dd").format(news.getNewsTime().getTime())
                                         + "</font></small>")
                         );
