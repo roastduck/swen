@@ -91,7 +91,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         int paragraphCount = paragraph.length;
         mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (TransientSetting.isNoImage()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
+        if (TransientSetting.isNoImage() || mUrls.isEmpty()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
             for (int i = 0; i < paragraphCount; i++) {
                 String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
@@ -337,9 +337,12 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         mTotalPictures = pictures.length == 0 ? 1 : pictures.length;
-        news_promise.thenUI(computeLayoutCallback).failUI(new Callback() {
+        news_promise.thenUI(computeLayoutCallback).failUI(new Callback<Exception,Object>() {
             @Override
-            public Object run(Object result) throws Exception {
+            public Object run(Exception result) throws Exception {
+                for(StackTraceElement e: result.getStackTrace()) {
+                    Log.e("NCA", e.toString());
+                }
                 showNoNetwork();
                 return null;
             }
