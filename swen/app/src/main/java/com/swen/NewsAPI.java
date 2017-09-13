@@ -76,8 +76,8 @@ class StreamFactory
     InputStream fromUrl(String url) throws IOException // Mockito doesn't mock static methods
     {
         URLConnection conn = new URL(url).openConnection();
-        conn.setConnectTimeout(2000);
-        conn.setReadTimeout(2000);
+        conn.setConnectTimeout(500);
+        conn.setReadTimeout(1000);
         return conn.getInputStream();
     }
 }

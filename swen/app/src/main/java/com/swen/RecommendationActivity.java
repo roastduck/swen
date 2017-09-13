@@ -33,7 +33,7 @@ public class RecommendationActivity extends NewsListActivity {
         }, null);
 
 
-        mAppendableList = new AppendableNewsList(20, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
+        mAppendableList = new AppendableNewsList(15, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
         mAppendableList.setKeywordFilter(((ApplicationWithStorage)getApplication()).getKeywordFilter());
         initialize();
 
