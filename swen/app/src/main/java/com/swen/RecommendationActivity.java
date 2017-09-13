@@ -33,7 +33,7 @@ public class RecommendationActivity extends NewsListActivity {
         }, null);
 
 
-        mAppendableList = new AppendableNewsList(10, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
+        mAppendableList = new AppendableNewsList(25, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
         initialize();
 
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);

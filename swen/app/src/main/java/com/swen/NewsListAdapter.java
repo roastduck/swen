@@ -99,6 +99,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         Activity activity = (Activity) mContext;
         Storage storage = ((ApplicationWithStorage) activity.getApplication())
             .getStorage();
+        iv.clearPicture();
         if(news.getNewsPictures().isEmpty()) {
             News.searchPicture(news.news_Title)
                 .then(new Callback<String, Object>() {
@@ -118,6 +119,9 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         Activity activity = (Activity) mContext;
         Storage storage = ((ApplicationWithStorage) activity.getApplication())
             .getStorage();
+        iv.clearPicture();
+        ivmid.clearPicture();
+        ivright.clearPicture();
         iv.showPictureByUrl(news.getNewsPictures().get(0), storage);
         ivmid.showPictureByUrl(news.getNewsPictures().get(1), storage);
         ivright.showPictureByUrl(news.getNewsPictures().get(2), storage);
