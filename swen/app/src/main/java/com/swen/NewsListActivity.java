@@ -28,13 +28,10 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
     protected NewsListAdapter mAdapter;
     protected LinearLayout mLinearLayout;
 
-
-
 //    protected void showLoading() {
 //        mHint.setVisibility(View.GONE);
 //        mLoading.show();
 //    }
-
 
 
     @Override
@@ -99,6 +96,9 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
                 mAdapter = new NewsListAdapter(mAppendableList, NewsListActivity.this, random);
                 mView.setAdapter(mAdapter);
                 mView.setLayoutManager(new LinearLayoutManager(NewsListActivity.this));
+                if(TransientSetting.isNightMode()) {
+                    mView.setBackgroundColor(getResources().getColor(R.color.background_dark));
+                }
                 Log.e("NewsListActivity", "in here " + mView.getFooterItemCount());
                 return null;
             }
