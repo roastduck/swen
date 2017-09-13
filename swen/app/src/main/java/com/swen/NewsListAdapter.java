@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
@@ -122,11 +123,11 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
         ivright.showPictureByUrl(news.getNewsPictures().get(2), storage);
     }
 
-    public void setOnClickListener(View itemView, News news, int position) {
-        setOnClickListener(itemView, news, position, false);
+    public void setOnClickListener(View itemView, News news, int position, TextView title) {
+        setOnClickListener(itemView, news, position, title, false);
     }
 
-    public void setOnClickListener(View itemView, News news, int position, boolean rightside) {
+    public void setOnClickListener(View itemView, News news, int position, TextView title, boolean rightside) {
         itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -139,6 +140,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                     , news.getNewsPictures().toArray(new String[news.getNewsPictures().size()]));
                 intent.putExtras(data);
                 mContext.startActivity(intent);
+                title.setTextColor(Color.rgb(102, 102, 102));
             }
         });
     }
@@ -151,7 +153,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro
                     .replace("\\s+", "").replace(" ", "").replace("　", ""));
-                setOnClickListener(holder.itemView, mData.get(position).news, position);
+                setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
             case 2:
                 showPicture(mData.get(position).news, holder.loadingImageView);
@@ -163,7 +165,7 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro
                     .replace("\\s+", "").replace(" ", "").replace("　", ""));
-                setOnClickListener(holder.itemView, mData.get(position).news, position);
+                setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
             case 3:
                 showPicture(mData.get(position).news, holder.loadingImageView);
@@ -171,20 +173,20 @@ public class NewsListAdapter extends RecyclerView.Adapter<NewsListAdapter.NLView
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).rightNews.news_Title);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_left),
-                    mData.get(position).news, position);
+                    mData.get(position).news, position, holder.textView);
                 setOnClickListener(holder.itemView.findViewById(R.id.item_intro_3_right),
-                    mData.get(position).rightNews, position);
+                    mData.get(position).rightNews, position, holder.textView);
                 break;
             case 4:
                 showPicture(mData.get(position).news, holder.loadingImageView,
                     holder.loadingImageViewMid, holder.loadingImageViewRight);
                 holder.textView.setText(mData.get(position).news.news_Title);
-                setOnClickListener(holder.itemView, mData.get(position).news, position);
+                setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
             case 5:
                 holder.textView.setText(mData.get(position).news.news_Title);
                 holder.textViewAnother.setText(mData.get(position).news.news_Intro);
-                setOnClickListener(holder.itemView, mData.get(position).news, position);
+                setOnClickListener(holder.itemView, mData.get(position).news, position, holder.textView);
                 break;
         }
     }
