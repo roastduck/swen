@@ -53,7 +53,10 @@ class SearchResultAdapter extends BaseAdapter {
         News news = (News)getItem(position);
         TextView titleTv = (TextView)convertView.findViewById(R.id.search_item_title);
         TextView digestTv = (TextView)convertView.findViewById(R.id.search_item_digest);
-
+        if(TransientSetting.isNightMode()) {
+            titleTv.setTextColor(context.getResources().getColor(R.color.title_night));
+            digestTv.setTextColor(context.getResources().getColor(R.color.intro_night));
+        }
         String title = news.news_Title.trim();
         int len = title.length();
         boolean[] marked = new boolean[len];
