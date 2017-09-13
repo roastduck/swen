@@ -80,14 +80,12 @@
 
         <TextView
             android:id="@+id/tv_intro4"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:maxLines="1"
-            android:ellipsize="end"
-            android:textStyle="bold"
             android:padding="5dp"
             android:gravity="center"
-            android:textSize="17sp"/>
+            style="@style/text_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
     </LinearLayout>
 

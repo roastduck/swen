@@ -29,7 +29,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void showNoNetwork() {
         mErrorNotified = false;
         mNoNetwork.setVisibility(View.VISIBLE);
-        mHint.setText("没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点击屏幕刷新");
+        mHint.setText(" 没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点我刷新\n\n");
         mHint.setVisibility(View.VISIBLE);
 //        mLoading.hide();
     }
@@ -40,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
 
     protected void showLoadError() {
         mNoNetwork.setVisibility(View.VISIBLE);
-        mHint.setText("加载失败啦╮(╯▽╰)╭\n\n点击屏幕重试");
+        mHint.setText(" 加载失败啦╮(╯▽╰)╭\n\n点我重试\n\n");
         mHint.setVisibility(View.VISIBLE);
 //        mLoading.setVisibility(View.VISIBLE);
 //        mLoading.hide();
