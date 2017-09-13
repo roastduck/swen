@@ -62,6 +62,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private Thread mThread;
     private Callback mFailCallback;
     private LinearLayout mRootLayout;
+    private int mTotalPictures;
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
@@ -90,7 +91,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         int paragraphCount = paragraph.length;
         mParam = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT);
-        if (TransientSetting.isNoImage() || mUrls.isEmpty()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
+        if (TransientSetting.isNoImage()) { // 从收藏夹进入的时候，或是还没来得及的时候，没有图片
             for (int i = 0; i < paragraphCount; i++) {
                 String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
@@ -98,7 +99,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             mThread = ContentPolisher.addHref(mNews, mTextViews, mHandler);
             return;
         }
-        if (mUrls.size() == 1) {
+        if (mTotalPictures == 1) {
             int pos = paragraphCount / 5;
             for (int i = 0; i < pos; i++) {
                 String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
@@ -109,9 +110,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 String text = "　　" + paragraph[i].replaceFirst("　", "") + "\n";
                 addTextView(text);
             }
-        } else if (mUrls.size() >= paragraphCount) {
-            int picturePerParagraph = mUrls.size() / paragraphCount;
-            int picturesOfFirstParagraph = mUrls.size() - picturePerParagraph * (paragraphCount - 1);
+        } else if (mTotalPictures >= paragraphCount) {
+            int picturePerParagraph = mTotalPictures / paragraphCount;
+            int picturesOfFirstParagraph = mTotalPictures - picturePerParagraph * (paragraphCount - 1);
             int index = 0;
             for (int i = 0; i < picturesOfFirstParagraph; i++) {
                 addImageView(mUrls.get(index++));
@@ -126,10 +127,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 //Log.e("NewsContentActivity", text);
             }
         } else {
-            int paragraphPerPicture = paragraphCount / mUrls.size();
+            int paragraphPerPicture = paragraphCount / mTotalPictures;
             int index = 0;
             int urlIndex = 0;
-            for (int i = 0; i < mUrls.size() - 1; i++) {
+            for (int i = 0; i < mTotalPictures - 1; i++) {
                 addImageView(mUrls.get(urlIndex++));
                 int end = index + paragraphPerPicture;
                 for (; index < end; index++) {
@@ -289,11 +290,15 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         }, null).then(new Callback<Boolean, Object>() {
             @Override
             public Object run(Boolean b) {
-                mMarked = b;      // TODO: not sure to be finished before onCreateOptionsMenu()
+                mMarked = b;
+                if (mMarked) {
+                    mLike.setIcon(R.drawable.marked);
+                } else {
+                    mLike.setIcon(R.drawable.unmarked);
+                }
                 return new Object();
             }
         });
-        //mMarked = ((ApplicationWithStorage) getApplication()).getStorage().isMarked(news_id);
 
         ((TextView) findViewById(R.id.tv_content_title)).setText(news_title);
         Storage storage = ((ApplicationWithStorage) getApplication()).getStorage();
@@ -305,10 +310,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 return null;
             }
         };
-        Promise news_promise = storage.getNewsCached(news_id);
-        mPromises.add(news_promise);
-
-        news_promise.failUI(mFailCallback);
 
         Callback<News,Object> computeLayoutCallback = new Callback<News,Object>() {
             @Override
@@ -326,12 +327,25 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             }
         };
 
+        Promise news_promise = storage.getNewsCached(news_id);
+        mPromises.add(news_promise);
+
+        news_promise.failUI(mFailCallback);
         if (TransientSetting.isNoImage()) {
+            mTotalPictures = 0;
             news_promise.thenUI(computeLayoutCallback);
             return;
         }
-
+        mTotalPictures = pictures.length == 0 ? 1 : pictures.length;
+        news_promise.thenUI(computeLayoutCallback).failUI(new Callback() {
+            @Override
+            public Object run(Object result) throws Exception {
+                showNoNetwork();
+                return null;
+            }
+        });
         if (pictures.length == 0) {
+
             Promise outterPromise = News.searchPicture(news_title);
             mPromises.add(outterPromise);
             outterPromise.then(new Callback<String, Object>() {
@@ -343,16 +357,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 }
             });
             outterPromise.failUI(mFailCallback);
-        } else
+        } else {
             for (String url : pictures)
                 mUrls.add(url);
-        news_promise.thenUI(computeLayoutCallback).failUI(new Callback() {
-            @Override
-            public Object run(Object result) throws Exception {
-                showNoNetwork();
-                return null;
-            }
-        }); // 这条要等mUrls初始化之后再调
+        }
     }
 
     @Override
