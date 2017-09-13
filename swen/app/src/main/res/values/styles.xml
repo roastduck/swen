@@ -10,4 +10,16 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="text_title">
+        <item name="android:textColor">@color/text_title</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:ellipsize">end</item>
+    </style>
+
+    <style name="text_intro">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/text_intro</item>
+        <item name="android:ellipsize">end</item>
+    </style>
 </resources>

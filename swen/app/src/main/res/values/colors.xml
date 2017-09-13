@@ -4,7 +4,11 @@
     <color name="colorPrimaryDark">#004979</color>
     <color name="colorAccent">#96beb2</color>
 
-    <color name="background_gray">#d0d0d0</color>
+    <color name="background_gray">#e0e0e0</color>
+    <color name="text_gray">#808A87</color>
+    <color name="text_intro">#666666</color>
+    <color name="text_title">#20242e</color>
+    <color name="text_read">#576069</color>
 
     <color name="purple_normal">#9932CC</color>
     <color name="purple_pressed">#9F79EE</color>

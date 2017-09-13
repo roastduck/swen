@@ -8,7 +8,8 @@
     android:layout_marginLeft="8dp"
     android:layout_marginRight="8dp"
     app:cardCornerRadius="0dp"
-    android:id="@+id/item_intro_1">
+    android:id="@+id/item_intro_1"
+    >
 
     <LinearLayout
         android:orientation="vertical"
@@ -35,22 +36,18 @@
 
             <TextView
                 android:id="@+id/tv_intro1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                style="@style/text_title"
                 android:gravity="center"
-                android:textStyle="bold"
-                android:textSize="17sp"
                 android:maxLines="2"
-                android:ellipsize="end" />
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <TextView
                 android:id="@+id/tv_intro1_1"
-                android:textSize="13sp"
-                android:textColor="#aaa"
+                style="@style/text_intro"
                 android:layout_marginTop="7dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </LinearLayout>
 

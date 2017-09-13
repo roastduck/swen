@@ -32,7 +32,7 @@
             android:text="没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点击屏幕刷新"
             android:id="@+id/tv_no_network"
             android:gravity="center"
-            android:textColor="#808A87"/>
+            android:textColor="@color/text_gray"/>
 
         <!--<com.wang.avi.AVLoadingIndicatorView-->
             <!--android:id="@+id/fl_loading"-->
