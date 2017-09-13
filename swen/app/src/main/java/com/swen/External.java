@@ -3,27 +3,39 @@ package com.swen;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.Semaphore;
 
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
 
 public class External
 {
-    private MediaPlayer player, lastPlayer;
+    private MediaPlayer player, lastPlayer, finalPlayer;
+    private ConcurrentLinkedQueue<MediaPlayer> playerQueue;
+    private Semaphore semPrepare, semUse, semPlay;
+    private boolean finishedPlaying;
     private boolean shouldStopReading;
-    private Object lock;
+    private Object lock1, lock2;
     private Thread readThread;
     private final String urlFormat = "http://tts.baidu.com/text2audio?lan=zh&ie=UTF-8&spd=5&text=%s";
     private final Context context;
 
     public External(final Context context) {
         this.context = context;
+        this.playerQueue = new ConcurrentLinkedQueue<>();
         this.readThread = null;
+        this.semPrepare = new Semaphore(10);
+        this.semUse = new Semaphore(0);
+        this.semPlay = new Semaphore(1);
+        this.finishedPlaying = false;
         this.shouldStopReading = false;
-        this.lock = new Object();
+        this.lock1 = new Object();
+        this.lock2 = new Object();
     }
 
     public void share(News news, String imgUrl) {
@@ -37,70 +49,71 @@ public class External
         oks.show(context);
     }
 
-    public synchronized void readOut(String str) {
-        if (readThread != null) {
-            synchronized (lock) {
-                shouldStopReading = true;
-            }
-            try {
-                wait();
-            }
-            catch (InterruptedException e) {}
-        }
-        readThread = new Thread(new Runnable() {
+    public void readOut(String text) {
+        String[] segments = segment(text);
+
+        Thread prepareThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                readInThread(str);
-            }
-        });
-        readThread.start();
-    }
-
-    private void readInThread(String str) {
-        String[] segments = segment(str);
-        lastPlayer = null;
-        for (String seg: segments) {
-            if (seg.equals("")) {
-                continue;
-            }
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    player = new MediaPlayer();
-                    try {
-                        player.setDataSource(context, Uri.parse(String.format(urlFormat, seg)));
-                        player.prepare();
+                MediaPlayer tempPlayer = null;
+                for (String seg: segments) {
+                    if (seg.equals("")) {
+                        continue;
                     }
+                    try {
+                        tempPlayer = new MediaPlayer();
+                        tempPlayer.setDataSource(context, Uri.parse(String.format(urlFormat, seg)));
+                        tempPlayer.prepare();
+                        semPrepare.acquire();
+                        playerQueue.add(tempPlayer);
+                        semUse.release();
+                    }
+                    catch (InterruptedException e) {}
+                    catch (IllegalStateException e) {}
                     catch (IOException e) {}
                 }
-            });
 
-            synchronized (lock) {
-                if (shouldStopReading) {
-                    break;
+
+                finalPlayer = tempPlayer;
+            }
+        });
+        Thread playThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true) {
+                    try {
+                        semPlay.acquire();
+                    }
+                    catch (InterruptedException e) {}
+                    if (finishedPlaying) {
+                        break;
+                    }
+                    try {
+                        semUse.acquire();
+                    }
+                    catch (InterruptedException e) {}
+
+                    MediaPlayer tempPlayer = playerQueue.remove();
+                    semPrepare.release();
+                    tempPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            boolean fin;
+                            fin = (mp == finalPlayer);
+                            if (fin) {
+                                finishedPlaying = true;
+                            }
+                            semPlay.release();
+                            mp.release();
+                        }
+                    });
+                    tempPlayer.start();
                 }
             }
+        });
 
-            thread.start();
-            try {
-                thread.join();
-            }
-            catch (InterruptedException e) {}
-            if (lastPlayer == null) {
-                player.start();
-            }
-            else {
-                lastPlayer.setNextMediaPlayer(player);
-            }
-            lastPlayer = player;
-        }
-        if (player != null) {
-            player.release();
-        }
-        if (lastPlayer != null) {
-            lastPlayer.release();
-        }
-        notify();
+        prepareThread.start();
+        playThread.start();
     }
 
     private String[] segment(String text) {
