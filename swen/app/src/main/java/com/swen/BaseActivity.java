@@ -19,7 +19,7 @@ import android.widget.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BaseActivity extends AppCompatActivity {
+abstract public class BaseActivity extends AppCompatActivity {
 
     protected FrameLayout mNoNetwork;
     protected TextView mHint;
@@ -27,6 +27,9 @@ public class BaseActivity extends AppCompatActivity {
     protected boolean mErrorNotified = false;
 
     protected void showNoNetwork() {
+        if(TransientSetting.isNightMode()) {
+            mNoNetwork.setBackgroundColor(getResources().getColor(R.color.background_dark));
+        }
         mErrorNotified = false;
         mNoNetwork.setVisibility(View.VISIBLE);
         mHint.setText(" 没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点我刷新\n\n");
@@ -52,10 +55,10 @@ public class BaseActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         // Call setTheme before creation of any(!) View.
-        if (TransientSetting.isNightMode())
-            setTheme(android.R.style.Theme_Black_NoTitleBar);
-        else
-            setTheme(android.R.style.Theme_Light_NoTitleBar);
+//        if (TransientSetting.isNightMode())
+//            toNightMode();
+//        else
+//            toDayMode();
 
         setContentView(R.layout.activity_main);
 
@@ -225,6 +228,9 @@ public class BaseActivity extends AppCompatActivity {
             }
             MenuItem item = (MenuItem)getItem(position);
             TextView tv = (TextView)convertView.findViewById(R.id.menu_item_text);
+            if(TransientSetting.isNightMode()) {
+                tv.setTextColor(getResources().getColor(R.color.title_night));
+            }
             tv.setVisibility(View.VISIBLE);
             ImageView iv = (ImageView)convertView.findViewById(R.id.menu_item_icon);
             SwitchCompat sc = (SwitchCompat)convertView.findViewById(R.id.menu_item_switch);

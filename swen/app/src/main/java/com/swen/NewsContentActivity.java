@@ -160,6 +160,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setTextSize(18);
         textView.setText(text);
+        if(TransientSetting.isNightMode()) {
+            textView.setTextColor(getResources().getColor(R.color.intro_night));
+        }
         mParam.setMargins(1, 2, 1, 2);
         mLinearLayout.addView(textView, mParam);
         mTextViews.add(textView);
@@ -271,12 +274,17 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         showNews();
         LayoutInflater inflater = LayoutInflater.from(this);
         mRootLayout.addView(inflater.inflate(R.layout.news_content_page, null));
-
+        if(TransientSetting.isNightMode()) {
+            mRootLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
         mImageViews = new ArrayList<>();
         mTextViews = new ArrayList<>();
         mPromises = new ArrayList<>();
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
+        if(TransientSetting.isNightMode()) {
+            mLinearLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
+        }
         mShare = (FloatingActionButton) findViewById(R.id.bt_share);
         mRead = (FloatingActionButton) findViewById(R.id.bt_read);
         mShare.setEnabled(false);
@@ -305,7 +313,11 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             }
         });
 
-        ((TextView) findViewById(R.id.tv_content_title)).setText(news_title);
+        TextView title = (TextView) findViewById(R.id.tv_content_title);
+        title.setText(news_title);
+        if(TransientSetting.isNightMode()) {
+            title.setTextColor(getResources().getColor(R.color.title_night));
+        }
         Storage storage = ((ApplicationWithStorage) getApplication()).getStorage();
         mFailCallback = new Callback<Exception, Object>() {
             @Override
