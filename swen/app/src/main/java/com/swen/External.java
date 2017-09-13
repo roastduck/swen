@@ -3,6 +3,7 @@ package com.swen;
 import android.content.Context;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.util.Log;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,18 +61,20 @@ public class External
                         continue;
                     }
                     try {
-                        tempPlayer = MediaPlayer.create(context, Uri.parse(String.format(urlFormat, seg)));
+                        tempPlayer = new MediaPlayer();
+                        tempPlayer.setDataSource(context, Uri.parse(String.format(urlFormat, seg)));
+                        tempPlayer.prepare();
                         semPrepare.acquire();
                         playerQueue.add(tempPlayer);
                         semUse.release();
                     }
                     catch (InterruptedException e) {}
                     catch (IllegalStateException e) {}
+                    catch (IOException e) {}
                 }
 
-                synchronized (lock1) {
-                    finalPlayer = tempPlayer;
-                }
+
+                finalPlayer = tempPlayer;
             }
         });
         Thread playThread = new Thread(new Runnable() {
@@ -82,10 +85,8 @@ public class External
                         semPlay.acquire();
                     }
                     catch (InterruptedException e) {}
-                    synchronized (lock2) {
-                        if (finishedPlaying) {
-                            break;
-                        }
+                    if (finishedPlaying) {
+                        break;
                     }
                     try {
                         semUse.acquire();
@@ -98,13 +99,9 @@ public class External
                         @Override
                         public void onCompletion(MediaPlayer mp) {
                             boolean fin;
-                            synchronized (lock1) {
-                                fin = (mp == finalPlayer);
-                            }
+                            fin = (mp == finalPlayer);
                             if (fin) {
-                                synchronized (lock2) {
-                                    finishedPlaying = true;
-                                }
+                                finishedPlaying = true;
                             }
                             semPlay.release();
                             mp.release();
@@ -118,8 +115,6 @@ public class External
         prepareThread.start();
         playThread.start();
     }
-
-
 
     private String[] segment(String text) {
         String text0 = text.replaceAll("，|。|！|？|；|：|（|）", " ")
