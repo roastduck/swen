@@ -44,6 +44,7 @@ public class SearchResultsActivity extends BaseActivity {
             String query = intent.getStringExtra(SearchManager.QUERY);
 
             AppendableNewsList list = new AppendableNewsList(30, query, null, false, ((ApplicationWithStorage)getApplication()).getBehavior());
+            list.setKeywordFilter(((ApplicationWithStorage)getApplication()).getKeywordFilter());
             ListView lv = (ListView)findViewById(R.id.search_list);
             SearchResultAdapter adapter = new SearchResultAdapter(list.list, query, getApplicationContext());
             lv.setAdapter(adapter);

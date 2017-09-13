@@ -34,6 +34,7 @@ public class RecommendationActivity extends NewsListActivity {
 
 
         mAppendableList = new AppendableNewsList(20, null, null, true, ((ApplicationWithStorage)getApplication()).getBehavior());
+        mAppendableList.setKeywordFilter(((ApplicationWithStorage)getApplication()).getKeywordFilter());
         initialize();
 
         final DrawerLayout drawer = (DrawerLayout)findViewById(R.id.drawer);

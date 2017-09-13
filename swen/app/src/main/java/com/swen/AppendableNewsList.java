@@ -7,6 +7,7 @@ import com.swen.promise.Promise;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Vector;
 
 /** This news list keeps the metadata of how to append itself
@@ -21,6 +22,7 @@ public class AppendableNewsList extends NewsList
 
     private NewsAPI mAPI;
     private Behavior mBehavior;
+    private KeywordFilter mKeywordFilter;
 
     /** Construct a new Extendable NewsList
      *  This is a overload function with isRecommend = false
@@ -57,6 +59,8 @@ public class AppendableNewsList extends NewsList
         this.mBehavior = behavior;
         this.mAPI = api;
     }
+
+    public void setKeywordFilter(KeywordFilter filter) { mKeywordFilter = filter; }
 
     /** Fetch a new page and append to itself
      *  You can refer to the unit test as an example of how to use Promise
@@ -107,7 +111,24 @@ public class AppendableNewsList extends NewsList
         }
 
         pageNo ++;
-        list.addAll(fetched.list);
+        if (mKeywordFilter == null)
+            list.addAll(fetched.list);
+        else
+        {
+            List<String> filterList = mKeywordFilter.getList();
+            for (News news : fetched.list)
+            {
+                boolean ok = true;
+                for (String word : filterList)
+                    if (news.news_Title.contains(word) || news.news_Intro.contains(word))
+                    {
+                        ok = false;
+                        break;
+                    }
+                if (ok)
+                    list.add(news);
+            }
+        }
     }
 
     private class ComparableNews implements Comparable<ComparableNews>

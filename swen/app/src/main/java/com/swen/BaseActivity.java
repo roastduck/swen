@@ -82,6 +82,7 @@ public class BaseActivity extends AppCompatActivity {
         /* 如果要调整顺序或者增删项，要一并改动下面的click回调 */
         list.add(new MenuItem(R.string.my_favorites, R.drawable.favorites, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.category_mgmt, R.drawable.category_management, MenuItem.ItemType.TextWithIcon));
+        list.add(new MenuItem(R.string.keyword_filter, R.drawable.icon_word_filter, MenuItem.ItemType.TextWithIcon));
         list.add(new MenuItem(R.string.no_image_mode, R.drawable.no_image, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(R.string.night_mode, R.drawable.night_mode, MenuItem.ItemType.TextWithIconSwitch));
         list.add(new MenuItem(0, 0, MenuItem.ItemType.Nothing));
@@ -105,11 +106,15 @@ public class BaseActivity extends AppCompatActivity {
                         intent = new Intent(BaseActivity.this, CategoryFilterActivity.class);
                         startActivity(intent);
                         break;
+                    case 2:
+                        intent = new Intent(BaseActivity.this, FilterSettingActivity.class);
+                        startActivity(intent);
+                        break;
                     default:
-                        if (position > 4)
+                        if (position > 5)
                         {
                             intent = new Intent(BaseActivity.this, CategoryActivity.class);
-                            intent.putExtra("category", categoryList.get(position - 5).getId());
+                            intent.putExtra("category", categoryList.get(position - 6).getId());
                             startActivity(intent);
                         }
                 }
@@ -125,12 +130,12 @@ public class BaseActivity extends AppCompatActivity {
     {
         switch (position)
         {
-            case 2:
+            case 3:
                 TransientSetting.setNoImage(isChecked);
                 finish(); // refresh activity
                 startActivity(getIntent());
                 break;
-            case 3:
+            case 4:
                 TransientSetting.setNightMode(isChecked);
                 finish(); // refresh activity
                 startActivity(getIntent());
@@ -144,9 +149,9 @@ public class BaseActivity extends AppCompatActivity {
     {
         switch (position)
         {
-            case 2:
-                return TransientSetting.isNoImage();
             case 3:
+                return TransientSetting.isNoImage();
+            case 4:
                 return TransientSetting.isNightMode();
             default:
                 throw new RuntimeException(); // impossible
