@@ -26,46 +26,21 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
     protected AppendableNewsList mAppendableList;
     protected Random random = new Random(System.currentTimeMillis());
     protected NewsListAdapter mAdapter;
-    protected FrameLayout mNoNetwork;
-    protected TextView mHint;
-    protected AVLoadingIndicatorView mLoading;
     protected LinearLayout mLinearLayout;
-    protected boolean mErrorNotified = false;
 
-    protected void showNoNetwork() {
-        mErrorNotified = false;
-        if(mView != null) {
-            mLinearLayout.removeView(mView);
-        }
-        mNoNetwork.setVisibility(View.VISIBLE);
-        mHint.setText("没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点击屏幕刷新");
-        mHint.setVisibility(View.VISIBLE);
-        mLoading.hide();
-    }
 
-    protected void showLoadError() {
-        if(mView != null) {
-            mLinearLayout.removeView(mView);
-        }
-        mNoNetwork.setVisibility(View.VISIBLE);
-        mHint.setText("加载失败啦╮(╯▽╰)╭\n\n点击屏幕重试");
-        mHint.setVisibility(View.VISIBLE);
-        mLoading.hide();
-    }
 
-    protected void showLoading() {
-        mHint.setVisibility(View.GONE);
-        mLoading.show();
-    }
+//    protected void showLoading() {
+//        mHint.setVisibility(View.GONE);
+//        mLoading.show();
+//    }
 
-    protected void showNews() {
-        mNoNetwork.setVisibility(View.GONE);
-    }
+
 
     @Override
     public void onClick(View v) {
         if(v.getId() == R.id.fl_no_network) {
-            showLoading();
+//            showLoading();
             SystemClock.sleep(1000);
             if(isNetworkConnected()) {
                 updateUI();
@@ -145,7 +120,7 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
         mLinearLayout = (LinearLayout)findViewById(R.id.content_main);
         mNoNetwork = (FrameLayout) findViewById(R.id.fl_no_network);
         mHint = (TextView)findViewById(R.id.tv_no_network);
-        mLoading = (AVLoadingIndicatorView) findViewById(R.id.fl_loading);
+//        mLoading = (AVLoadingIndicatorView) findViewById(R.id.fl_loading);
         mNoNetwork.setOnClickListener(this);
         mErrorNotified = false;
         if(isNetworkConnected()) {

@@ -20,6 +20,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BaseActivity extends AppCompatActivity {
+
+    protected FrameLayout mNoNetwork;
+    protected TextView mHint;
+    //    protected AVLoadingIndicatorView mLoading;
+    protected boolean mErrorNotified = false;
+
+    protected void showNoNetwork() {
+        mErrorNotified = false;
+        mNoNetwork.setVisibility(View.VISIBLE);
+        mHint.setText("没有网络连接哦╮(╯▽╰)╭\n\n连接网络后点击屏幕刷新");
+        mHint.setVisibility(View.VISIBLE);
+//        mLoading.hide();
+    }
+
+    protected void showNews() {
+        mNoNetwork.setVisibility(View.GONE);
+    }
+
+    protected void showLoadError() {
+        mNoNetwork.setVisibility(View.VISIBLE);
+        mHint.setText("加载失败啦╮(╯▽╰)╭\n\n点击屏幕重试");
+        mHint.setVisibility(View.VISIBLE);
+//        mLoading.setVisibility(View.VISIBLE);
+//        mLoading.hide();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {

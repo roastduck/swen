@@ -2,6 +2,7 @@ package com.swen;
 
 import android.os.Bundle;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
@@ -13,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -160,8 +162,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     @Override
     public void onDestroy() {
         super.onDestroy();
-        for (Promise p : mPromises) {
-            p.cancel();
+        if (mPromises != null) {
+            for (Promise p : mPromises) {
+                p.cancel();
+            }
         }
         if (mThread != null) {
             mThread.interrupt();
@@ -258,19 +262,9 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     }
 
     protected void updateUI() {
-
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstance) {
-        super.onCreate(savedInstance);
-        if(isNetworkConnected()) {
-            updateUI();
-        }
-        mRootLayout = (LinearLayout) findViewById(R.id.content_main);
+        showNews();
         LayoutInflater inflater = LayoutInflater.from(this);
         mRootLayout.addView(inflater.inflate(R.layout.news_content_page, null));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
         mImageViews = new ArrayList<>();
@@ -283,12 +277,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         mRead.setEnabled(false);
         mShare.setOnClickListener(this);
         mRead.setOnClickListener(this);
-
         Bundle bundle = getIntent().getExtras();
         String[] pictures = bundle.getStringArray(getString(R.string.bundle_news_pictures));
         String news_id = bundle.getString(getString(R.string.bundle_news_id));
         String news_title = bundle.getString(getString(R.string.bundle_news_title));
-
         new Promise<Object, Boolean>(new Callback<Object, Boolean>() {
             @Override
             public Boolean run(Object o) {
@@ -358,6 +350,24 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     }
 
     @Override
+    protected void onCreate(Bundle savedInstance) {
+        super.onCreate(savedInstance);
+        mRootLayout = (LinearLayout) findViewById(R.id.content_main);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mNoNetwork = (FrameLayout) findViewById(R.id.fl_no_network);
+        mHint = (TextView)findViewById(R.id.tv_no_network);
+        mNoNetwork.setOnClickListener(this);
+        mErrorNotified = false;
+
+        if(isNetworkConnected()) {
+            updateUI();
+        } else {
+            showNoNetwork();
+        }
+
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bt_read:
@@ -365,6 +375,14 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 break;
             case R.id.bt_share:
                 mExternal.share(mNews, mUrls.get(0));
+                break;
+            case R.id.fl_no_network:
+                SystemClock.sleep(1000);
+                if(isNetworkConnected()) {
+                    updateUI();
+                } else {
+                    showNoNetwork();
+                }
                 break;
         }
     }

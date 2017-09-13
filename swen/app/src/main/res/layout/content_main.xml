@@ -32,14 +32,15 @@
             android:gravity="center"
             android:textColor="#aaa"/>
 
-        <com.wang.avi.AVLoadingIndicatorView
-            android:id="@+id/fl_loading"
-            android:layout_centerHorizontal="true"
-            android:layout_centerVertical="true"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            app:indicatorName="BallClipRotateMultipleIndicator"
-            app:indicatorColor="#aaa"/>
+        <!--<com.wang.avi.AVLoadingIndicatorView-->
+            <!--android:id="@+id/fl_loading"-->
+            <!--android:layout_centerHorizontal="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_width="30dp"-->
+            <!--android:layout_height="30dp"-->
+            <!--android:layout_gravity="center_horizontal|center_vertical"-->
+            <!--app:indicatorName="BallClipRotateMultipleIndicator"-->
+            <!--app:indicatorColor="#aaa"/>-->
 
     </FrameLayout>
 
