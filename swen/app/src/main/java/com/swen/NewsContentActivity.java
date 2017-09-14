@@ -33,9 +33,10 @@ import java.util.List;
 
 public class NewsContentActivity extends BaseActivity implements View.OnClickListener {
 
+    public static final String ACTION_NAME = "com.swen.action.CONTENT";
+    protected boolean mIsRefreshing = false;
     //TODO: grey the news item in parent list
     private News mNews = null;
-    public static final String ACTION_NAME = "com.swen.action.CONTENT";
     private List<String> mUrls;
     private List<LoadingImageView> mImageViews;
     private List<TextView> mTextViews;
@@ -62,11 +63,11 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
     private Thread mThread;
     private Callback mFailCallback;
     private LinearLayout mRootLayout;
-    private int mTotalPictures;
 
     /* 加载过程：
      * 文字加载完成后，立即显示，并得知段数。根据pictures长度与文字段数来分配view。
      */
+    private int mTotalPictures;
 
     protected void addImageView(String url) {
         FrameLayout spacing = new FrameLayout(this);
@@ -167,7 +168,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         textView.setMovementMethod(LinkMovementMethod.getInstance());
         textView.setTextSize(15);
         textView.setText(text);
-        if(TransientSetting.isNightMode()) {
+        if (TransientSetting.isNightMode()) {
             textView.setTextColor(getResources().getColor(R.color.intro_night));
         }
         textView.setLineSpacing(0, (float)1.5);
@@ -190,7 +191,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             mThread.interrupt();
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -284,7 +284,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         showNews();
         LayoutInflater inflater = LayoutInflater.from(this);
         mRootLayout.addView(inflater.inflate(R.layout.news_content_page, null));
-        if(TransientSetting.isNightMode()) {
+        if (TransientSetting.isNightMode()) {
             mRootLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
         }
         mUrls = new ArrayList<>(); // 这些变量不能在函数外初始化
@@ -292,7 +292,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         mTextViews = new ArrayList<>();
         mPromises = new ArrayList<>();
         mLinearLayout = (LinearLayout) findViewById(R.id.ll_content);
-        if(TransientSetting.isNightMode()) {
+        if (TransientSetting.isNightMode()) {
             mLinearLayout.setBackgroundColor(getResources().getColor(R.color.foreground_dark));
         }
         mShare = (FloatingActionButton) findViewById(R.id.bt_share);
@@ -325,7 +325,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
 
         TextView title = (TextView) findViewById(R.id.tv_content_title);
         title.setText(news_title);
-        if(TransientSetting.isNightMode()) {
+        if (TransientSetting.isNightMode()) {
             title.setTextColor(getResources().getColor(R.color.title_night));
         }
         Storage storage = ((ApplicationWithStorage) getApplication()).getStorage();
@@ -338,7 +338,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             }
         };
 
-        Callback<News,Object> computeLayoutCallback = new Callback<News,Object>() {
+        Callback<News, Object> computeLayoutCallback = new Callback<News, Object>() {
             @Override
             public Object run(News news) {
                 mNews = news;
@@ -360,10 +360,10 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
             return;
         }
         mTotalPictures = pictures.length == 0 ? 1 : pictures.length;
-        news_promise.thenUI(computeLayoutCallback).failUI(new Callback<Exception,Object>() {
+        news_promise.thenUI(computeLayoutCallback).failUI(new Callback<Exception, Object>() {
             @Override
             public Object run(Exception result) throws Exception {
-                for(StackTraceElement e: result.getStackTrace()) {
+                for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("NCA", e.toString());
                 }
                 showNoNetwork();
@@ -395,7 +395,7 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
         mRootLayout = (LinearLayout) findViewById(R.id.content_main);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mNoNetwork = (FrameLayout) findViewById(R.id.fl_no_network);
-        mHint = (TextView)findViewById(R.id.tv_no_network);
+        mHint = (TextView) findViewById(R.id.tv_no_network);
         mNoNetwork.setOnClickListener(this);
         mErrorNotified = false;
 
@@ -413,11 +413,17 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 mExternal.share(mNews, mUrls.get(0));
                 break;
             case R.id.fl_no_network:
+                if (mIsRefreshing) {
+                    return;
+                }
+                mIsRefreshing = true;
                 SystemClock.sleep(1000);
-                if(isNetworkConnected()) {
+                if (isNetworkConnected()) {
                     updateUI();
+                    mIsRefreshing = false;
                 } else {
                     showNoNetwork();
+                    mIsRefreshing = false;
                 }
                 break;
         }
