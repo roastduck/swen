@@ -417,7 +417,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                     return;
                 }
                 mIsRefreshing = true;
-                SystemClock.sleep(1000);
                 if (isNetworkConnected()) {
                     updateUI();
                     mIsRefreshing = false;
