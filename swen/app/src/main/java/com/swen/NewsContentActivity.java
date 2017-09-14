@@ -413,7 +413,6 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 mIsRefreshing = true;
                 if (isNetworkConnected()) {
                     updateUI();
-                    mIsRefreshing = false;
                 } else {
                     showNoNetwork();
                     mIsRefreshing = false;

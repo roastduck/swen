@@ -45,7 +45,6 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
             mIsRefreshing = true;
             if(isNetworkConnected()) {
                 updateUI();
-                mIsRefreshing = false;
             } else {
                 showNoNetwork();
                 mIsRefreshing = false;
