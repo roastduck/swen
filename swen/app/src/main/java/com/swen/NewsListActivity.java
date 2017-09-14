@@ -43,7 +43,6 @@ public abstract class NewsListActivity extends BaseActivity implements View.OnCl
                 return;
             }
             mIsRefreshing = true;
-            SystemClock.sleep(1000);
             if(isNetworkConnected()) {
                 updateUI();
                 mIsRefreshing = false;
