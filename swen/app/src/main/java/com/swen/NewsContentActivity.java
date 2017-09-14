@@ -360,7 +360,13 @@ public class NewsContentActivity extends BaseActivity implements View.OnClickLis
                 for (StackTraceElement e : result.getStackTrace()) {
                     Log.e("NCA", e.toString());
                 }
-                showNoNetwork();
+                if(!isNetworkConnected()) {
+                    mIsRefreshing = false;
+                    showNoNetwork();
+                } else {
+                    mIsRefreshing = false;
+                    showLoadError();
+                }
                 return null;
             }
         });

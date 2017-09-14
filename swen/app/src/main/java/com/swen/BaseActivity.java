@@ -43,7 +43,7 @@ abstract public class BaseActivity extends AppCompatActivity {
 
     protected void showLoadError() {
         mNoNetwork.setVisibility(View.VISIBLE);
-        mHint.setText(" 加载失败啦╮(╯▽╰)╭\n\n点我重试\n\n");
+        mHint.setText(" 加载失败啦╮(╯▽╰)╭也许是页面无法访问\n\n点我重试\n\n");
         mHint.setVisibility(View.VISIBLE);
 //        mLoading.setVisibility(View.VISIBLE);
 //        mLoading.hide();
