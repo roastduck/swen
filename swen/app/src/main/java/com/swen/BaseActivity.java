@@ -116,23 +116,23 @@ abstract public class BaseActivity extends AppCompatActivity {
                 Intent intent;
                 switch (position)
                 {
-                    case 0:
+                    case 1:
                         intent = new Intent(BaseActivity.this, FavoritesActivity.class);
                         startActivity(intent);
                         break;
-                    case 1:
+                    case 2:
                         intent = new Intent(BaseActivity.this, CategoryFilterActivity.class);
                         startActivity(intent);
                         break;
-                    case 2:
+                    case 3:
                         intent = new Intent(BaseActivity.this, FilterSettingActivity.class);
                         startActivity(intent);
                         break;
                     default:
-                        if (position > 5)
+                        if (position > 6)
                         {
                             intent = new Intent(BaseActivity.this, CategoryActivity.class);
-                            intent.putExtra("category", categoryList.get(position - 6).getId());
+                            intent.putExtra("category", categoryList.get(position - 7).getId());
                             startActivity(intent);
                         }
                 }
