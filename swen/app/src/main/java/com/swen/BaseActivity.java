@@ -76,10 +76,12 @@ abstract public class BaseActivity extends AppCompatActivity {
 
         ListView lv = (ListView)findViewById(R.id.menu_list_view);
         LayoutInflater inflater = LayoutInflater.from(this);
+        /*
         View hv = inflater.inflate(R.layout.menu_header, null);
         ImageView iv = (ImageView)hv.findViewById(R.id.menu_header_iv);
         iv.setImageResource(TransientSetting.isNightMode() ? R.drawable.menu_header_night : R.drawable.menu_header);
         lv.addHeaderView(hv);
+        */
     }
 
     protected boolean isNetworkConnected() {
