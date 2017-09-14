@@ -42,6 +42,12 @@ public class External
         OnekeyShare oks = new OnekeyShare();
         oks.disableSSOWhenAuthorize();
         oks.setTitle(news.news_Title);
+        try {
+            oks.setText((news.news_Intro == null ? news.news_Title : news.news_Intro) + "\n" + news.news_URL);
+        }
+        catch (Exception e) {
+
+        }
         oks.setUrl(news.news_URL);
         oks.setTitleUrl(news.news_URL);
         oks.setImageUrl(imgUrl);    // TODO: parse news_Pictures
